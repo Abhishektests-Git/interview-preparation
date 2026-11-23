@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>CI/CD Pipeline Animation — How Jenkins Takes Code to Production</title>
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.75rem; }
+      * { box-sizing: border-box; }
+      :root{
+        --bg:#eef2f5; --card:#ffffff; --card2:#f4f7f9; --ink:#17242f; --ink2:#43566a;
+        --line:#d5dee5; --blue:#1f6fb2; --blue-soft:#dcecf8; --green:#178a4c; --green-soft:#dcf2e4;
+        --red:#c9332b; --red-soft:#fbe3e1; --amber:#b97a0f; --amber-soft:#fdf0d3;
+        --grey:#8fa1b0; --belt:#22384a; --belt-line:#3d5a73; --shadow:0 10px 30px rgba(23,36,47,.10);
+        --accent:#d3382c;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#0d141b; --card:#16222d; --card2:#1b2a38; --ink:#e9f0f5; --ink2:#a9bccb;
+          --line:#2b3e4f; --blue:#5ea9dd; --blue-soft:#1d3a52; --green:#4cc47e; --green-soft:#173d2a;
+          --red:#f0766d; --red-soft:#4a2320; --amber:#e0aa4e; --amber-soft:#453311;
+          --grey:#5f7488; --belt:#0a1118; --belt-line:#2c4358; --shadow:0 10px 30px rgba(0,0,0,.45);
+        }
+      }
+      html{ -webkit-text-size-adjust:100%; }
+      body{
+        margin:0; background:var(--bg); color:var(--ink);
+        font-family:"Nunito","Segoe UI",system-ui,-apple-system,sans-serif;
+        line-height:1.55;
+      }
+      .wrap{ max-width:1060px; margin:0 auto; padding:20px 16px 56px; }
+      h1{ font-size:clamp(26px,4.6vw,40px); line-height:1.15; margin:6px 0 8px; font-weight:900; letter-spacing:-.01em; }
+      h1 .pipe-word{ color:var(--blue); }
+      .lede{ font-size:clamp(16px,2.4vw,19px); color:var(--ink2); margin:0 0 4px; max-width:46em; }
+      .lede strong{ color:var(--ink); }
+      h2{ font-size:clamp(21px,3.4vw,27px); font-weight:900; margin:0 0 6px; }
+      .section-sub{ color:var(--ink2); margin:0 0 16px; max-width:44em; }
+
+      /* ---------- scenario toggle ---------- */
+      .scenario-bar{ display:flex; gap:10px; flex-wrap:wrap; margin:20px 0 14px; }
+      .scen-btn{
+        flex:1 1 240px; text-align:left; cursor:pointer; border:2px solid var(--line);
+        background:var(--card); color:var(--ink); border-radius:14px; padding:12px 16px;
+        font:inherit; font-weight:800; font-size:16px; display:flex; gap:12px; align-items:center;
+      }
+      .scen-btn .dot{ width:34px; height:34px; border-radius:50%; flex:none; display:grid; place-items:center; font-size:17px; color:#fff; }
+      .scen-btn small{ display:block; font-weight:600; color:var(--ink2); font-size:13.5px; }
+      .scen-btn.pass .dot{ background:var(--green); }
+      .scen-btn.fail .dot{ background:var(--red); }
+      .scen-btn[aria-pressed="true"]{ border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-soft); }
+      .scen-btn:focus-visible, .ctl-btn:focus-visible, input[type="range"]:focus-visible{ outline:3px solid var(--blue); outline-offset:2px; }
+
+      /* ---------- stage card ---------- */
+      .stage-card{
+        background:var(--card); border:1px solid var(--line); border-radius:20px;
+        box-shadow:var(--shadow); padding:18px 16px 16px; position:relative; overflow:hidden;
+      }
+      .ff-badge{
+        position:absolute; top:12px; right:14px; background:var(--amber-soft); color:var(--amber);
+        font-weight:900; font-size:13px; padding:4px 10px; border-radius:999px; display:none; z-index:5;
+      }
+      .ff-badge.on{ display:block; }
+
+      /* belt */
+      .belt-zone{ position:relative; padding:64px 6px 0; }
+      .belt{
+        position:absolute; left:0; right:0; top:96px; height:26px; border-radius:8px;
+        background:
+          repeating-linear-gradient(90deg, var(--belt-line) 0 14px, transparent 14px 30px) 0 50%/100% 3px no-repeat,
+          var(--belt);
+        box-shadow:inset 0 -4px 0 rgba(0,0,0,.25);
+      }
+      .belt-zone.running .belt{
+        animation:beltmove .6s linear infinite;
+      }
+      @keyframes beltmove{ from{ background-position:0 50%, 0 0; } to{ background-position:30px 50%, 0 0; } }
+      .return-path{
+        position:absolute; left:4%; right:4%; top:138px; height:0;
+        border-top:3px dashed var(--grey); opacity:.35;
+      }
+      .return-path.on{ border-top-color:var(--red); opacity:1; animation:dashmove 1s linear infinite; }
+      @keyframes dashmove{ to{ background-position:24px 0; } }
+      .return-label{
+        position:absolute; top:146px; left:50%; transform:translateX(-50%);
+        font-size:12.5px; font-weight:800; color:var(--red); display:none; white-space:nowrap;
+      }
+      .return-label.on{ display:block; }
+      .stations{ position:relative; display:flex; justify-content:space-between; z-index:2; }
+      .station{ width:12.5%; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; }
+      .st-ic{
+        width:52px; height:52px; border-radius:50%; background:var(--card2); border:3px solid var(--line);
+        display:grid; place-items:center; font-size:23px; transition:border-color .4s, background .4s, transform .4s;
+      }
+      .station .st-name{ font-size:12px; font-weight:800; line-height:1.2; color:var(--ink2); max-width:100%; }
+      .st-name .tiny{ display:none; }
+      .station.done .st-ic{ border-color:var(--green); background:var(--green-soft); }
+      .station.done .st-name{ color:var(--green); }
+      .station.active .st-ic{ border-color:var(--blue); background:var(--blue-soft); transform:scale(1.14); box-shadow:0 0 0 5px var(--blue-soft); }
+      .station.active .st-name{ color:var(--blue); }
+      .station.failed .st-ic{ border-color:var(--red); background:var(--red-soft); animation:shake .45s ease; }
+      .station.failed .st-name{ color:var(--red); }
+      @keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+      /* travelling box */
+      .box{
+        position:absolute; top:2px; left:6.25%; transform:translateX(-50%); z-index:4;
+        transition:left 1s ease; text-align:center; pointer-events:none;
+      }
+      .box .pkg{ font-size:38px; line-height:1; filter:drop-shadow(0 4px 5px rgba(0,0,0,.25)); }
+      .box .box-label{
+        display:inline-block; margin-top:2px; background:var(--belt); color:#fff; font-size:12px; font-weight:900;
+        padding:2px 9px; border-radius:999px; white-space:nowrap;
+      }
+      .box.bad .box-label{ background:var(--red); }
+      .box.good .box-label{ background:var(--green); }
+      .box.returning{ transition:left 1.6s ease; }
+
+      /* narration */
+      .narration{
+        margin-top:58px; background:var(--card2); border:1px solid var(--line); border-radius:14px;
+        padding:14px 18px; min-height:104px;
+      }
+      .narration .n-step{ font-size:12.5px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; color:var(--blue); margin:0 0 2px; }
+      .narration .n-title{ font-size:20px; font-weight:900; margin:0 0 3px; }
+      .narration .n-text{ font-size:17.5px; margin:0; color:var(--ink); max-width:56em; }
+      .narration .n-text b{ color:var(--blue); }
+      .narration.bad .n-step{ color:var(--red); }
+      .narration.good .n-step{ color:var(--green); }
+
+      /* dynamic panels */
+      .panel{ display:none; margin-top:14px; border:1px solid var(--line); border-radius:14px; padding:14px 16px; background:var(--card); }
+      .panel.on{ display:block; animation:fadein .4s ease; }
+      @keyframes fadein{ from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none} }
+      .panel h3{ margin:0 0 8px; font-size:16.5px; font-weight:900; }
+      .panel h3 .count{ float:right; font-size:15px; background:var(--blue-soft); color:var(--blue); padding:2px 10px; border-radius:999px; }
+      .panel h3 .count.allpass{ background:var(--green-soft); color:var(--green); }
+      .panel h3 .count.hasfail{ background:var(--red-soft); color:var(--red); }
+      .chip-group-label{ font-size:13px; font-weight:900; color:var(--ink2); text-transform:uppercase; letter-spacing:.06em; margin:10px 0 6px; }
+      .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+      .chip{
+        font-weight:800; font-size:14px; padding:7px 11px; border-radius:10px;
+        background:var(--card2); border:2px solid var(--line); color:var(--ink2); min-width:118px;
+      }
+      .chip small{ display:block; font-weight:600; font-size:12px; }
+      .chip.pass{ background:var(--green-soft); border-color:var(--green); color:var(--green); }
+      .chip.fail{ background:var(--red-soft); border-color:var(--red); color:var(--red); }
+      .chip.running{ background:var(--blue-soft); border-color:var(--blue); color:var(--blue); animation:pulse 1s ease infinite; }
+      .chip.spotlight{ box-shadow:0 0 0 3px var(--amber); }
+      @keyframes pulse{ 50%{ transform:scale(1.05); } }
+      .sanity-list{ list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px; }
+      .sanity-list li{ background:var(--green-soft); color:var(--green); font-weight:800; font-size:14.5px; padding:7px 12px; border-radius:10px; border:2px solid var(--green); }
+      .gate-panel{ text-align:center; font-size:19px; font-weight:900; padding:18px 16px; }
+      .gate-panel.open{ background:var(--green-soft); border-color:var(--green); color:var(--green); }
+      .gate-panel.closed{ background:var(--red-soft); border-color:var(--red); color:var(--red); }
+      .gate-panel p{ margin:4px 0 0; font-size:15.5px; font-weight:600; color:var(--ink); }
+      .defect-panel{ background:var(--red-soft); border-color:var(--red); }
+      .defect-panel h3{ color:var(--red); }
+      .defect-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; font-size:14.5px; }
+      .defect-grid div{ background:var(--card); border-radius:10px; padding:8px 11px; }
+      .defect-grid b{ display:block; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink2); }
+      .prod-panel{ background:var(--green-soft); border-color:var(--green); text-align:center; }
+      .prod-panel .big{ font-size:22px; font-weight:900; color:var(--green); }
+      .confetti-piece{ position:absolute; top:0; width:9px; height:14px; z-index:6; pointer-events:none; border-radius:2px; }
+
+      /* controls */
+      .controls{
+        display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:16px;
+        background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px 14px; box-shadow:var(--shadow);
+      }
+      .ctl-btn{
+        cursor:pointer; font:inherit; font-weight:900; font-size:15.5px; border-radius:12px;
+        border:2px solid var(--line); background:var(--card2); color:var(--ink); padding:9px 16px;
+        display:inline-flex; align-items:center; gap:7px; min-width:48px; justify-content:center;
+      }
+      .ctl-btn.primary{ background:var(--blue); border-color:var(--blue); color:#fff; min-width:118px; }
+      .ctl-btn:disabled{ opacity:.4; cursor:default; }
+      .speed-box{ display:flex; align-items:center; gap:9px; margin-left:auto; font-weight:800; font-size:14.5px; color:var(--ink2); }
+      .speed-box input[type="range"]{ width:130px; accent-color:var(--blue); min-height:2.75rem; }
+      .progress-track{ height:8px; background:var(--line); border-radius:99px; margin-top:14px; overflow:hidden; }
+      .progress-fill{ height:100%; background:var(--blue); border-radius:99px; transition:width .5s ease; width:0%; }
+
+      /* legend */
+      .legend{ display:flex; flex-wrap:wrap; gap:8px 18px; margin:14px 2px 0; font-size:14px; font-weight:700; color:var(--ink2); }
+      .legend span::before{ content:""; display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:6px; vertical-align:-1px; }
+      .legend .l-blue::before{ background:var(--blue); } .legend .l-green::before{ background:var(--green); }
+      .legend .l-red::before{ background:var(--red); } .legend .l-grey::before{ background:var(--grey); }
+
+      /* sections below */
+      section{ margin-top:44px; }
+      .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+      .jcard{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px; box-shadow:var(--shadow); }
+      .jcard .j-ic{ font-size:26px; }
+      .jcard h3{ margin:6px 0 4px; font-size:17.5px; font-weight:900; }
+      .jcard h3 span{ color:var(--blue); font-size:14px; font-weight:800; display:block; }
+      .jcard p{ margin:0; color:var(--ink2); font-size:15px; }
+      .jcard p b{ color:var(--ink); }
+      .stageview{
+        display:flex; align-items:stretch; gap:0; flex-wrap:wrap; background:var(--card);
+        border:1px solid var(--line); border-radius:16px; padding:16px; box-shadow:var(--shadow); margin-bottom:14px;
+      }
+      .sv-box{ flex:1 1 110px; text-align:center; border-radius:12px; padding:10px 6px; font-weight:900; font-size:14.5px; border:2px solid var(--line); background:var(--card2); }
+      .sv-box small{ display:block; font-weight:700; color:var(--ink2); font-size:12px; }
+      .sv-box.g{ border-color:var(--green); background:var(--green-soft); color:var(--green); }
+      .sv-box.r{ border-color:var(--red); background:var(--red-soft); color:var(--red); }
+      .sv-arrow{ align-self:center; padding:0 5px; color:var(--grey); font-weight:900; }
+      .sv-caption{ width:100%; margin:10px 0 0; font-size:14px; color:var(--ink2); }
+      .recap{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+      .recap li{
+        background:var(--card); border:1px solid var(--line); border-radius:14px; padding:13px 16px 13px 48px;
+        position:relative; font-size:16px; box-shadow:var(--shadow);
+      }
+      .recap li::before{
+        content:"✓"; position:absolute; left:14px; top:11px; width:24px; height:24px; border-radius:50%;
+        background:var(--green); color:#fff; font-weight:900; display:grid; place-items:center; font-size:14px;
+      }
+      .recap li b{ color:var(--blue); }
+      .interview{
+        background:var(--belt); color:#eaf2f8; border-radius:18px; padding:20px 22px; box-shadow:var(--shadow);
+      }
+      .interview h2{ color:#fff; }
+      .interview p{ font-size:17px; margin:0; max-width:52em; }
+      .interview .say{ color:#9fd0f5; font-weight:900; text-transform:uppercase; letter-spacing:.08em; font-size:12.5px; margin:0 0 6px; }
+      footer{ margin-top:40px; color:var(--ink2); font-size:14px; text-align:center; }
+      @media (max-width:560px){
+        .station .st-name{ font-size:10.5px; }
+        .st-name .full{ display:none; }
+        .st-name .tiny{ display:inline; white-space:nowrap; }
+        .st-ic{ width:40px; height:40px; font-size:18px; }
+        .box .pkg{ font-size:30px; }
+        .box .box-label{ font-size:10.5px; padding:2px 7px; }
+        .belt{ top:78px; height:22px; }
+        .belt-zone{ padding-top:56px; }
+        .return-path{ top:122px; } .return-label{ top:130px; }
+        .narration{ margin-top:52px; min-height:120px; }
+        .narration .n-text{ font-size:16.5px; }
+        .speed-box{ margin-left:0; width:100%; }
+        .speed-box input[type="range"]{ flex:1; }
+        .chip{ min-width:0; flex:1 1 44%; }
+      }
+      @media (prefers-reduced-motion: reduce){
+        .belt-zone.running .belt, .chip.running, .station.failed .st-ic, .return-path.on{ animation:none; }
+        .box{ transition:none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>The CI/CD <span class="pipe-word">Pipeline</span>, Animated</h1>
+        <p class="lede">A <strong>pipeline</strong> is a fixed line of stations — like a conveyor belt in a factory. Every code change rides the belt in order: <strong>Code → Build → Test in QA → Deploy</strong>. It cannot skip a station, and if it fails the test station, it falls off the belt and <strong>never reaches Production</strong>. Press play and watch one build make the full journey.</p>
+      </header>
+
+      <div class="scenario-bar" role="group" aria-label="Choose a scenario">
+        <button class="scen-btn pass" id="btnScenA" aria-pressed="true">
+          <span class="dot">✓</span>
+          <span>Scenario A — All tests pass<small>The happy path: Build #42 sails through QA to Production.</small></span>
+        </button>
+        <button class="scen-btn fail" id="btnScenB" aria-pressed="false">
+          <span class="dot">✗</span>
+          <span>Scenario B — A test fails<small>TC-07 fails in QA. Watch the loop back to the developer.</small></span>
+        </button>
+      </div>
+
+      <div class="stage-card" id="stageCard">
+        <div class="ff-badge" id="ffBadge">⏩ Fast-forward — re-running the belt</div>
+        <div class="belt-zone" id="beltZone">
+          <div class="belt"></div>
+          <div class="return-path" id="returnPath"></div>
+          <div class="return-label" id="returnLabel">↩ FAILED BUILD SENT BACK TO THE DEVELOPER</div>
+          <div class="box" id="boxEl"><div class="pkg" id="boxPkg">💻</div><span class="box-label" id="boxLabel">new code</span></div>
+          <div class="stations" id="stations"></div>
+        </div>
+
+        <div class="narration" id="narration" aria-live="polite">
+          <p class="n-step" id="nStep">Step 1</p>
+          <p class="n-title" id="nTitle"></p>
+          <p class="n-text" id="nText"></p>
+        </div>
+
+        <div class="panel" id="sanityPanel">
+          <h3>🩺 Sanity check — is the app even alive?</h3>
+          <ul class="sanity-list">
+            <li>✓ App opens</li>
+            <li>✓ Login works</li>
+            <li>✓ Home page loads</li>
+          </ul>
+        </div>
+
+        <div class="panel" id="testPanel">
+          <h3>🧪 Test cases running in QA <span class="count" id="testCount">0 / 10 passed</span></h3>
+          <p class="chip-group-label">Change testing — the new feature itself</p>
+          <div class="chips" id="chipsChange"></div>
+          <p class="chip-group-label">Regression — nearby old features, to check nothing broke</p>
+          <div class="chips" id="chipsReg"></div>
+        </div>
+
+        <div class="panel gate-panel" id="gatePanel"><span id="gateText"></span><p id="gateSub"></p></div>
+
+        <div class="panel defect-panel" id="defectPanel">
+          <h3>🐞 Defect raised — the failure is now official</h3>
+          <div class="defect-grid">
+            <div><b>Defect</b>DEF-101 (example)</div>
+            <div><b>Found by</b>TC-07 — regression</div>
+            <div><b>Problem</b>Checkout total is wrong when a coupon is applied</div>
+            <div><b>Status</b>Assigned to the developer</div>
+          </div>
+        </div>
+
+        <div class="panel prod-panel" id="prodPanel">
+          <div class="big">🎉 LIVE IN PRODUCTION</div>
+          <p style="margin:4px 0 0;">Real users are now using this build. Jenkins marks the job <b>SUCCESS</b> and publishes the TestNG / Extent report.</p>
+        </div>
+      </div>
+
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+      <div class="controls">
+        <button class="ctl-btn" id="btnBack" aria-label="Step back">⏮ Back</button>
+        <button class="ctl-btn primary" id="btnPlay">▶ Play</button>
+        <button class="ctl-btn" id="btnFwd" aria-label="Step forward">Step ⏭</button>
+        <button class="ctl-btn" id="btnRestart" aria-label="Restart">↺ Restart</button>
+        <label class="speed-box">Speed
+          <input type="range" id="speed" min="0.5" max="2" step="0.5" value="1" aria-label="Animation speed" />
+          <span id="speedVal">1×</span>
+        </label>
+      </div>
+
+      <div class="legend">
+        <span class="l-grey">Waiting</span>
+        <span class="l-blue">In progress</span>
+        <span class="l-green">Passed</span>
+        <span class="l-red">Failed — belt stops</span>
+      </div>
+
+      <section>
+        <h2>How Jenkins works — the machine that runs the belt</h2>
+        <p class="section-sub">Jenkins is the automation server behind the animation above. It watches for new code, then runs the same fixed stations every single time — nobody has to start it by hand.</p>
+
+        <div class="stageview" aria-label="Example of a Jenkins stage view">
+          <div class="sv-box g">Checkout<small>code from Git ✓</small></div><span class="sv-arrow">→</span>
+          <div class="sv-box g">Build<small>Maven ✓</small></div><span class="sv-arrow">→</span>
+          <div class="sv-box g">Deploy to QA<small>same build ✓</small></div><span class="sv-arrow">→</span>
+          <div class="sv-box g">Test<small>TestNG ✓</small></div><span class="sv-arrow">→</span>
+          <div class="sv-box r">Deploy to Prod<small>only if tests pass</small></div>
+          <p class="sv-caption">This is how Jenkins shows a run on screen: one box per <b>stage</b>. Green = passed, red = failed — and the run stops at the red box. Production only happens after a fully green row.</p>
+        </div>
+
+        <div class="cards">
+          <div class="jcard"><div class="j-ic">🖥️</div><h3>Jenkins Server <span>the boss · also called the Controller</span></h3><p>The machine that <b>watches Git for new code</b> and runs the belt. It decides what runs, in what order, and records the result of every run.</p></div>
+          <div class="jcard"><div class="j-ic">📜</div><h3>Job / Pipeline <span>the recipe</span></h3><p>The <b>fixed list of stages</b> — Build → Test → Deploy — written once and run the same way every time. One job = one belt.</p></div>
+          <div class="jcard"><div class="j-ic">📦</div><h3>Stages <span>the stations</span></h3><p>Each station on the belt is a stage. Jenkins shows every stage as a box that turns <b>green when it passes, red when it fails</b> — a red stage stops the whole run.</p></div>
+          <div class="jcard"><div class="j-ic">🦾</div><h3>Agent / Node <span>the worker</span></h3><p>The machine that <b>actually does the work</b> the boss assigns: compiling the code and running your Selenium + TestNG tests. A busy team can have many agents.</p></div>
+          <div class="jcard"><div class="j-ic">⏰</div><h3>Triggers <span>what starts the belt</span></h3><p>Three ways a run starts: a <b>Git webhook</b> the moment code is pushed, a <b>schedule</b> (for example a nightly regression run), or a <b>manual click</b> on “Build Now”.</p></div>
+          <div class="jcard"><div class="j-ic">📊</div><h3>Reports &amp; Result <span>the verdict</span></h3><p>After testing, Jenkins publishes the result and the report — in your project, the <b>TestNG / Extent Report</b>. Green build = <b>SUCCESS</b>, red build = <b>FAILURE</b>, and a failed build is never deployed.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>What you learnt — the whole session in six lines</h2>
+        <p class="section-sub">If you remember only this page's recap before an interview, you have the full picture.</p>
+        <ul class="recap">
+          <li><b>Pipeline = a fixed line of stations.</b> Every change travels Code → Build → Test → Deploy, in order, with no skipping.</li>
+          <li><b>Testing happens in the QA environment, before Production.</b> Code is deployed first to a test server that copies the real system — breaking things there is safe.</li>
+          <li><b>Sanity first, then change testing + regression.</b> If the app doesn't even open or login fails, stop immediately — there is no point running the full suite.</li>
+          <li><b>A failed test stops the belt.</b> The build loops back to the developer, gets fixed, and re-enters from the very start as a new build — it never moves forward.</li>
+          <li><b>The same tested build is promoted.</b> The exact build that passed in QA is the one that goes to Staging and then Production — it is not rebuilt.</li>
+          <li><b>Jenkins runs the whole belt automatically.</b> A Git push wakes it up, its job runs every stage on a worker agent, and it publishes the result and report at the end.</li>
+        </ul>
+      </section>
+
+      <section class="interview">
+        <p class="say">Say it in an interview</p>
+        <h2>Your project, in one answer</h2>
+        <p>“In our project, whenever code was pushed to Git, a webhook triggered Jenkins. Jenkins built the code with Maven and deployed the same build to the QA environment. Sanity ran first, then our Selenium–TestNG suites — change testing and regression. If any test failed, Jenkins marked the build FAILURE, a defect was raised, and the build never moved ahead; the fix came back as a new build and was retested with regression. Only a fully green build was promoted towards production, and Jenkins published the Extent Report for every run.”</p>
+      </section>
+
+      <footer>Built from your CI/CD session — Jenkins · Maven · Git · TestNG · Selenium · QA → Staging → Production</footer>
+    </div>
+
+    <script>
+      (function(){
+        "use strict";
+        var STATIONS = [
+          { icon:"👨‍💻", name:"Developer",  short:"Developer", tiny:"Dev" },
+          { icon:"⚙️",  name:"Jenkins wakes up", short:"Jenkins", tiny:"Jenkins" },
+          { icon:"🔨",  name:"Build (Maven)", short:"Build", tiny:"Build" },
+          { icon:"🧪",  name:"QA Environment", short:"QA Env", tiny:"QA" },
+          { icon:"🩺",  name:"Sanity Check", short:"Sanity", tiny:"Sanity" },
+          { icon:"✅",  name:"Test Cases Run", short:"Tests", tiny:"Tests" },
+          { icon:"🚦",  name:"The Gate", short:"Gate", tiny:"Gate" },
+          { icon:"🚀",  name:"Production", short:"Production", tiny:"Prod" }
+        ];
+        var TC = [
+          { id:"TC-01", label:"New feature opens", group:0 },
+          { id:"TC-02", label:"Valid input saved", group:0 },
+          { id:"TC-03", label:"Invalid input rejected", group:0 },
+          { id:"TC-04", label:"New button works", group:0 },
+          { id:"TC-05", label:"New page loads", group:0 },
+          { id:"TC-06", label:"Login still works", group:1 },
+          { id:"TC-07", label:"Coupon total correct", group:1 },
+          { id:"TC-08", label:"Search still works", group:1 },
+          { id:"TC-09", label:"Payment still works", group:1 },
+          { id:"TC-10", label:"Logout still works", group:1 }
+        ];
+        function firstN(n){ var a=[]; for(var i=0;i<n;i++) a.push(TC[i].id); return a; }
+        function allBut(id){ return TC.filter(function(t){return t.id!==id;}).map(function(t){return t.id;}); }
+        function allIds(){ return TC.map(function(t){return t.id;}); }
+
+        /* Step fields:
+           st = active station index (-1 none), done = stations completed (green),
+           failSt = failed station index or -1, box = box position (station index, can be fractional),
+           pkg/label/boxCls = travelling package look, sanity = show sanity panel,
+           chips = {passed:[ids], failed:id|null, running:id|null, spot:id|null} or null,
+           gate = null|'open'|'closed', defect = bool, ret = return path on,
+           ff = fast-forward badge, prod = production panel, tone = ''|'bad'|'good' */
+        var STEPS_A = [
+          { st:-1, done:0, failSt:-1, box:0, pkg:"💻", label:"new code", boxCls:"", tone:"",
+            title:"Meet the belt", text:"One code change is about to travel the full pipeline. Watch the package on the belt — it can only move <b>forward</b> by passing each station." },
+          { st:0, done:0, failSt:-1, box:0, pkg:"💻", label:"commit a1b2c3", boxCls:"", tone:"",
+            title:"1 · The developer pushes code", text:"The developer writes code, then <b>commits</b> it (saves a snapshot) and <b>pushes</b> it to <b>Git</b> — the shared store where the whole team keeps the code. This push is what starts everything." },
+          { st:1, done:1, failSt:-1, box:1, pkg:"📦", label:"Build #42", boxCls:"", tone:"",
+            title:"2 · Jenkins wakes up", text:"Git sends Jenkins a <b>webhook</b> — an instant automatic message saying “new code arrived”. Jenkins starts its <b>pipeline job</b>: the fixed recipe of stages, run exactly the same way every time." },
+          { st:2, done:2, failSt:-1, box:2, pkg:"📦", label:"Build #42", boxCls:"", tone:"",
+            title:"3 · Build — Maven packages the code", text:"A worker machine (the <b>agent</b>) does the actual work: <b>Maven compiles</b> the code — turns it into a runnable program — and packs it into one single package: <b>Build #42</b>. If the code cannot compile, the pipeline stops right here." },
+          { st:3, done:3, failSt:-1, box:3, pkg:"📦", label:"Build #42", boxCls:"", tone:"",
+            title:"4 · The build is deployed to QA", text:"Build #42 is installed on the <b>QA environment</b> — a test server that copies the real system, but only the team can reach it. “Deployed” here means deployed to <i>testing</i>, not to real users. Breaking things here is safe." },
+          { st:4, done:4, failSt:-1, box:3.9, pkg:"📦", label:"Build #42", boxCls:"", sanity:true, tone:"",
+            title:"5 · Sanity check first", text:"Before the big suite, a few basic <b>sanity</b> cases: does the app open, does login work, does the home page load? If sanity failed, the build would be rejected on the spot — no point running hundreds of tests on an app that doesn't even open." },
+          { st:5, done:5, failSt:-1, box:4.9, pkg:"📦", label:"Build #42", boxCls:"", sanity:true,
+            chips:{ passed:firstN(4), failed:null, running:"TC-05", spot:null }, tone:"",
+            title:"6 · Test cases run in QA", text:"Now the real testing. <b>Change testing</b> checks the new feature itself. The chips light up green one by one as cases pass — watch the counter." },
+          { st:5, done:5, failSt:-1, box:5.1, pkg:"📦", label:"Build #42", boxCls:"", sanity:true,
+            chips:{ passed:firstN(8), failed:null, running:"TC-09", spot:null }, tone:"",
+            title:"6 · Regression runs alongside", text:"<b>Regression</b> re-checks nearby <i>old</i> features — login, search, payment — to prove the new change didn't break anything that already worked." },
+          { st:5, done:6, failSt:-1, box:5.4, pkg:"📦", label:"Build #42", boxCls:"good", sanity:true,
+            chips:{ passed:allIds(), failed:null, running:null, spot:null }, tone:"good",
+            title:"6 · All 10 test cases passed", text:"10 out of 10 green. The build has earned the right to move forward — testing is the <b>gatekeeper</b> between QA and Production." },
+          { st:6, done:6, failSt:-1, box:6, pkg:"📦", label:"Build #42", boxCls:"good",
+            chips:{ passed:allIds(), failed:null, running:null, spot:null }, gate:"open", tone:"good",
+            title:"7 · The gate opens", text:"Every test passed, so the gate opens. Notice what travels onward: the <b>same Build #42</b> that was tested — promoted as-is, never rebuilt. What ships is exactly what passed." },
+          { st:6, done:7, failSt:-1, box:6.55, pkg:"📦", label:"Build #42", boxCls:"good", gate:"open", tone:"good",
+            title:"7 · One stop at Staging / UAT", text:"On its way, the same build pauses at <b>Staging</b> — an even closer copy of Production where business users give the final check (UAT). Same build, last rehearsal." },
+          { st:7, done:7, failSt:-1, box:7, pkg:"🎉", label:"Build #42 · LIVE", boxCls:"good", prod:true, tone:"good",
+            title:"8 · Production — real users", text:"Build #42 is now <b>live in Production</b>, used by real users. Jenkins marks the job <b>SUCCESS</b> and publishes the TestNG / Extent report. Journey complete — because QA said yes first." }
+        ];
+
+        var STEPS_B = [
+          { st:-1, done:0, failSt:-1, box:0, pkg:"💻", label:"new code", boxCls:"", tone:"",
+            title:"Same belt — one thing will go wrong", text:"This time a regression case will fail in QA. Watch carefully what the belt does: it does <b>not</b> push the bad build forward. Ever." },
+          { st:0, done:0, failSt:-1, box:0, pkg:"💻", label:"commit a1b2c3", boxCls:"", tone:"",
+            title:"1 · The developer pushes code", text:"Same start: code is committed and pushed to Git as the change that will become Build #42." },
+          { st:1, done:1, failSt:-1, box:1, pkg:"📦", label:"Build #42", boxCls:"", tone:"",
+            title:"2 · Jenkins wakes up", text:"The Git webhook fires, Jenkins starts the pipeline job, and an agent picks up the work." },
+          { st:2, done:2, failSt:-1, box:2, pkg:"📦", label:"Build #42", boxCls:"", tone:"",
+            title:"3 · Build succeeds", text:"Maven compiles and packages the code cleanly as <b>Build #42</b>. Compiling fine only means the code <i>runs</i> — it says nothing about whether it behaves correctly. That's what QA is for." },
+          { st:3, done:3, failSt:-1, box:3, pkg:"📦", label:"Build #42", boxCls:"", tone:"",
+            title:"4 · Deployed to the QA environment", text:"The same Build #42 is installed on the QA test server, ready to be tested before anyone talks about Production." },
+          { st:4, done:4, failSt:-1, box:3.9, pkg:"📦", label:"Build #42", boxCls:"", sanity:true, tone:"",
+            title:"5 · Sanity passes", text:"App opens, login works, home page loads. The build is alive, so the full test suite is worth running." },
+          { st:5, done:5, failSt:-1, box:4.9, pkg:"📦", label:"Build #42", boxCls:"", sanity:true,
+            chips:{ passed:firstN(6), failed:null, running:"TC-07", spot:null }, tone:"",
+            title:"6 · Tests are running…", text:"Change testing passed, and regression is under way. Six cases green so far. The next chip is TC-07 — it checks that the checkout total stays correct when a coupon is applied." },
+          { st:5, done:5, failSt:5, box:5.1, pkg:"📦", label:"Build #42", boxCls:"bad", sanity:true,
+            chips:{ passed:firstN(6), failed:"TC-07", running:"TC-08", spot:"TC-07" }, tone:"bad",
+            title:"6 · TC-07 FAILS", text:"The coupon total comes out <b>wrong</b> — the new change quietly broke an old feature. This is exactly why regression exists. The belt keeps running the remaining cases to collect the full picture…" },
+          { st:6, done:5, failSt:6, box:5.6, pkg:"📦", label:"Build #42", boxCls:"bad",
+            chips:{ passed:allBut("TC-07"), failed:"TC-07", running:null, spot:"TC-07" }, gate:"closed", tone:"bad",
+            title:"7 · The gate stays SHUT — 9/10 is not enough", text:"Final score: <b>9 passed, 1 failed</b>. One failure is enough. The gate stays closed, the belt stops, and Build #42 will <b>never</b> reach Staging or Production. Jenkins marks the job <b>FAILURE</b>." },
+          { st:6, done:5, failSt:6, box:5.6, pkg:"📦", label:"Build #42 ✗", boxCls:"bad", defect:true,
+            chips:{ passed:allBut("TC-07"), failed:"TC-07", running:null, spot:"TC-07" }, gate:"closed", tone:"bad",
+            title:"8 · A defect is raised", text:"The tester logs a <b>defect</b> with the failing case, the wrong total, and steps to reproduce — and it is assigned to the developer. No fix is attempted inside QA; the build itself is rejected." },
+          { st:0, done:0, failSt:-1, box:0, pkg:"📦", label:"Build #42 ✗ returned", boxCls:"bad", ret:true, defect:true, tone:"bad",
+            title:"9 · Sent BACK to the developer", text:"The failed build travels <b>backwards</b> along the return path. This loop — fail → defect → back to dev — is the heart of testing. A failed build only ever moves in one direction: back." },
+          { st:0, done:0, failSt:-1, box:0, pkg:"💻", label:"fix commit f9e8d7", boxCls:"", tone:"",
+            title:"10 · The developer fixes the code", text:"The developer finds the coupon bug, fixes it, and pushes a <b>new commit</b>. The old Build #42 is dead — fixes never patch a tested build; they always start a brand-new journey." },
+          { st:1, done:1, failSt:-1, box:1.6, pkg:"📦", label:"Build #43", boxCls:"", tone:"",
+            title:"11 · Jenkins starts a NEW build — #43", text:"The new push fires the webhook again. Jenkins runs the whole recipe from the top and Maven packages the fixed code as <b>Build #43</b> — a new number, because it is a new build." },
+          { st:3, done:4, failSt:-1, box:3.9, pkg:"📦", label:"Build #43", boxCls:"", ff:true, sanity:true, tone:"",
+            title:"12 · The belt runs again (fast-forward)", text:"Build #43 is deployed to QA and sanity passes — the <b>entire</b> belt, from the start. Nothing is skipped just because #42 “almost passed”." },
+          { st:5, done:5, failSt:-1, box:5.1, pkg:"📦", label:"Build #43", boxCls:"", sanity:true,
+            chips:{ passed:allIds(), failed:null, running:null, spot:"TC-07" }, tone:"good",
+            title:"13 · Retest + full regression — TC-07 passes", text:"Two things happen here: <b>retesting</b> — TC-07, the exact case that failed, now passes — and <b>regression again</b>, all 10 cases, to prove the fix broke nothing else. 10/10." },
+          { st:6, done:6, failSt:-1, box:6, pkg:"📦", label:"Build #43", boxCls:"good",
+            chips:{ passed:allIds(), failed:null, running:null, spot:null }, gate:"open", tone:"good",
+            title:"14 · The gate opens for #43", text:"This time the row is fully green, so the gate opens and the <b>same tested Build #43</b> is promoted through Staging." },
+          { st:7, done:7, failSt:-1, box:7, pkg:"🎉", label:"Build #43 · LIVE", boxCls:"good", prod:true, tone:"good",
+            title:"15 · Production — the fixed build goes live", text:"Build #43 reaches real users, and Jenkins marks the job <b>SUCCESS</b>. Remember the moral: the failed #42 never travelled forward — the fix re-entered at the start, was retested, and only then earned Production." }
+        ];
+
+        /* ---------- build station nodes & chips ---------- */
+        var stationsEl = document.getElementById("stations");
+        STATIONS.forEach(function(s){
+          var d = document.createElement("div"); d.className = "station";
+          d.innerHTML = '<div class="st-ic">' + s.icon + '</div><div class="st-name"><span class="full">' + s.short + '</span><span class="tiny">' + s.tiny + '</span></div>';
+          stationsEl.appendChild(d);
+        });
+        var stationNodes = stationsEl.children;
+        function makeChips(container, group){
+          TC.filter(function(t){ return t.group===group; }).forEach(function(t){
+            var c = document.createElement("div"); c.className = "chip"; c.id = "chip-" + t.id;
+            c.innerHTML = t.id + "<small>" + t.label + "</small>";
+            container.appendChild(c);
+          });
+        }
+        makeChips(document.getElementById("chipsChange"), 0);
+        makeChips(document.getElementById("chipsReg"), 1);
+
+        /* ---------- state ---------- */
+        var steps = STEPS_A, idx = 0, playing = false, timer = null, speed = 1;
+        var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var boxEl = document.getElementById("boxEl"), boxPkg = document.getElementById("boxPkg"), boxLabel = document.getElementById("boxLabel");
+        var beltZone = document.getElementById("beltZone");
+        var nStep = document.getElementById("nStep"), nTitle = document.getElementById("nTitle"), nText = document.getElementById("nText"), narration = document.getElementById("narration");
+        var sanityPanel = document.getElementById("sanityPanel"), testPanel = document.getElementById("testPanel"), testCount = document.getElementById("testCount");
+        var gatePanel = document.getElementById("gatePanel"), gateText = document.getElementById("gateText"), gateSub = document.getElementById("gateSub");
+        var defectPanel = document.getElementById("defectPanel"), prodPanel = document.getElementById("prodPanel");
+        var returnPath = document.getElementById("returnPath"), returnLabel = document.getElementById("returnLabel");
+        var ffBadge = document.getElementById("ffBadge"), progressFill = document.getElementById("progressFill");
+        var btnPlay = document.getElementById("btnPlay"), btnBack = document.getElementById("btnBack"), btnFwd = document.getElementById("btnFwd");
+
+        function boxLeft(pos){ return (6.25 + pos * 12.5) + "%"; }
+
+        function render(){
+          var s = steps[idx];
+          var i;
+          for (i = 0; i < stationNodes.length; i++){
+            stationNodes[i].className = "station" +
+              (i < s.done ? " done" : "") +
+              (i === s.st && s.failSt !== i ? " active" : "") +
+              (i === s.failSt ? " failed" : "");
+          }
+          boxEl.classList.toggle("returning", !!s.ret);
+          boxEl.style.left = boxLeft(s.box);
+          boxEl.className = "box" + (s.ret ? " returning" : "") + (s.boxCls ? " " + s.boxCls : "");
+          boxPkg.textContent = s.pkg;
+          boxLabel.textContent = s.label;
+          beltZone.classList.toggle("running", playing);
+          returnPath.classList.toggle("on", !!s.ret);
+          returnLabel.classList.toggle("on", !!s.ret);
+          ffBadge.classList.toggle("on", !!s.ff);
+          narration.className = "narration" + (s.tone ? " " + (s.tone === "bad" ? "bad" : "good") : "");
+          nStep.textContent = "Step " + (idx + 1) + " of " + steps.length;
+          nTitle.textContent = s.title;
+          nText.innerHTML = s.text;
+          sanityPanel.classList.toggle("on", !!s.sanity);
+          /* chips */
+          if (s.chips){
+            testPanel.classList.add("on");
+            var passed = s.chips.passed.length, failed = s.chips.failed ? 1 : 0;
+            TC.forEach(function(t){
+              var c = document.getElementById("chip-" + t.id);
+              c.className = "chip";
+              if (s.chips.passed.indexOf(t.id) >= 0) c.classList.add("pass"), c.firstChild.textContent = t.id + " ✓";
+              else c.firstChild.textContent = t.id;
+              if (s.chips.failed === t.id){ c.classList.add("fail"); c.firstChild.textContent = t.id + " ✗"; }
+              if (s.chips.running === t.id) c.classList.add("running");
+              if (s.chips.spot === t.id) c.classList.add("spotlight");
+            });
+            testCount.textContent = passed + " / 10 passed" + (failed ? " · 1 failed" : "");
+            testCount.className = "count" + (failed ? " hasfail" : (passed === 10 ? " allpass" : ""));
+          } else {
+            testPanel.classList.remove("on");
+          }
+          /* gate */
+          if (s.gate){
+            gatePanel.classList.add("on");
+            gatePanel.classList.toggle("open", s.gate === "open");
+            gatePanel.classList.toggle("closed", s.gate === "closed");
+            if (s.gate === "open"){ gateText.textContent = "🚦 GATE OPEN — build promoted"; gateSub.textContent = "All tests passed in QA, so the same tested build moves to Staging, then Production."; }
+            else { gateText.textContent = "🚦 GATE CLOSED — build blocked"; gateSub.textContent = "One failed test is enough. This build goes back to the developer, never forward."; }
+          } else gatePanel.classList.remove("on");
+          defectPanel.classList.toggle("on", !!s.defect);
+          prodPanel.classList.toggle("on", !!s.prod);
+          progressFill.style.width = ((idx + 1) / steps.length * 100) + "%";
+          btnBack.disabled = idx === 0;
+          btnFwd.disabled = idx === steps.length - 1;
+          btnPlay.textContent = playing ? "⏸ Pause" : (idx === steps.length - 1 ? "↺ Replay" : "▶ Play");
+          if (s.prod && !reduced) spawnConfetti();
+        }
+
+        var confettiDone = false;
+        function spawnConfetti(){
+          if (confettiDone) return; confettiDone = true;
+          var card = document.getElementById("stageCard");
+          var colors = ["#178a4c","#1f6fb2","#e3b341","#d3382c","#5ea9dd"];
+          for (var i = 0; i < 26; i++){
+            var p = document.createElement("div");
+            p.className = "confetti-piece";
+            p.style.left = (5 + Math.random() * 90) + "%";
+            p.style.background = colors[i % colors.length];
+            p.style.transform = "rotate(" + (Math.random() * 360) + "deg)";
+            card.appendChild(p);
+            (function(el){
+              var fall = 260 + Math.random() * 160, drift = (Math.random() - 0.5) * 90;
+              el.animate([
+                { transform:"translate(0,-10px) rotate(0deg)", opacity:1 },
+                { transform:"translate(" + drift + "px," + fall + "px) rotate(" + (360 + Math.random()*360) + "deg)", opacity:0 }
+              ], { duration: 1600 + Math.random()*900, easing:"cubic-bezier(.2,.7,.4,1)" }).onfinish = function(){ el.remove(); };
+            })(p);
+          }
+          setTimeout(function(){ confettiDone = false; }, 400);
+        }
+
+        function stopTimer(){ if (timer){ clearInterval(timer); timer = null; } }
+        function startTimer(){
+          stopTimer();
+          var base = 3400;
+          timer = setInterval(function(){
+            if (idx >= steps.length - 1){ pause(); return; }
+            idx++; render();
+            if (idx >= steps.length - 1) pause();
+          }, base / speed);
+        }
+        function play(){
+          if (idx >= steps.length - 1) idx = 0;
+          playing = true; render(); startTimer();
+        }
+        function pause(){ playing = false; stopTimer(); render(); }
+
+        btnPlay.addEventListener("click", function(){ playing ? pause() : play(); });
+        btnFwd.addEventListener("click", function(){ pause(); if (idx < steps.length - 1){ idx++; render(); } });
+        btnBack.addEventListener("click", function(){ pause(); if (idx > 0){ idx--; render(); } });
+        document.getElementById("btnRestart").addEventListener("click", function(){ pause(); idx = 0; render(); });
+        document.getElementById("speed").addEventListener("input", function(e){
+          speed = parseFloat(e.target.value);
+          document.getElementById("speedVal").textContent = speed + "×";
+          if (playing) startTimer();
+        });
+
+        var btnA = document.getElementById("btnScenA"), btnB = document.getElementById("btnScenB");
+        function setScenario(which){
+          pause();
+          steps = which === "A" ? STEPS_A : STEPS_B;
+          idx = 0;
+          btnA.setAttribute("aria-pressed", which === "A" ? "true" : "false");
+          btnB.setAttribute("aria-pressed", which === "B" ? "true" : "false");
+          render();
+          if (!reduced) play();
+        }
+        btnA.addEventListener("click", function(){ setScenario("A"); });
+        btnB.addEventListener("click", function(){ setScenario("B"); });
+
+        render();
+        if (!reduced) play();
+      })();
+    </script>
+  </body>
+</html>
