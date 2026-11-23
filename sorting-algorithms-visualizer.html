@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Sorting Algorithms Visualizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f7f9;
+    --surface:#ffffff;
+    --surface-2:#eef1f5;
+    --border:#dde3ea;
+    --text:#16202e;
+    --muted:#5b6b7f;
+    --accent:#0e7490;
+    --accent-ink:#ffffff;
+    --bar:#8494ab;
+    --bar-compare:#d97706;
+    --bar-swap:#dc2645;
+    --bar-sorted:#0d9668;
+    --bar-pivot:#2563eb;
+    --code-bg:#101a28;
+    --code-text:#c9d6e8;
+    --code-active:#1d3a2a;
+    --code-active-text:#a7f3c9;
+    --shadow:0 1px 3px rgba(16,32,46,.08),0 8px 24px rgba(16,32,46,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0c1219;
+      --surface:#141e2a;
+      --surface-2:#1b2838;
+      --border:#2a3a4e;
+      --text:#e8eef5;
+      --muted:#9db0c4;
+      --accent:#22a7c6;
+      --bar:#7d92ad;
+      --code-bg:#0a1017;
+      --shadow:0 1px 3px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+    background:var(--bg);color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  button,select,input{font:inherit}
+  button,[role="button"]{min-height:44px}
+  .page{max-width:1020px;margin:0 auto;padding:20px 16px 40px}
+
+  header.top{margin:6px 0 16px}
+  header.top h1{font-size:clamp(26px,4.5vw,38px);line-height:1.08;margin:0 0 6px;font-weight:800;letter-spacing:-.02em}
+  header.top p{margin:0;color:var(--muted);font-size:16px;max-width:62ch}
+
+  /* Algorithm tabs */
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 14px}
+  .tab{
+    border:1.5px solid var(--border);background:var(--surface);color:var(--text);
+    padding:9px 16px;border-radius:999px;font-weight:700;font-size:15px;cursor:pointer;
+    transition:background .15s,border-color .15s,color .15s;
+  }
+  .tab:hover{border-color:var(--accent)}
+  .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+
+  /* Visualizer */
+  .viz{padding:18px 18px 14px}
+  .bars{
+    display:flex;align-items:flex-end;gap:5px;
+    height:290px;padding:14px 6px 0;
+    border-bottom:2px solid var(--border);
+  }
+  @media (max-width:560px){.bars{height:230px;gap:3px}}
+  .bar-wrap{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .bar{
+    width:100%;max-width:52px;border-radius:6px 6px 0 0;background:var(--bar);
+    transition:height .28s ease,background-color .18s ease;
+    display:flex;align-items:flex-start;justify-content:center;
+  }
+  .bar .val{font-size:12px;font-weight:700;color:#fff;padding-top:5px;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+  .bar.compare{background:var(--bar-compare)}
+  .bar.swap{background:var(--bar-swap)}
+  .bar.pivot{background:var(--bar-pivot)}
+  .bar.sorted{background:var(--bar-sorted)}
+  .bar-label{font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;height:16px;line-height:16px;font-variant-numeric:tabular-nums}
+  @keyframes pulse{0%{filter:brightness(1)}40%{filter:brightness(1.45)}100%{filter:brightness(1)}}
+  .bar.pulse{animation:pulse .45s ease}
+  @media (prefers-reduced-motion: reduce){
+    .bar{transition:none}
+    .bar.pulse{animation:none}
+  }
+
+  .explain{
+    margin-top:14px;min-height:52px;display:flex;align-items:center;gap:10px;
+    background:var(--surface-2);border-radius:10px;padding:10px 14px;
+    font-size:17px;font-weight:600;line-height:1.35;
+  }
+  .explain .dot{flex:0 0 auto;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+  .explain.done .dot{background:var(--bar-sorted)}
+
+  .progress{height:6px;background:var(--surface-2);border-radius:99px;margin-top:12px;overflow:hidden}
+  .progress > div{height:100%;width:0%;background:var(--accent);border-radius:99px;transition:width .25s ease}
+
+  /* Controls */
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+  .btn{
+    border:1.5px solid var(--border);background:var(--surface);color:var(--text);
+    padding:9px 18px;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;transition:border-color .15s,background .15s;
+  }
+  .btn:hover{border-color:var(--accent)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);min-width:118px;justify-content:center}
+  .sliders{display:flex;flex-wrap:wrap;gap:18px;margin-top:14px}
+  .slider-group{display:flex;align-items:center;gap:10px;flex:1 1 220px;min-width:200px}
+  .slider-group label{font-size:14px;font-weight:700;color:var(--muted);white-space:nowrap}
+  .slider-group output{font-size:14px;font-weight:700;min-width:52px;font-variant-numeric:tabular-nums}
+  input[type="range"]{flex:1;accent-color:var(--accent);height:36px;cursor:pointer}
+
+  .stats{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:12px;font-size:15px;color:var(--muted)}
+  .stats b{color:var(--text);font-variant-numeric:tabular-nums}
+  .array-line{margin-top:8px;font-family:"JetBrains Mono",monospace;font-size:13.5px;color:var(--muted);word-break:break-all}
+  .array-line b{color:var(--text);font-weight:600}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:13.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .swatch{width:14px;height:14px;border-radius:4px;display:inline-block}
+  .sw-default{background:var(--bar)} .sw-compare{background:var(--bar-compare)} .sw-swap{background:var(--bar-swap)}
+  .sw-sorted{background:var(--bar-sorted)} .sw-pivot{background:var(--bar-pivot)}
+
+  /* Info grid */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  @media (max-width:760px){.grid{grid-template-columns:1fr}}
+  .info{padding:18px}
+  .info h2{margin:0 0 8px;font-size:19px;font-weight:800}
+  .info p{margin:0;color:var(--muted);font-size:15.5px;line-height:1.55}
+  .complexity{margin-top:14px;border-top:1px solid var(--border);padding-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}
+  .complexity div{font-size:14.5px;color:var(--muted)}
+  .complexity b{display:block;color:var(--text);font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:600;margin-top:1px}
+  .code-card{padding:18px;background:var(--code-bg);border-color:var(--code-bg)}
+  .code-card h2{margin:0 0 10px;font-size:15px;font-weight:700;color:#8fa8c4;letter-spacing:.04em;text-transform:uppercase}
+  .code-line{
+    font-family:"JetBrains Mono",monospace;font-size:13.5px;line-height:1.5;color:var(--code-text);
+    padding:3px 10px;border-radius:6px;white-space:pre;overflow-x:auto;transition:background .15s,color .15s;
+  }
+  .code-line.active{background:var(--code-active);color:var(--code-active-text);font-weight:600}
+  footer{margin-top:18px;color:var(--muted);font-size:13.5px;text-align:center}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="top">
+    <h1>Sorting, seen step by step</h1>
+    <p>Pick an algorithm, press play, and watch how it thinks. Every comparison and swap is narrated in plain words — go slow, step through by hand, and the pattern will click.</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Choose a sorting algorithm" id="tabs"></div>
+
+  <section class="card viz" aria-label="Sorting visualization">
+    <div class="bars" id="bars" aria-hidden="true"></div>
+
+    <div class="explain" id="explain"><span class="dot"></span><span id="explainText">Press Play to start, or use Step to walk through one move at a time.</span></div>
+    <div class="progress" aria-hidden="true"><div id="progressFill"></div></div>
+
+    <div class="controls">
+      <button class="btn primary" id="playBtn" type="button">▶ Play</button>
+      <button class="btn" id="stepBtn" type="button">Step →</button>
+      <button class="btn" id="backBtn" type="button">← Back</button>
+      <button class="btn" id="resetBtn" type="button">↺ Restart</button>
+      <button class="btn" id="shuffleBtn" type="button">🔀 Shuffle new array</button>
+    </div>
+
+    <div class="sliders">
+      <div class="slider-group">
+        <label for="sizeRange">Array size</label>
+        <input type="range" id="sizeRange" min="8" max="40" step="1" value="10" />
+        <output id="sizeOut" for="sizeRange">10 bars</output>
+      </div>
+      <div class="slider-group">
+        <label for="speedRange">Speed</label>
+        <input type="range" id="speedRange" min="1" max="10" step="1" value="4" />
+        <output id="speedOut" for="speedRange">Normal</output>
+      </div>
+    </div>
+
+    <div class="stats">
+      <span>Comparisons: <b id="statComp">0</b></span>
+      <span>Swaps / moves: <b id="statSwap">0</b></span>
+      <span>Step: <b id="statStep">0 / 0</b></span>
+    </div>
+    <div class="array-line">Array: <b id="arrayLine"></b></div>
+
+    <div class="legend" aria-label="Colour legend">
+      <span><i class="swatch sw-default"></i> Unsorted</span>
+      <span><i class="swatch sw-compare"></i> Comparing</span>
+      <span><i class="swatch sw-swap"></i> Swapping / placing</span>
+      <span><i class="swatch sw-pivot"></i> Pivot / key</span>
+      <span><i class="swatch sw-sorted"></i> In final position</span>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card info">
+      <h2 id="algoTitle">Bubble Sort — how it works</h2>
+      <p id="algoDesc"></p>
+      <div class="complexity">
+        <div>Best case<b id="cxBest"></b></div>
+        <div>Average case<b id="cxAvg"></b></div>
+        <div>Worst case<b id="cxWorst"></b></div>
+        <div>Extra space<b id="cxSpace"></b></div>
+      </div>
+    </section>
+
+    <section class="card code-card">
+      <h2>Pseudocode</h2>
+      <div id="codeBox"></div>
+    </section>
+  </div>
+
+  <footer>Tip: shrink the array to 8 bars and step slowly — following every single move is the fastest way to actually learn these.</footer>
+</div>
+
+<script>
+"use strict";
+
+/* ---------- Algorithm metadata ---------- */
+var ALGOS = {
+  bubble: {
+    name: "Bubble Sort",
+    desc: "Walk through the array comparing each pair of neighbours. If they are in the wrong order, swap them. After each full pass, the largest unsorted value has “bubbled up” to the end, so the next pass can stop one bar earlier.",
+    best: "O(n)", avg: "O(n²)", worst: "O(n²)", space: "O(1)",
+    pseudo: [
+      "for pass = 0 to n - 2:",
+      "  swapped = false",
+      "  for j = 0 to n - 2 - pass:",
+      "    if a[j] > a[j+1]:",
+      "      swap a[j] and a[j+1];  swapped = true",
+      "  if swapped is false: break  // already sorted",
+      "// largest unsorted value is now at the end"
+    ]
+  },
+  selection: {
+    name: "Selection Sort",
+    desc: "Scan the unsorted part of the array to find its smallest value, then swap it into the first unsorted position. The sorted part grows by one bar each round, and the search starts again from the next position.",
+    best: "O(n²)", avg: "O(n²)", worst: "O(n²)", space: "O(1)",
+    pseudo: [
+      "for i = 0 to n - 2:",
+      "  min = i",
+      "  for j = i + 1 to n - 1:",
+      "    if a[j] < a[min]:  min = j",
+      "  swap a[i] and a[min]",
+      "// first i + 1 bars are now sorted"
+    ]
+  },
+  insertion: {
+    name: "Insertion Sort",
+    desc: "Take the next bar as a “key” and slide it leftwards, shifting every larger bar one step right, until it drops into its correct place among the bars already arranged. It works just like sorting a hand of playing cards.",
+    best: "O(n)", avg: "O(n²)", worst: "O(n²)", space: "O(1)",
+    pseudo: [
+      "for i = 1 to n - 1:",
+      "  key = a[i]",
+      "  j = i - 1",
+      "  while j >= 0 and a[j] > key:",
+      "    a[j+1] = a[j];  j = j - 1",
+      "  a[j+1] = key"
+    ]
+  },
+  merge: {
+    name: "Merge Sort",
+    desc: "Split the array in half again and again until each piece holds a single bar. Then merge neighbouring pieces back together, always picking the smaller front value first — so every merged piece comes out fully sorted.",
+    best: "O(n log n)", avg: "O(n log n)", worst: "O(n log n)", space: "O(n)",
+    pseudo: [
+      "mergeSort(a, left, right):",
+      "  if left >= right: return",
+      "  mid = (left + right) / 2",
+      "  mergeSort(a, left, mid)",
+      "  mergeSort(a, mid + 1, right)",
+      "  merge the two sorted halves"
+    ]
+  },
+  quick: {
+    name: "Quick Sort",
+    desc: "Pick one bar as the pivot. Rearrange the rest so everything smaller sits to its left and everything larger to its right — the pivot is now in its final place. Then repeat the same trick on the left group and the right group.",
+    best: "O(n log n)", avg: "O(n log n)", worst: "O(n²)", space: "O(log n)",
+    pseudo: [
+      "quickSort(a, low, high):",
+      "  pivot = a[high]",
+      "  move all values < pivot to the left",
+      "  place pivot in its final position",
+      "  quickSort(a, low, pivotPos - 1)",
+      "  quickSort(a, pivotPos + 1, high)"
+    ]
+  },
+  heap: {
+    name: "Heap Sort",
+    desc: "First rearrange the array into a max-heap, where every parent bar is larger than its children, so the biggest value sits at the front. Swap it to the end (its final place), rebuild the heap over the remaining bars, and repeat.",
+    best: "O(n log n)", avg: "O(n log n)", worst: "O(n log n)", space: "O(1)",
+    pseudo: [
+      "build a max-heap from the array",
+      "for end = n - 1 down to 1:",
+      "  swap a[0] and a[end]  // max to the end",
+      "  heapify the remaining bars:",
+      "    if a child is larger than its parent:",
+      "      swap them and keep sinking"
+    ]
+  }
+};
+var ORDER = ["bubble","selection","insertion","merge","quick","heap"];
+
+/* ---------- Step generators ----------
+   Each step: {arr, compare:[], swap:[], pivot:-1, sorted:[], msg, line, comp, swaps, done} */
+
+function genBubble(src){
+  var arr = src.slice(), steps = [], comp = 0, swaps = 0, sorted = {};
+  var n = arr.length, i, j;
+  for (i = 0; i < n - 1; i++){
+    var swapped = false;
+    for (j = 0; j < n - 1 - i; j++){
+      comp++;
+      var willSwap = arr[j] > arr[j+1];
+      steps.push({arr:arr.slice(), compare:[j,j+1], swap:[], pivot:-1, sorted:Object.keys(sorted).map(Number),
+        msg:"Comparing " + arr[j] + " and " + arr[j+1] + " — " + (willSwap ? arr[j+1] + " is smaller, so they swap." : "already in the right order, no swap."),
+        line:3, comp:comp, swaps:swaps});
+      if (willSwap){
+        var x = arr[j], y = arr[j+1];
+        arr[j] = y; arr[j+1] = x; swaps++; swapped = true;
+        steps.push({arr:arr.slice(), compare:[], swap:[j,j+1], pivot:-1, sorted:Object.keys(sorted).map(Number),
+          msg:"Swapped — " + y + " moves left, " + x + " moves right.",
+          line:4, comp:comp, swaps:swaps});
+      }
+    }
+    sorted[n-1-i] = true;
+    steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:Object.keys(sorted).map(Number),
+      msg:arr[n-1-i] + " has bubbled up to its final position at the end.",
+      line:6, comp:comp, swaps:swaps});
+    if (!swapped) break;
+  }
+  for (i = 0; i < n; i++) sorted[i] = true;
+  steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:Object.keys(sorted).map(Number),
+    msg:"Done — the whole array is sorted.", line:5, comp:comp, swaps:swaps, done:true});
+  return steps;
+}
+
+function genSelection(src){
+  var arr = src.slice(), steps = [], comp = 0, swaps = 0, sorted = {};
+  var n = arr.length, i, j;
+  for (i = 0; i < n - 1; i++){
+    var min = i;
+    steps.push({arr:arr.slice(), compare:[], swap:[], pivot:i, sorted:Object.keys(sorted).map(Number),
+      msg:"Round " + (i+1) + ": looking for the smallest value from position " + (i+1) + " onwards. Starting guess: " + arr[i] + ".",
+      line:1, comp:comp, swaps:swaps});
+    for (j = i + 1; j < n; j++){
+      comp++;
+      steps.push({arr:arr.slice(), compare:[min,j], swap:[], pivot:-1, sorted:Object.keys(sorted).map(Number),
+        msg:"Comparing " + arr[j] + " with the smallest so far (" + arr[min] + ")" + (arr[j] < arr[min] ? " — " + arr[j] + " is a new smallest." : " — " + arr[min] + " stays the smallest."),
+        line:3, comp:comp, swaps:swaps});
+      if (arr[j] < arr[min]) min = j;
+    }
+    if (min !== i){
+      var x = arr[i], y = arr[min];
+      arr[i] = y; arr[min] = x; swaps++;
+      steps.push({arr:arr.slice(), compare:[], swap:[i,min], pivot:-1, sorted:Object.keys(sorted).map(Number),
+        msg:"Swapping the smallest (" + y + ") into position " + (i+1) + ".",
+        line:4, comp:comp, swaps:swaps});
+    } else {
+      steps.push({arr:arr.slice(), compare:[], swap:[], pivot:i, sorted:Object.keys(sorted).map(Number),
+        msg:arr[i] + " is already the smallest — no swap needed.",
+        line:4, comp:comp, swaps:swaps});
+    }
+    sorted[i] = true;
+    steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:Object.keys(sorted).map(Number),
+      msg:arr[i] + " is now locked into its sorted position.",
+      line:5, comp:comp, swaps:swaps});
+  }
+  for (i = 0; i < n; i++) sorted[i] = true;
+  steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:Object.keys(sorted).map(Number),
+    msg:"Done — the whole array is sorted.", line:5, comp:comp, swaps:swaps, done:true});
+  return steps;
+}
+
+function genInsertion(src){
+  var arr = src.slice(), steps = [], comp = 0, moves = 0;
+  var n = arr.length, i;
+  for (i = 1; i < n; i++){
+    var key = arr[i], j = i - 1;
+    steps.push({arr:arr.slice(), compare:[], swap:[], pivot:i, sorted:[],
+      msg:"Pick up " + key + " as the key. Now slide it left into the sorted part.",
+      line:1, comp:comp, swaps:moves});
+    while (j >= 0){
+      comp++;
+      var bigger = arr[j] > key;
+      steps.push({arr:arr.slice(), compare:[j], swap:[], pivot:j+1, sorted:[],
+        msg:"Comparing the key " + key + " with " + arr[j] + " — " + (bigger ? arr[j] + " is bigger, so it shifts right." : arr[j] + " is not bigger, so the key stops here."),
+        line:3, comp:comp, swaps:moves});
+      if (!bigger) break;
+      var shifted = arr[j];
+      arr[j+1] = arr[j]; j--; moves++;
+      steps.push({arr:arr.slice(), compare:[], swap:[j+2], pivot:j+1, sorted:[],
+        msg:"Shifted " + shifted + " one step right to make room.",
+        line:4, comp:comp, swaps:moves});
+    }
+    arr[j+1] = key;
+    steps.push({arr:arr.slice(), compare:[], swap:[], pivot:j+1, sorted:[],
+      msg:"Dropped the key " + key + " into position " + (j+2) + ". Everything up to here is in order.",
+      line:5, comp:comp, swaps:moves});
+  }
+  var all = []; for (i = 0; i < n; i++) all.push(i);
+  steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:all,
+    msg:"Done — the whole array is sorted.", line:5, comp:comp, swaps:moves, done:true});
+  return steps;
+}
+
+function genMerge(src){
+  var arr = src.slice(), steps = [], comp = 0, moves = 0;
+  var n = arr.length;
+  function rangeTxt(l, r){ return "[" + arr.slice(l, r+1).join(", ") + "]"; }
+  function merge(l, m, r){
+    var left = arr.slice(l, m+1), right = arr.slice(m+1, r+1);
+    steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:[],
+      msg:"Merging two sorted halves: " + "[" + left.join(", ") + "]" + " and " + "[" + right.join(", ") + "]" + ".",
+      line:5, comp:comp, swaps:moves});
+    var i = 0, j = 0, k = l;
+    while (i < left.length && j < right.length){
+      comp++;
+      var takeLeft = left[i] <= right[j];
+      steps.push({arr:arr.slice(), compare:[k], swap:[], pivot:-1, sorted:[],
+        msg:"Comparing the fronts: " + left[i] + " (left) and " + right[j] + " (right) — " + (takeLeft ? left[i] : right[j]) + " is smaller, so it goes next.",
+        line:5, comp:comp, swaps:moves});
+      arr[k] = takeLeft ? left[i++] : right[j++];
+      moves++;
+      steps.push({arr:arr.slice(), compare:[], swap:[k], pivot:-1, sorted:[],
+        msg:"Placed " + arr[k] + " at position " + (k+1) + ".",
+        line:5, comp:comp, swaps:moves});
+      k++;
+    }
+    while (i < left.length){
+      arr[k] = left[i++]; moves++;
+      steps.push({arr:arr.slice(), compare:[], swap:[k], pivot:-1, sorted:[],
+        msg:"Only the left half has values left — placing " + arr[k] + " next.",
+        line:5, comp:comp, swaps:moves});
+      k++;
+    }
+    while (j < right.length){
+      arr[k] = right[j++]; moves++;
+      steps.push({arr:arr.slice(), compare:[], swap:[k], pivot:-1, sorted:[],
+        msg:"Only the right half has values left — placing " + arr[k] + " next.",
+        line:5, comp:comp, swaps:moves});
+      k++;
+    }
+    steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:[],
+      msg:"Merged into " + rangeTxt(l, r) + " — this section is now sorted.",
+      line:5, comp:comp, swaps:moves});
+  }
+  function sort(l, r){
+    if (l >= r) return;
+    var m = Math.floor((l + r) / 2);
+    steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:[],
+      msg:"Splitting " + rangeTxt(l, r) + " into two halves to sort each one.",
+      line:2, comp:comp, swaps:moves});
+    sort(l, m);
+    sort(m + 1, r);
+    merge(l, m, r);
+  }
+  sort(0, n - 1);
+  var all = []; for (var i = 0; i < n; i++) all.push(i);
+  steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:all,
+    msg:"Done — all the pieces have merged into one sorted array.", line:5, comp:comp, swaps:moves, done:true});
+  return steps;
+}
+
+function genQuick(src){
+  var arr = src.slice(), steps = [], comp = 0, swaps = 0, sorted = {};
+  var n = arr.length;
+  function sortedArr(){ return Object.keys(sorted).map(Number); }
+  function partition(l, r){
+    var pivot = arr[r];
+    steps.push({arr:arr.slice(), compare:[], swap:[], pivot:r, sorted:sortedArr(),
+      msg:"New group " + "[" + arr.slice(l, r+1).join(", ") + "]" + " — pivot is " + pivot + " (the last bar). Smaller values will move left of it.",
+      line:1, comp:comp, swaps:swaps});
+    var i = l - 1, j;
+    for (j = l; j < r; j++){
+      comp++;
+      var smaller = arr[j] < pivot;
+      steps.push({arr:arr.slice(), compare:[j], swap:[], pivot:r, sorted:sortedArr(),
+        msg:"Is " + arr[j] + " smaller than the pivot " + pivot + "? " + (smaller ? "Yes — it belongs on the left side." : "No — it stays on the right side."),
+        line:2, comp:comp, swaps:swaps});
+      if (smaller){
+        i++;
+        if (i !== j){
+          var x = arr[i], y = arr[j];
+          arr[i] = y; arr[j] = x; swaps++;
+          steps.push({arr:arr.slice(), compare:[], swap:[i,j], pivot:r, sorted:sortedArr(),
+            msg:"Swapped " + y + " to the left side, " + x + " moves right.",
+            line:2, comp:comp, swaps:swaps});
+        }
+      }
+    }
+    if (i + 1 !== r){
+      var p = arr[i+1], q = arr[r];
+      arr[i+1] = q; arr[r] = p; swaps++;
+      steps.push({arr:arr.slice(), compare:[], swap:[i+1, r], pivot:-1, sorted:sortedArr(),
+        msg:"Moving the pivot " + q + " into place between the smaller and larger values.",
+        line:3, comp:comp, swaps:swaps});
+    }
+    sorted[i+1] = true;
+    steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:sortedArr(),
+      msg:"Pivot " + arr[i+1] + " is now in its final position. Now sort the left and right groups the same way.",
+      line:3, comp:comp, swaps:swaps});
+    return i + 1;
+  }
+  function qs(l, r){
+    if (l < r){
+      var p = partition(l, r);
+      qs(l, p - 1);
+      qs(p + 1, r);
+    } else if (l === r){
+      sorted[l] = true;
+      steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:sortedArr(),
+        msg:arr[l] + " is a group of one — it is already in its final position.",
+        line:4, comp:comp, swaps:swaps});
+    }
+  }
+  qs(0, n - 1);
+  var all = []; for (var i = 0; i < n; i++) all.push(i);
+  steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:all,
+    msg:"Done — every pivot landed in place and the array is sorted.", line:5, comp:comp, swaps:swaps, done:true});
+  return steps;
+}
+
+function genHeap(src){
+  var arr = src.slice(), steps = [], comp = 0, swaps = 0, sorted = {};
+  var n = arr.length;
+  function sortedArr(){ return Object.keys(sorted).map(Number); }
+  function heapify(size, root){
+    var largest = root, l = 2 * root + 1, r = 2 * root + 2;
+    if (l < size){
+      comp++;
+      steps.push({arr:arr.slice(), compare:[root, l], swap:[], pivot:-1, sorted:sortedArr(),
+        msg:"Heap check: is child " + arr[l] + " larger than parent " + arr[root] + "? " + (arr[l] > arr[largest] ? "Yes." : "No."),
+        line:4, comp:comp, swaps:swaps});
+      if (arr[l] > arr[largest]) largest = l;
+    }
+    if (r < size){
+      comp++;
+      steps.push({arr:arr.slice(), compare:[largest, r], swap:[], pivot:-1, sorted:sortedArr(),
+        msg:"Heap check: is child " + arr[r] + " larger than " + arr[largest] + "? " + (arr[r] > arr[largest] ? "Yes." : "No."),
+        line:4, comp:comp, swaps:swaps});
+      if (arr[r] > arr[largest]) largest = r;
+    }
+    if (largest !== root){
+      var x = arr[root], y = arr[largest];
+      arr[root] = y; arr[largest] = x; swaps++;
+      steps.push({arr:arr.slice(), compare:[], swap:[root, largest], pivot:-1, sorted:sortedArr(),
+        msg:"Swapped parent " + x + " with larger child " + y + " — the larger value rises up.",
+        line:5, comp:comp, swaps:swaps});
+      heapify(size, largest);
+    }
+  }
+  steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:[],
+    msg:"First, rearrange the array into a max-heap so the biggest value floats to the front.",
+    line:0, comp:comp, swaps:swaps});
+  var i;
+  for (i = Math.floor(n / 2) - 1; i >= 0; i--) heapify(n, i);
+  steps.push({arr:arr.slice(), compare:[], swap:[], pivot:0, sorted:[],
+    msg:"Heap built — the largest value, " + arr[0] + ", is now at the front.",
+    line:0, comp:comp, swaps:swaps});
+  for (i = n - 1; i > 0; i--){
+    var a = arr[0], b = arr[i];
+    arr[0] = b; arr[i] = a; swaps++;
+    sorted[i] = true;
+    steps.push({arr:arr.slice(), compare:[], swap:[0, i], pivot:-1, sorted:sortedArr(),
+      msg:"Swapped the maximum " + a + " to position " + (i+1) + " — its final place. The heap now covers the rest.",
+      line:2, comp:comp, swaps:swaps});
+    heapify(i, 0);
+  }
+  sorted[0] = true;
+  var all = []; for (i = 0; i < n; i++) all.push(i);
+  steps.push({arr:arr.slice(), compare:[], swap:[], pivot:-1, sorted:all,
+    msg:"Done — the whole array is sorted.", line:2, comp:comp, swaps:swaps, done:true});
+  return steps;
+}
+
+var GENERATORS = { bubble: genBubble, selection: genSelection, insertion: genInsertion, merge: genMerge, quick: genQuick, heap: genHeap };
+
+/* ---------- State & UI ---------- */
+var els = {
+  tabs: document.getElementById("tabs"),
+  bars: document.getElementById("bars"),
+  explain: document.getElementById("explain"),
+  explainText: document.getElementById("explainText"),
+  progressFill: document.getElementById("progressFill"),
+  playBtn: document.getElementById("playBtn"),
+  stepBtn: document.getElementById("stepBtn"),
+  backBtn: document.getElementById("backBtn"),
+  resetBtn: document.getElementById("resetBtn"),
+  shuffleBtn: document.getElementById("shuffleBtn"),
+  sizeRange: document.getElementById("sizeRange"),
+  sizeOut: document.getElementById("sizeOut"),
+  speedRange: document.getElementById("speedRange"),
+  speedOut: document.getElementById("speedOut"),
+  statComp: document.getElementById("statComp"),
+  statSwap: document.getElementById("statSwap"),
+  statStep: document.getElementById("statStep"),
+  arrayLine: document.getElementById("arrayLine"),
+  algoTitle: document.getElementById("algoTitle"),
+  algoDesc: document.getElementById("algoDesc"),
+  cxBest: document.getElementById("cxBest"),
+  cxAvg: document.getElementById("cxAvg"),
+  cxWorst: document.getElementById("cxWorst"),
+  cxSpace: document.getElementById("cxSpace"),
+  codeBox: document.getElementById("codeBox")
+};
+
+var state = {
+  algo: "bubble",
+  baseArray: [42, 17, 68, 29, 85, 53, 11, 74, 36, 59],
+  steps: [],
+  idx: -1,           // -1 = before first step
+  playing: false,
+  timer: null
+};
+
+function randomArray(n){
+  var vals = {}, out = [];
+  while (out.length < n){
+    var v = 10 + Math.floor(Math.random() * 88); // 10..97, unique
+    if (!vals[v]){ vals[v] = true; out.push(v); }
+  }
+  return out;
+}
+function speedDelay(){
+  var s = Number(els.speedRange.value); // 1..10
+  return 1350 - s * 125; // 1225ms .. 100ms
+}
+function speedLabel(){
+  var s = Number(els.speedRange.value);
+  if (s <= 2) return "Very slow";
+  if (s <= 4) return "Slow";
+  if (s <= 6) return "Normal";
+  if (s <= 8) return "Fast";
+  return "Very fast";
+}
+
+function buildSteps(){
+  state.steps = GENERATORS[state.algo](state.baseArray);
+  state.idx = -1;
+}
+function currentView(){
+  if (state.idx < 0) return { arr: state.baseArray, compare: [], swap: [], pivot: -1, sorted: [], comp: 0, swaps: 0, line: -1, done: false,
+    msg: "Press Play to start, or use Step → to walk through one move at a time." };
+  return state.steps[state.idx];
+}
+
+function render(){
+  var view = currentView();
+  var n = view.arr.length;
+  var showValues = n <= 20;
+  var html = "";
+  for (var i = 0; i < n; i++){
+    var cls = "bar";
+    if (view.sorted.indexOf(i) !== -1) cls += " sorted";
+    else if (view.swap.indexOf(i) !== -1) cls += " swap";
+    else if (view.compare.indexOf(i) !== -1) cls += " compare";
+    else if (view.pivot === i) cls += " pivot";
+    html += '<div class="bar-wrap"><div class="' + cls + '" style="height:' + view.arr[i] + '%">'
+      + '</div><div class="bar-label">' + (showValues ? view.arr[i] : '') + '</div></div>';
+  }
+  els.bars.innerHTML = html;
+
+  els.explainText.textContent = view.msg;
+  els.explain.classList.toggle("done", !!view.done);
+  els.statComp.textContent = view.comp;
+  els.statSwap.textContent = view.swaps;
+  els.statStep.textContent = Math.max(0, state.idx + 1) + " / " + state.steps.length;
+  els.arrayLine.textContent = "[ " + view.arr.join(",  ") + " ]";
+  var pct = state.steps.length ? ((state.idx + 1) / state.steps.length) * 100 : 0;
+  els.progressFill.style.width = pct + "%";
+
+  // pseudocode highlight
+  var lines = els.codeBox.children;
+  for (var k = 0; k < lines.length; k++) lines[k].classList.toggle("active", k === view.line);
+
+  els.stepBtn.disabled = state.idx >= state.steps.length - 1;
+  els.backBtn.disabled = state.idx < 0;
+  els.playBtn.textContent = state.playing ? "⏸ Pause" : (state.idx >= state.steps.length - 1 ? "↺ Replay" : "▶ Play");
+}
+
+function completionSweep(){
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var bars = els.bars.querySelectorAll(".bar");
+  bars.forEach(function(b, i){
+    setTimeout(function(){ b.classList.add("pulse"); }, i * 45);
+    setTimeout(function(){ b.classList.remove("pulse"); }, i * 45 + 500);
+  });
+}
+
+function stopTimer(){
+  if (state.timer){ clearTimeout(state.timer); state.timer = null; }
+  state.playing = false;
+}
+function tick(){
+  if (!state.playing) return;
+  if (state.idx >= state.steps.length - 1){ stopTimer(); render(); return; }
+  state.idx++;
+  render();
+  if (state.steps[state.idx] && state.steps[state.idx].done){
+    stopTimer(); render(); completionSweep(); return;
+  }
+  state.timer = setTimeout(tick, speedDelay());
+}
+function play(){
+  if (state.idx >= state.steps.length - 1) state.idx = -1; // replay
+  state.playing = true;
+  render();
+  stopTimer(); state.playing = true;
+  state.timer = setTimeout(tick, Math.min(speedDelay(), 350));
+}
+function pause(){ stopTimer(); render(); }
+
+function setAlgo(key){
+  pause();
+  state.algo = key;
+  var tabs = els.tabs.children;
+  for (var i = 0; i < tabs.length; i++) tabs[i].setAttribute("aria-selected", tabs[i].dataset.algo === key ? "true" : "false");
+  var meta = ALGOS[key];
+  els.algoTitle.textContent = meta.name + " — how it works";
+  els.algoDesc.textContent = meta.desc;
+  els.cxBest.textContent = meta.best;
+  els.cxAvg.textContent = meta.avg;
+  els.cxWorst.textContent = meta.worst;
+  els.cxSpace.textContent = meta.space;
+  els.codeBox.innerHTML = meta.pseudo.map(function(l){ return '<div class="code-line">' + l.replace(/</g, "&lt;") + '</div>'; }).join("");
+  buildSteps();
+  render();
+}
+
+/* Build tabs */
+ORDER.forEach(function(key){
+  var b = document.createElement("button");
+  b.type = "button";
+  b.className = "tab";
+  b.textContent = ALGOS[key].name;
+  b.dataset.algo = key;
+  b.setAttribute("role", "tab");
+  b.setAttribute("aria-selected", key === state.algo ? "true" : "false");
+  b.addEventListener("click", function(){ setAlgo(key); });
+  els.tabs.appendChild(b);
+});
+
+/* Controls */
+els.playBtn.addEventListener("click", function(){ state.playing ? pause() : play(); });
+els.stepBtn.addEventListener("click", function(){
+  pause();
+  if (state.idx < state.steps.length - 1){
+    state.idx++;
+    render();
+    if (state.steps[state.idx] && state.steps[state.idx].done) completionSweep();
+  }
+});
+els.backBtn.addEventListener("click", function(){
+  pause();
+  if (state.idx >= 0){ state.idx--; render(); }
+});
+els.resetBtn.addEventListener("click", function(){
+  pause(); state.idx = -1; render();
+});
+els.shuffleBtn.addEventListener("click", function(){
+  pause();
+  state.baseArray = randomArray(Number(els.sizeRange.value));
+  buildSteps(); render();
+});
+els.sizeRange.addEventListener("input", function(){
+  els.sizeOut.textContent = els.sizeRange.value + " bars";
+});
+els.sizeRange.addEventListener("change", function(){
+  pause();
+  state.baseArray = randomArray(Number(els.sizeRange.value));
+  buildSteps(); render();
+});
+els.speedRange.addEventListener("input", function(){
+  els.speedOut.textContent = speedLabel();
+});
+
+/* Init */
+els.sizeOut.textContent = els.sizeRange.value + " bars";
+els.speedOut.textContent = speedLabel();
+setAlgo("bubble");
+</script>
+</body>
+</html>
