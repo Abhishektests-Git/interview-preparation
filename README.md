@@ -1,17 +1,35 @@
 # Interview Preparation
 
-Study material for SDET interviews, built while preparing.
+Abhishek's SDET interview preparation — interactive explainers and study guides, all in one place.
 
-## CI/CD Pipeline Animation
+## Contents
 
-An animated conveyor-belt explainer of the full CI/CD process:
+- **`index.html`** — CI/CD Pipeline Animation: an animated walkthrough of a
+  CI/CD pipeline — how test cases run in the QA environment before a build
+  reaches production, and what happens when a test fails (the defect loop
+  back to the developer, a new build, and a re-run). Includes a "How
+  Jenkins works" section (server, job/pipeline, stages, agents, triggers,
+  reports).
+- **`sorting-algorithms-visualizer.html`** — Sorting Algorithms Visualizer:
+  step-by-step animations of Bubble, Selection, Insertion, Merge, Quick and
+  Heap sort with play/pause, step controls, speed and array-size sliders,
+  live comparison/swap counters and plain-English narration for every step.
+- **`SDET_Complete_Roadmap.pdf`** — The Complete SDET Roadmap: the full
+  skill map with an honest status per area, 7 phases in order, an
+  integrated 12-week study calendar, a round-by-round interview map, and a
+  readiness checklist.
 
-- A build travels station to station: Developer → Jenkins (Git webhook) → Build (Maven) → QA environment → Sanity check → Test cases → The Gate → Production
-- **Scenario A:** all test cases pass in QA — the same build is promoted to production
-- **Scenario B:** a test fails — defect raised, build loops back to the developer, fix re-enters as a new build, retest + regression run again before it can go live
-- A "How Jenkins works" section: server, job/pipeline, stages, agent, triggers, reports
+## Live
 
-Open `index.html` in any browser, or view it live on GitHub Pages.
+GitHub Pages: https://abhishektests-git.github.io/interview-preparation/
 
----
+- CI/CD animation: the home page
+- Sorting visualizer: https://abhishektests-git.github.io/interview-preparation/sorting-algorithms-visualizer.html
+- SDET roadmap (PDF): https://abhishektests-git.github.io/interview-preparation/SDET_Complete_Roadmap.pdf
+
+## About
+
+Built during interview-preparation sessions for an SDET role (Selenium,
+Java, TestNG, Jenkins, SQL — plus API testing, DSA and system design).
+
 Created with ♡ by Aevi
