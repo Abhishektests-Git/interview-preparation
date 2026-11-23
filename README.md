@@ -18,6 +18,13 @@ Abhishek's SDET interview preparation — interactive explainers and study guide
   skill map with an honest status per area, 7 phases in order, an
   integrated 12-week study calendar, a round-by-round interview map, and a
   readiness checklist.
+- **`Java_OOP_Notes.pdf`** — Java OOP Notes: complete study notes from
+  Kunal Kushwaha's "Object Oriented Programming (OOP) in Java" YouTube
+  playlist (all 7 videos) — classes and constructors, static and
+  singleton, inheritance and polymorphism, access control and the Object
+  class, abstract classes and interfaces, generics, lambdas, exception
+  handling, cloning, collections and enums. 77 concepts, 47 code
+  snippets, rules to remember and interview takeaways per section.
 
 ## Live
 
@@ -26,6 +33,7 @@ GitHub Pages: https://abhishektests-git.github.io/interview-preparation/
 - CI/CD animation: the home page
 - Sorting visualizer: https://abhishektests-git.github.io/interview-preparation/sorting-algorithms-visualizer.html
 - SDET roadmap (PDF): https://abhishektests-git.github.io/interview-preparation/SDET_Complete_Roadmap.pdf
+- Java OOP notes (PDF): https://abhishektests-git.github.io/interview-preparation/Java_OOP_Notes.pdf
 
 ## About
 
