@@ -18,6 +18,14 @@ Abhishek's SDET interview preparation — interactive explainers and study guide
   skill map with an honest status per area, 7 phases in order, an
   integrated 12-week study calendar, a round-by-round interview map, and a
   readiness checklist.
+- **`SQL_Window_Functions_Notes.pdf`** — SQL Window Functions Notes:
+  study notes from a 20-slide guide to SQL window functions — the big
+  idea (detail rows stay visible, unlike GROUP BY), the OVER() anatomy
+  (PARTITION BY, ORDER BY, frames), ROW_NUMBER vs RANK vs DENSE_RANK,
+  aggregates as windows and running totals, LAG/LEAD, FIRST_VALUE and
+  the LAST_VALUE trap, NTILE, ROWS vs RANGE frames, the Top-N-per-group
+  and latest-record-per-group patterns, common mistakes, and 10
+  interview questions with a practice set.
 - **`Java_OOP_Notes.pdf`** — Java OOP Notes: complete study notes from
   Kunal Kushwaha's "Object Oriented Programming (OOP) in Java" YouTube
   playlist (all 7 videos) — classes and constructors, static and
@@ -34,6 +42,7 @@ GitHub Pages: https://abhishektests-git.github.io/interview-preparation/
 - Sorting visualizer: https://abhishektests-git.github.io/interview-preparation/sorting-algorithms-visualizer.html
 - SDET roadmap (PDF): https://abhishektests-git.github.io/interview-preparation/SDET_Complete_Roadmap.pdf
 - Java OOP notes (PDF): https://abhishektests-git.github.io/interview-preparation/Java_OOP_Notes.pdf
+- SQL window functions notes (PDF): https://abhishektests-git.github.io/interview-preparation/SQL_Window_Functions_Notes.pdf
 
 ## About
 
