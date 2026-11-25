@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>Gen AI and LLM — Complete Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600;700;800&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFBF0; --surface:#FFFFFF; --ink:#1E1B16; --muted:#5C5648; --line:#EADFC8;
+  --radius:18px;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#17141F; --surface:#221E2E; --ink:#F3EFE6; --muted:#C9C2B2; --line:#3A354A; }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito Sans",system-ui,sans-serif;font-size:16.5px;line-height:1.65}
+h1,h2,h3{font-family:"Lexend",sans-serif;line-height:1.2;margin:0}
+button{min-height:44px}
+a{color:inherit}
+.wrap{max-width:1060px;margin:0 auto;padding:0 18px 10px}
+/* HERO */
+.hero{padding:34px 0 8px;text-align:left}
+.hero-badge{display:inline-flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.pill{font-size:13px;font-weight:800;padding:7px 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface)}
+.hero h1{font-size:clamp(32px,6vw,54px);letter-spacing:-.02em}
+.hero h1 em{font-style:normal;background:#FFE066;padding:0 8px;border-radius:8px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+@media (prefers-color-scheme: dark){.hero h1 em{background:#6B4E00;color:#FFE9A8}}
+.hero p{font-size:18px;color:var(--muted);max-width:720px;margin:14px 0 0}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;font-weight:800;font-size:15px;text-decoration:none;border:2px solid var(--ink);min-height:48px}
+.btn-solid{background:var(--ink);color:var(--bg)}
+.btn-ghost{background:var(--surface)}
+.path{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:22px 0 6px}
+.path a{text-decoration:none;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:12px;text-align:center;font-weight:800;font-size:14px}
+.path a span{display:block;font-size:22px;margin-bottom:2px}
+.toc{position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--bg) 92%, transparent);backdrop-filter:blur(8px);border-bottom:1.5px solid var(--line);padding:10px 0;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.toc::-webkit-scrollbar{display:none}
+.toc a{display:inline-flex;align-items:center;min-height:36px;padding:6px 12px;margin-right:6px;border-radius:999px;background:var(--surface);border:1.5px solid var(--line);text-decoration:none;font-weight:700;font-size:13.5px}
+/* PARTS + SECTIONS */
+.part{margin:38px 0 4px;display:flex;align-items:center;gap:14px}
+.part .letter{width:46px;height:46px;flex:none;border-radius:14px;display:grid;place-items:center;font-family:Lexend;font-weight:800;font-size:20px;color:#fff}
+.part h2{font-size:clamp(22px,3.5vw,30px)}
+.part p{margin:2px 0 0;color:var(--muted);font-size:15px}
+.sec{--accent:#0E7C6B;--tint:#E6F4F0;--tint2:#F4FBF8;background:var(--surface);border:1.5px solid var(--line);border-top:6px solid var(--accent);border-radius:20px;padding:22px 20px 18px;margin:18px 0;scroll-margin-top:70px}
+@media (prefers-color-scheme: dark){.sec{--tint:#2A2A38;--tint2:#24222F}}
+.sec-head{display:flex;gap:14px;align-items:flex-start}
+.num{flex:none;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:Lexend;font-weight:800;font-size:16px}
+.sec-head h2{font-size:clamp(21px,3vw,27px)}
+.sec-head .sub{color:var(--muted);font-size:15px;margin-top:3px}
+.tag{margin-left:auto;flex:none;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;background:var(--tint);color:var(--ink);padding:6px 10px;border-radius:999px}
+@media(max-width:560px){.tag{display:none}}
+.lead{font-size:17px;margin:14px 0 0}
+.lead strong{background:var(--tint);padding:1px 6px;border-radius:6px}
+.scene{margin:16px 0;background:var(--tint2);border:1.5px dashed color-mix(in srgb, var(--accent) 45%, var(--line));border-radius:16px;padding:16px;position:relative;overflow:hidden}
+.scene-label{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.play-btn{margin-top:14px;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:10px 18px;font-weight:800;font-size:14.5px;cursor:pointer;font-family:inherit}
+.play-btn:active{transform:scale(.97)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:14px}
+.card{background:var(--tint);border-radius:14px;padding:15px 16px}
+.card h3{font-size:16.5px;margin-bottom:5px}
+.card p{margin:0;font-size:15.5px;color:var(--ink)}
+.card .emoji{font-size:24px;display:block;margin-bottom:6px}
+.remember{margin-top:16px;background:var(--ink);color:var(--bg);border-radius:12px;padding:13px 16px;font-weight:700;font-size:16px}
+.remember b{color:#FFD93D}
+@media (prefers-color-scheme: dark){.remember{background:#FFD93D;color:#1E1B16}.remember b{color:#1E1B16;text-decoration:underline}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{font-size:14px;font-weight:800;padding:7px 12px;border-radius:999px;background:var(--surface);border:1.5px solid var(--line)}
+.mono{font-family:"JetBrains Mono",monospace;font-size:13.5px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.two{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:15.5px;margin-top:12px}
+th,td{border:1.5px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--tint);font-family:Lexend;font-size:14.5px}
+details{background:var(--tint);border-radius:14px;padding:4px 16px;margin-top:10px}
+summary{cursor:pointer;font-weight:800;padding:12px 0;min-height:44px;font-size:16px}
+details p{padding-bottom:14px;margin:0;font-size:15.5px}
+footer{text-align:center;padding:34px 16px 44px;color:var(--muted);font-size:15px}
+/* --- scene visuals --- */
+.nest{border:2.5px solid;border-radius:16px;padding:12px;margin:6px}
+.nest b{font-family:Lexend}
+.nest p{margin:2px 0 0;font-size:14.5px}
+.n1{border-color:#E85D3F;background:#FFF0EA}.n2{border-color:#E9A100;background:#FFF7DC}.n3{border-color:#0E7C6B;background:#E9F7F1}.n4{border-color:#7C4DBD;background:#F1EAFB}
+@media (prefers-color-scheme: dark){.n1,.n2,.n3,.n4{background:#2A2A38}}
+.wordcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.wordcards div{background:var(--surface);border:2px solid var(--accent);border-radius:14px;padding:14px;text-align:center}
+.wordcards .w{font-family:Lexend;font-size:22px;font-weight:800}
+.dialbar{height:16px;border-radius:999px;background:var(--line);overflow:hidden;margin:6px 0 12px}
+.dialbar i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width 1.2s ease}
+.tokrow{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
+.tok{background:var(--surface);border:2px solid var(--accent);border-radius:10px;padding:8px 10px;text-align:center;font-weight:800;min-width:56px}
+.tok small{display:block;font-weight:700;color:var(--muted);font-size:11.5px}
+.playing .tok{animation:pop .5s ease both}
+.playing .tok:nth-child(2){animation-delay:.15s}.playing .tok:nth-child(3){animation-delay:.3s}.playing .tok:nth-child(4){animation-delay:.45s}.playing .tok:nth-child(5){animation-delay:.6s}.playing .tok:nth-child(6){animation-delay:.75s}
+@keyframes pop{0%{transform:translateY(10px);opacity:.3}100%{transform:translateY(0);opacity:1}}
+.mapbox{position:relative;height:230px;background:var(--surface);border-radius:14px;border:1.5px solid var(--line)}
+.dot{position:absolute;transform:translate(-50%,-50%);font-weight:800;font-size:13.5px;padding:5px 10px;border-radius:999px;color:#fff;white-space:nowrap}
+.cluster{position:absolute;border:2px dashed;border-radius:50%;opacity:.55}
+.bars{display:grid;gap:8px;margin-top:8px}
+.bar-row{display:grid;grid-template-columns:86px 1fr 44px;gap:10px;align-items:center;font-weight:700;font-size:14.5px}
+.bar-track{height:20px;background:var(--line);border-radius:999px;overflow:hidden}
+.bar-fill{height:100%;border-radius:999px;background:var(--accent);transition:width .8s ease, background .3s}
+.sentence{font-family:Lexend;font-size:19px;font-weight:700;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;min-height:56px}
+.sentence .new{background:#FFE066;border-radius:5px;padding:0 4px}
+@media (prefers-color-scheme: dark){.sentence .new{background:#6B4E00}}
+.pipe{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.station{flex:1 1 150px;background:var(--surface);border:2px solid var(--accent);border-radius:14px;padding:12px;text-align:center}
+.station .n{width:30px;height:30px;margin:0 auto 6px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+.station b{display:block;font-size:15px}.station span{font-size:13.5px;color:var(--muted)}
+.arrow{align-self:center;font-size:20px;font-weight:800;color:var(--accent)}
+.playing .station{animation:glow 1s ease both}
+.playing .station:nth-child(3){animation-delay:.4s}.playing .station:nth-child(5){animation-delay:.8s}.playing .station:nth-child(7){animation-delay:1.2s}.playing .station:nth-child(9){animation-delay:1.6s}
+@keyframes glow{0%{transform:scale(1)}40%{transform:scale(1.04)}100%{transform:scale(1)}}
+.winframe{border:3px solid var(--accent);border-radius:14px;padding:12px;background:var(--surface);display:flex;flex-wrap:wrap;gap:8px;min-height:86px}
+.winblock{background:var(--tint);border-radius:8px;padding:8px 11px;font-weight:700;font-size:14px}
+.playing .winblock.old{animation:fallout 1.4s ease .6s both}
+@keyframes fallout{to{transform:translateY(26px);opacity:0}}
+input[type=range]{width:100%;accent-color:var(--accent);height:36px}
+.temp-out{font-family:Lexend;font-weight:700;font-size:17px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px}
+.stamp{display:inline-block;border:3.5px solid #D92B2B;color:#D92B2B;font-family:Lexend;font-weight:800;padding:8px 16px;border-radius:10px;transform:rotate(-4deg);font-size:17px;background:#FFF5F5}
+.loop{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.loop div{background:var(--surface);border:2px solid var(--accent);border-radius:999px;padding:10px 16px;font-weight:800}
+.balance{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;text-align:center}
+.balance .pan{background:var(--surface);border:2px solid var(--accent);border-radius:14px;padding:14px}
+.revgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:14px}
+.rev{background:var(--tint);border-radius:12px;padding:12px 14px}
+.rev b{font-family:Lexend;font-size:15px;display:block}
+.rev span{font-size:14px}
+.codebox{background:#1E1B16;color:#F3EFE6;border-radius:14px;padding:16px;font-family:"JetBrains Mono",monospace;font-size:13.5px;line-height:1.7;overflow-x:auto;white-space:pre}
+.codebox .k{color:#FFD93D}.codebox .s{color:#8CE99A}
+.msg{border-radius:14px;padding:12px 14px;margin-top:10px;font-size:15.5px}
+.msg.sys{background:#EDE9FE;border:2px solid #7C4DBD}
+.msg.usr{background:#E6F4F0;border:2px solid #0E7C6B}
+.msg small{font-weight:800;letter-spacing:.05em;text-transform:uppercase;font-size:11.5px;display:block;margin-bottom:3px}
+@media (prefers-color-scheme: dark){.msg.sys,.msg.usr{background:#2A2A38}}
+.bad{border:2px solid #D92B2B;background:#FFF5F5;border-radius:14px;padding:15px}
+.good{border:2px solid #1E9E4A;background:#EFFBF2;border-radius:14px;padding:15px}
+@media (prefers-color-scheme: dark){.bad,.good{background:#2A2A38}}
+.progress-note{font-size:14px;color:var(--muted);text-align:center;margin:8px 0 0}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important;scroll-behavior:auto !important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="hero-badge"><span class="pill">🧠 From absolute zero</span><span class="pill">🎯 Built for SDET interviews</span><span class="pill">⏱️ ~45 min, start to finish</span></div>
+  <h1>Generative AI &amp; LLMs, <em>explained like a story</em> — not a textbook.</h1>
+  <p>One page. No other reference needed. Every idea gets a picture, an everyday analogy, a tiny animation, and a one-line memory hook. Read it top to bottom once, and you can talk about GenAI in an interview with confidence.</p>
+  <div class="hero-cta"><a class="btn btn-solid" href="#s1">Start at Section 1 ↓</a><a class="btn btn-ghost" href="#s24">Jump to quick revision →</a></div>
+  <nav class="path" aria-label="Learning path">
+    <a href="#partA"><span>🗺️</span>A · The Map</a>
+    <a href="#partB"><span>⚙️</span>B · How it works</a>
+    <a href="#partC"><span>🏭</span>C · How it's made</a>
+    <a href="#partD"><span>🎛️</span>D · Controlling it</a>
+    <a href="#partE"><span>🛠️</span>E · Making it useful</a>
+    <a href="#partF"><span>⚖️</span>F · Models &amp; limits</a>
+    <a href="#partG"><span>🧪</span>G · For testers</a>
+  </nav>
+</header>
+</div>
+<nav class="toc" aria-label="Sections">
+  <a href="#s1">1 AI family</a><a href="#s2">2 What is an LLM</a><a href="#s3">3 Tokens</a><a href="#s4">4 Embeddings</a><a href="#s5">5 Next-token</a><a href="#s6">6 Attention</a><a href="#s7">7 Context window</a><a href="#s8">8 Training</a><a href="#s9">9 Fine-tuning</a><a href="#s10">10 Inference</a><a href="#s11">11 Temperature</a><a href="#s12">12 Prompts</a><a href="#s13">13 Hallucination</a><a href="#s14">14 RAG</a><a href="#s15">15 RAG vs FT</a><a href="#s16">16 Tools</a><a href="#s17">17 Agents</a><a href="#s18">18 Multimodal</a><a href="#s19">19 APIs</a><a href="#s20">20 Models</a><a href="#s21">21 Limits</a><a href="#s22">22 Evaluation</a><a href="#s23">23 Testing AI</a><a href="#s24">24 Revision</a><a href="#s25">25 Interview answers</a>
+</nav>
+<div class="wrap">
+
+<!-- PART A -->
+<div class="part" id="partA"><div class="letter" style="background:#E85D3F">A</div><div><h2>The Map — start from zero</h2><p>Four words everyone mixes up, sorted out once and for all.</p></div></div>
+
+<section class="sec" id="s1" style="--accent:#E85D3F;--tint:#FFEDE7;--tint2:#FFF6F2">
+  <div class="sec-head"><span class="num">01</span><div><h2>AI vs ML vs Deep Learning vs GenAI</h2><div class="sub">Four boxes, one inside the other — like Russian dolls.</div></div><span class="tag">Foundation</span></div>
+  <p class="lead">Think of it as a family. <strong>AI</strong> is the whole family. Inside it lives <strong>Machine Learning</strong>. Inside that, <strong>Deep Learning</strong>. And the youngest, loudest member is <strong>Generative AI</strong>.</p>
+  <div class="scene"><div class="scene-label">🎬 The nested boxes — press play</div>
+    <div class="nest n1"><b>🤖 Artificial Intelligence (AI)</b><p>Any machine doing a task that looks “smart” — chess apps, face unlock, spam filters. It does <i>not</i> have to learn anything.</p>
+      <div class="nest n2"><b>📈 Machine Learning (ML)</b><p>AI that <i>learns patterns from data</i> instead of following hand-written rules.</p>
+        <div class="nest n3"><b>🧠 Deep Learning (DL)</b><p>ML using very large neural networks with many layers — great at images, voice and language.</p>
+          <div class="nest n4"><b>✨ Generative AI (GenAI)</b><p>Deep learning that <i>creates new content</i> — text, images, code, music — instead of just classifying things.</p></div>
+        </div></div></div>
+    <button class="play-btn" data-play>▶ Play — open the boxes</button>
+  </div>
+  <div class="two">
+    <div class="bad"><h3>✍️ Rule-based (old way)</h3><p>A spam filter written by hand:</p><p class="mono">IF email contains “FREE MONEY” → spam<br>IF sender is unknown AND has 5 links → spam</p><p>Breaks the moment spammers change one word. <i>You</i> do all the thinking.</p></div>
+    <div class="good"><h3>🌱 Learned (ML way)</h3><p>Show the system 10,000 spam and 10,000 real emails. It <i>figures out its own rules</i> — words, patterns, sender behaviour.</p><p>Spammers change tactics? Feed it new examples and it adapts. The machine does the pattern-finding.</p></div>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> AI ⊃ ML ⊃ Deep Learning ⊃ GenAI — each one is a smaller, more specific idea inside the bigger one.</div>
+</section>
+
+<section class="sec" id="s2" style="--accent:#7C4DBD;--tint:#EFE8FB;--tint2:#F8F4FE">
+  <div class="sec-head"><span class="num">02</span><div><h2>What is an LLM — deeply, word by word</h2><div class="sub">Large Language Model. Three words, three ideas.</div></div><span class="tag">Core concept</span></div>
+  <p class="lead">An LLM is <strong>autocomplete that read the whole library</strong>. Your phone keyboard suggests the next word after seeing a few words. An LLM does the same trick — after “reading” most of the internet, and with billions of dials tuned by that reading.</p>
+  <div class="wordcards" style="margin-top:14px">
+    <div><div class="w">LARGE</div><p>Billions of <b>parameters</b> (adjustable dials). More dials = it can capture more patterns of language.</p></div>
+    <div><div class="w">LANGUAGE</div><p>It works on <b>text</b> — words, sentences, code, tables. Everything becomes text in, text out.</p></div>
+    <div><div class="w">MODEL</div><p>A <b>trained mathematical system</b>. Not a person, not a database — a huge pattern-matching machine.</p></div>
+  </div>
+  <div class="scene"><div class="scene-label">🎛️ Parameters = dials — why size matters</div>
+    <p style="margin:0 0 4px"><b>7B model</b> — 7 billion dials. Fast, cheap, good at simple tasks.</p><div class="dialbar"><i data-w="22%"></i></div>
+    <p style="margin:0 0 4px"><b>70B model</b> — 70 billion dials. Slower, pricier, noticeably smarter.</p><div class="dialbar"><i data-w="78%"></i></div>
+    <p style="margin:0;font-size:15px">A <b>neural network</b> in plain words: layers of tiny units. Each unit takes numbers in, turns its dials (weights), and passes numbers on. During training, every dial gets nudged millions of times until the guesses get good.</p>
+    <button class="play-btn" data-play data-dials>▶ Play — fill the dials</button>
+  </div>
+  <div class="grid">
+    <div class="card"><span class="emoji">🔍</span><h3>NOT a search engine</h3><p>Google <i>finds</i> pages that exist. An LLM <i>generates</i> new sentences that never existed before.</p></div>
+    <div class="card"><span class="emoji">🗄️</span><h3>NOT a database</h3><p>A database stores exact facts you can look up. An LLM stores <i>patterns</i> — so it can sound right and still be wrong (see §13).</p></div>
+    <div class="card"><span class="emoji">🧩</span><h3>It stores patterns, not facts</h3><p>It learned <i>how</i> language and ideas connect — like a student who understood the subject, not one who memorised an answer key.</p></div>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> LLM = a giant pattern machine for language, tuned by billions of dials — it generates, it doesn't look up.</div>
+</section>
+
+<!-- PART B -->
+<div class="part" id="partB"><div class="letter" style="background:#0E7C6B">B</div><div><h2>How an LLM actually works</h2><p>The engine room — five ideas that explain almost everything else.</p></div></div>
+
+<section class="sec" id="s3" style="--accent:#0E7C6B;--tint:#E2F2ED;--tint2:#F2FAF7">
+  <div class="sec-head"><span class="num">03</span><div><h2>Tokens &amp; tokenization</h2><div class="sub">The model doesn't read words. It reads tokens — chunks with ID numbers.</div></div><span class="tag">Engine · 1 of 5</span></div>
+  <p class="lead">Before anything clever happens, your sentence is <strong>chopped into tokens</strong> and each token becomes a number. The model only ever sees numbers — never letters.</p>
+  <div class="scene"><div class="scene-label">🎬 Watch a sentence split</div>
+    <div class="tokrow">
+      <div class="tok">Testing<small>ID 9642</small></div><div class="tok"> is<small>ID 318</small></div><div class="tok"> fun<small>ID 933</small></div><div class="tok"> for<small>ID 329</small></div><div class="tok"> test<small>ID 1287</small></div><div class="tok">ers<small>ID 480</small></div>
+    </div>
+    <p style="font-size:15px;margin:12px 0 0">Notice “testers” split into <b>test + ers</b>. Common chunks get one token; rare words get split into pieces. Punctuation and spaces are tokens too.</p>
+    <button class="play-btn" data-play>▶ Replay the split</button>
+  </div>
+  <div class="grid">
+    <div class="card"><span class="emoji">📏</span><h3>The 4-character rule</h3><p>Roughly <b>4 characters ≈ 1 token</b> in English. 100 words ≈ 130 tokens. This is how API usage (and cost) is counted.</p></div>
+    <div class="card"><span class="emoji">🔢</span><h3>Why numbers only?</h3><p>Maths needs numbers. Token IDs are just the entry point — next, each ID becomes a rich list of numbers called an embedding (§4).</p></div>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> Text → tokens → numbers. The model never sees your actual words, only token IDs.</div>
+</section>
+
+<section class="sec" id="s4" style="--accent:#D97706;--tint:#FDF0DC;--tint2:#FFF9EE">
+  <div class="sec-head"><span class="num">04</span><div><h2>Embeddings — meaning as numbers</h2><div class="sub">Every token becomes a list of numbers that captures its meaning.</div></div><span class="tag">Engine · 2 of 5</span></div>
+  <p class="lead">An <strong>embedding</strong> is a token written as a long list of numbers (say, 1,536 numbers) — like coordinates on a giant map of meaning. Words with similar meanings land <strong>close together</strong> on that map.</p>
+  <div class="scene"><div class="scene-label">🗺️ The word map — similar words cluster</div>
+    <div class="mapbox">
+      <div class="cluster" style="left:6%;top:8%;width:180px;height:100px;border-color:#7C4DBD"></div>
+      <div class="cluster" style="right:8%;top:12%;width:150px;height:95px;border-color:#1E9E4A"></div>
+      <div class="cluster" style="left:32%;bottom:6%;width:160px;height:95px;border-color:#E85D3F"></div>
+      <span class="dot" style="left:16%;top:24%;background:#7C4DBD">king 👑</span>
+      <span class="dot" style="left:30%;top:44%;background:#7C4DBD">queen 👸</span>
+      <span class="dot" style="left:13%;top:52%;background:#9B7ED9">man</span>
+      <span class="dot" style="left:33%;top:20%;background:#9B7ED9">woman</span>
+      <span class="dot" style="right:16%;top:28%;background:#1E9E4A">cat 🐱</span>
+      <span class="dot" style="right:24%;top:52%;background:#1E9E4A">dog 🐶</span>
+      <span class="dot" style="left:42%;bottom:16%;background:#E85D3F">apple 🍎</span>
+      <span class="dot" style="left:58%;bottom:30%;background:#E85D3F">banana 🍌</span>
+    </div>
+    <p style="font-size:15.5px;margin:12px 0 0">The famous party trick: <b>king − man + woman ≈ queen</b>. The maths literally works, because “royalty” and “gender” are directions on the map. <b>Cosine similarity</b> in one line: a score for how close two meanings point — near 1 = very similar, near 0 = unrelated.</p>
+    <button class="play-btn" data-play>▶ Replay</button>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> Embeddings turn meaning into distance — close on the map = close in meaning.</div>
+</section>
+
+<section class="sec" id="s5" style="--accent:#2563EB;--tint:#E3EBFD;--tint2:#F3F7FF">
+  <div class="sec-head"><span class="num">05</span><div><h2>Next-token prediction — the core loop</h2><div class="sub">This one loop is the entire secret. Everything else is support staff.</div></div><span class="tag">Engine · 3 of 5</span></div>
+  <p class="lead">The model does exactly one job, over and over: <strong>read everything so far → guess the probabilities for the next token → pick one → add it → repeat.</strong> Paragraphs, poems and Java code all come out of this loop.</p>
+  <div class="scene"><div class="scene-label">🎬 Building a sentence, one token at a time</div>
+    <div class="sentence" id="nextSent">The cat sat on the <span class="new">___</span></div>
+    <div class="bars" id="nextBars">
+      <div class="bar-row"><span>mat</span><div class="bar-track"><div class="bar-fill" style="width:62%"></div></div><span>62%</span></div>
+      <div class="bar-row"><span>floor</span><div class="bar-track"><div class="bar-fill" style="width:21%"></div></div><span>21%</span></div>
+      <div class="bar-row"><span>roof</span><div class="bar-track"><div class="bar-fill" style="width:9%"></div></div><span>9%</span></div>
+      <div class="bar-row"><span>moon</span><div class="bar-track"><div class="bar-fill" style="width:3%"></div></div><span>3%</span></div>
+    </div>
+    <p style="font-size:15px;margin:10px 0 0">It doesn't “know” the answer — it ranks what's <i>likely</i>. Pick “mat”, append it, and run the loop again for the next token.</p>
+    <button class="play-btn" id="nextPlay">▶ Play — predict the next token</button>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> An LLM writes by predicting one likely token at a time — fluency comes from the loop, not from understanding like a human.</div>
+</section>
+
+<section class="sec" id="s6" style="--accent:#C2187A;--tint:#FBE3F1;--tint2:#FDF3F9">
+  <div class="sec-head"><span class="num">06</span><div><h2>Attention &amp; Transformers</h2><div class="sub">How the model knows which words matter to which other words.</div></div><span class="tag">Engine · 4 of 5</span></div>
+  <p class="lead">Read this: <i>“The animal didn't cross the street because <strong>it</strong> was tired.”</i> What does “it” mean — animal or street? You knew instantly. <strong>Attention</strong> is the mechanism that lets the model do the same: every word looks at every other word and decides how much each one matters.</p>
+  <div class="scene"><div class="scene-label">🎬 Attention arcs — thick = strong link</div>
+    <svg viewBox="0 0 640 170" style="width:100%;height:auto" role="img" aria-label="Attention arcs from the word it to animal and street">
+      <path d="M 480 130 Q 300 10 130 130" fill="none" stroke="#C2187A" stroke-width="7" stroke-linecap="round" opacity="0.85"/>
+      <path d="M 480 130 Q 420 70 350 130" fill="none" stroke="#C2187A" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+      <g font-family="Lexend" font-weight="700" font-size="16" fill="currentColor">
+        <text x="95" y="155">animal 🐾</text><text x="315" y="155">street</text><text x="468" y="155">it</text>
+      </g>
+    </svg>
+    <p style="font-size:15.5px;margin:6px 0 0">“it” pays <b>strong attention</b> to “animal” and only weak attention to “street” — so the model reads “it” as the animal. This happens for every word pair, in every layer, all at once.</p>
+    <button class="play-btn" data-play>▶ Replay</button>
+  </div>
+  <div class="grid">
+    <div class="card"><span class="emoji">🏗️</span><h3>Transformer</h3><p>The <b>architecture</b> (overall design) built on attention. ChatGPT, Claude, Gemini — all Transformers. The “T” in GPT literally stands for Transformer.</p></div>
+    <div class="card"><span class="emoji">⚡</span><h3>Why it won</h3><p>Older models read word-by-word in order, like a person with a tiny bookmark. Transformers read the <b>whole sentence at once</b> — faster to train, and far better at long-range links like “it → animal”.</p></div>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> Attention lets every word weigh every other word; the Transformer is the design built on that idea.</div>
+</section>
+
+<section class="sec" id="s7" style="--accent:#0891B2;--tint:#DFF4F9;--tint2:#F2FBFD">
+  <div class="sec-head"><span class="num">07</span><div><h2>Context window — short-term memory</h2><div class="sub">The model can only “see” a limited amount of text at once.</div></div><span class="tag">Engine · 5 of 5</span></div>
+  <p class="lead">The <strong>context window</strong> is the model's working memory — the chunk of conversation it can see right now, measured in tokens (modern models: tens of thousands to over a million). It is <i>not</i> permanent memory.</p>
+  <div class="scene"><div class="scene-label">🎬 When the chat outgrows the window</div>
+    <div class="winframe">
+      <span class="winblock old">👋 “Hi, I'm Abhishek”</span><span class="winblock old">“I test pension software”</span><span class="winblock">“Explain joins…”</span><span class="winblock">“Now a login test…”</span><span class="winblock">“One more question…”</span>
+    </div>
+    <p style="font-size:15.5px;margin:10px 0 0">Keep chatting past the limit and the <b>oldest blocks fall out</b> — the model genuinely can't see them anymore. That's why a long chat “forgets” what you said at the start.</p>
+    <button class="play-btn" data-play>▶ Play — watch the oldest fall out</button>
+  </div>
+  <div class="two">
+    <div class="card"><h3>🪟 Context = temporary</h3><p>Lives only for this conversation. Close the chat, it's gone. Like RAM in a computer.</p></div>
+    <div class="card"><h3>🎛️ Weights = baked-in</h3><p>Knowledge frozen in during training. Like a printed textbook — present in every chat, but never updated by chatting.</p></div>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> Context window = what the model can see <i>now</i>; weights = what it learned <i>during training</i>. Different things.</div>
+</section>
+
+<!-- PART C -->
+<div class="part" id="partC"><div class="letter" style="background:#1E9E4A">C</div><div><h2>How an LLM is made</h2><p>Study once (training), get coached (fine-tuning), then answer forever (inference).</p></div></div>
+
+<section class="sec" id="s8" style="--accent:#1E9E4A;--tint:#E2F5E8;--tint2:#F3FBF5">
+  <div class="sec-head"><span class="num">08</span><div><h2>Training (pretraining) — the study phase</h2><div class="sub">Done once. Slow, expensive, and it's where all the “knowledge” comes from.</div></div><span class="tag">Making · 1 of 3</span></div>
+  <p class="lead">Imagine a student reading <strong>books, websites and code for years</strong> — except after every sentence, they must guess the next word, check the real one, and adjust. That guessing-and-correcting, repeated <strong>trillions of times</strong>, is pretraining. Every correction nudges the dials (weights) a tiny bit.</p>
+  <div class="scene"><div class="scene-label">🎬 Data in, dials tuned</div>
+    <div class="chips"><span class="chip">📚 Books</span><span class="chip">🌐 Websites</span><span class="chip">💻 Code</span><span class="chip">📰 Articles</span><span class="chip">💬 Conversations</span></div>
+    <p style="margin:14px 0 4px;font-weight:700">Weights filling up with patterns…</p>
+    <div class="dialbar"><i data-w="88%"></i></div>
+    <p style="font-size:15px;margin:0">Guess → compare → nudge dials → guess again. No human writes the rules; the patterns settle into the weights by themselves.</p>
+    <button class="play-btn" data-play data-dials>▶ Play — run training</button>
+  </div>
+  <div class="grid">
+    <div class="card"><span class="emoji">🐢</span><h3>Slow &amp; expensive</h3><p>Weeks to months on thousands of GPUs, costing crores. That's why only a few companies train frontier models from scratch.</p></div>
+    <div class="card"><span class="emoji">1️⃣</span><h3>Done once</h3><p>After pretraining you get a <b>base model</b> — brilliant at continuing text, but not yet a helpful assistant. That comes next (§9).</p></div>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> Pretraining = read everything, guess the next token, fix your dials — trillions of times, exactly once.</div>
+</section>
+
+<section class="sec" id="s9" style="--accent:#E9A100;--tint:#FFF3D1;--tint2:#FFFBEC">
+  <div class="sec-head"><span class="num">09</span><div><h2>Fine-tuning + RLHF — the coaching phase</h2><div class="sub">A base model can complete text. Coaching turns it into an assistant.</div></div><span class="tag">Making · 2 of 3</span></div>
+  <p class="lead"><strong>Fine-tuning</strong> is extra training on a smaller, high-quality set of examples — like a graduate doing a focused internship after a general degree.</p>
+  <div class="grid">
+    <div class="card"><span class="emoji">📝</span><h3>SFT — learn from good examples</h3><p><b>Supervised Fine-Tuning:</b> show the model thousands of ideal question → answer pairs (“when asked this, answer like this”). It learns the assistant style: helpful, structured, polite.</p></div>
+    <div class="card"><span class="emoji">🏆</span><h3>RLHF — learn from human preference</h3><p><b>Reinforcement Learning from Human Feedback:</b> humans are shown two answers and pick the better one, thousands of times. The model learns <i>which answers people prefer</i> — clearer, safer, more honest — not just which are likely.</p></div>
+  </div>
+  <div class="scene"><div class="scene-label">🏷️ LoRA — the budget-friendly fine-tune</div>
+    <p style="margin:0;font-size:16px"><b>LoRA</b> (Low-Rank Adaptation): instead of retraining all billions of dials, you train only a <b>small add-on module</b> — like adding a sticky-note layer of corrections on top of a textbook instead of reprinting the book. Result: most of the benefit, a fraction of the cost, and you can keep different add-ons for different tasks.</p>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> SFT teaches by example, RLHF teaches by preference, LoRA does fine-tuning cheaply with a small add-on.</div>
+</section>
+
+<section class="sec" id="s10" style="--accent:#0E7C6B;--tint:#E2F2ED;--tint2:#F2FAF7">
+  <div class="sec-head"><span class="num">10</span><div><h2>Inference — the answering phase</h2><div class="sub">Training happens once. Inference happens every time anyone asks anything.</div></div><span class="tag">Making · 3 of 3</span></div>
+  <p class="lead"><strong>Inference</strong> simply means <i>using</i> the trained model. The dials are frozen now — no learning happens while you chat. Your question goes in, and the next-token loop (§5) runs until the answer is complete.</p>
+  <div class="scene"><div class="scene-label">🎬 One inference, live</div>
+    <div class="pipe">
+      <div class="station"><div class="n">?</div><b>Your question</b><span>“Write a test case for login”</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">🧠</div><b>The model</b><span>Dials frozen, loop running</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">✍️</div><b>Answer</b><span id="inferOut">…</span></div>
+    </div>
+    <button class="play-btn" id="inferPlay">▶ Play — run inference</button>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> Training = learning (once, dials change). Inference = answering (billions of times a day, dials frozen).</div>
+</section>
+
+<!-- PART D -->
+<div class="part" id="partD"><div class="letter" style="background:#2563EB">D</div><div><h2>Controlling the output</h2><p>Two dials you actually control: randomness, and how you ask.</p></div></div>
+
+<section class="sec" id="s11" style="--accent:#2563EB;--tint:#E3EBFD;--tint2:#F3F7FF">
+  <div class="sec-head"><span class="num">11</span><div><h2>Sampling &amp; Temperature — try it yourself</h2><div class="sub">Drag the slider. Watch the probabilities — and the personality — change.</div></div><span class="tag">Hands-on ⭐</span></div>
+  <p class="lead">The model gives probabilities (§5). <strong>Sampling</strong> is how the next token gets picked from them, and <strong>temperature</strong> controls how wild that pick is. Low = safe and repetitive. High = creative and risky.</p>
+  <div class="scene"><div class="scene-label">🎛️ Interactive — “The best testing tool is ___”</div>
+    <label for="tempRange" style="font-weight:800">Temperature: <span id="tempVal">0.7</span> <span id="tempMood" style="color:var(--accent)">— balanced</span></label>
+    <input type="range" id="tempRange" min="0" max="20" value="7" step="1" aria-label="Temperature slider">
+    <div class="bars" id="tempBars"></div>
+    <p style="font-weight:700;margin:12px 0 4px">Likely completion:</p>
+    <div class="temp-out" id="tempOut">The best testing tool is <b>Selenium — widely used for web automation.</b></div>
+    <p style="font-size:14.5px;color:var(--muted);margin:8px 0 0">Same model, same question — only the temperature changed. Facts and code usually want low temperature; stories and brainstorming want higher.</p>
+  </div>
+  <div class="grid">
+    <div class="card"><h3>🎯 Greedy</h3><p>Always pick the single highest-probability token. Most predictable — temperature 0 behaves like this. Great for facts, boring for stories.</p></div>
+    <div class="card"><h3>🔝 Top-k</h3><p>Pick randomly, but only from the <b>k best</b> candidates (e.g. top 40). The long tail of nonsense words is cut off first.</p></div>
+    <div class="card"><h3>📊 Top-p (nucleus)</h3><p>Pick from the smallest set whose probabilities add up to <b>p</b> (e.g. 0.9). The set grows or shrinks depending on how confident the model is.</p></div>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> Temperature tunes randomness — 0 for facts, ~0.7 balanced, 1+ for creativity. Top-k and top-p limit <i>where</i> the randomness can roam.</div>
+</section>
+
+<section class="sec" id="s12" style="--accent:#C2187A;--tint:#FBE3F1;--tint2:#FDF3F9">
+  <div class="sec-head"><span class="num">12</span><div><h2>Prompt engineering — the practical skill</h2><div class="sub">The model is fixed. The prompt is yours. This is the skill you will actually use daily.</div></div><span class="tag">Practical ⭐</span></div>
+  <p class="lead">A <strong>prompt</strong> is simply everything you send the model. Prompt engineering = asking well. Same model, better prompt, dramatically better answer — as any tester who's written a good vs bad bug report already knows.</p>
+  <div class="msg sys"><small>⚙️ System prompt — standing instructions</small>“You are an expert SDET. Answer in simple English with examples. If unsure, say so.” — set once, applies to the whole conversation, like a test plan.</div>
+  <div class="msg usr"><small>👤 User prompt — this question</small>“Give me 5 negative test cases for a login page.” — changes every turn, like a single test case.</div>
+  <div class="grid">
+    <div class="card"><span class="emoji">0️⃣</span><h3>Zero-shot — just ask</h3><p>No examples, direct question. “Classify this review as positive or negative.” Works when the task is common and clear.</p></div>
+    <div class="card"><span class="emoji">3️⃣</span><h3>Few-shot — show, then ask</h3><p>Give 2–3 examples first, then your real input. The model copies the pattern.</p><div class="chips"><span class="chip">“Great app!” → Positive</span><span class="chip">“Worst update ever” → Negative</span><span class="chip">“Crashes on login” → ?</span></div></div>
+    <div class="card"><span class="emoji">🪜</span><h3>Chain-of-thought</h3><p>Add <b>“think step by step.”</b> The model reasons in the open, one step at a time — and multi-step problems (maths, logic, debugging) get far more accurate.</p></div>
+    <div class="card"><span class="emoji">🎭</span><h3>Role prompting</h3><p>“You are an expert tester reviewing a pension app…” A role focuses the vocabulary, depth and tone of the answer.</p></div>
+  </div>
+  <div class="two" style="margin-top:12px">
+    <div class="bad"><h3>❌ Vague prompt</h3><p class="mono">“Write test cases for login.”</p><p>You get 5 generic lines you've seen a hundred times. The model had to guess everything: platform? fields? depth? format?</p></div>
+    <div class="good"><h3>✅ Specific prompt</h3><p class="mono">“You are an SDET. For a banking login page with username, password and OTP: give 8 test cases — 3 positive, 5 negative — in a table with ID, steps, expected result. Include one SQL-injection attempt.”</p><p>Role + context + count + split + format + edge case. The answer is usable as-is.</p></div>
+  </div>
+  <div class="scene"><div class="scene-label">🏆 The three golden rules</div><div class="chips"><span class="chip">1 · Be specific 🎯</span><span class="chip">2 · Give examples 📌</span><span class="chip">3 · Give context 🧾</span></div></div>
+  <div class="remember">💡 <b>Remember:</b> System prompt = standing orders, user prompt = today's question. Specific + examples + context = good answers.</div>
+</section>
+
+<!-- PART E -->
+<div class="part" id="partE"><div class="letter" style="background:#7C4DBD">E</div><div><h2>Making it reliable &amp; useful</h2><p>Fixing the big flaw, then giving the model books, tools, and a job.</p></div></div>
+
+<section class="sec" id="s13" style="--accent:#D92B2B;--tint:#FDE3E3;--tint2:#FFF4F4">
+  <div class="sec-head"><span class="num">13</span><div><h2>Hallucination — confident, fluent, wrong</h2><div class="sub">The most important limitation to understand — and to say in interviews.</div></div><span class="tag">Must-know ⚠️</span></div>
+  <p class="lead">A <strong>hallucination</strong> is when the model states something false with full confidence — an invented date, a fake law, a book that doesn't exist. It isn't lying; it has no concept of truth. It only knows what text <i>sounds likely</i> (§5), and false text can sound exactly as likely as true text.</p>
+  <div class="scene" style="text-align:center">
+    <p style="font-size:17px;margin:4px 0 12px">“The Taj Mahal was built in 1857 by Shah Jahan's grandson.”<br><span style="color:var(--muted);font-size:14.5px">(Fluent. Confident. Completely invented.)</span></p>
+    <span class="stamp">SOUNDS RIGHT ≠ IS RIGHT</span>
+  </div>
+  <div class="grid">
+    <div class="card"><h3>Why it happens</h3><p>The loop rewards <i>plausible</i>, not <i>verified</i>. Gaps in training data get filled with the most likely-sounding continuation.</p></div>
+    <div class="card"><h3>How to reduce it</h3><p>Use <b>RAG</b> (§14) so answers come from real documents · ask for <b>sources</b> · lower the <b>temperature</b> · and <b>verify</b> anything that matters — exactly like verifying a bug before raising it.</p></div>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> The model predicts likely text, it doesn't check truth — so confident ≠ correct. Always verify.</div>
+</section>
+
+<section class="sec" id="s14" style="--accent:#7C4DBD;--tint:#EFE8FB;--tint2:#F8F4FE">
+  <div class="sec-head"><span class="num">14</span><div><h2>RAG in full — the open-book exam</h2><div class="sub">Retrieval-Augmented Generation: let the model look things up before answering.</div></div><span class="tag">Must-know ⭐</span></div>
+  <p class="lead">The model can't know your company's private documents — they weren't in its training. <strong>RAG</strong> fixes that: before answering, the system <strong>searches your documents</strong>, finds the most relevant pieces, and hands them to the model along with the question. Closed-book memory becomes an open-book exam.</p>
+  <div class="scene"><div class="scene-label">🎬 Answering time — the 5 stations</div>
+    <div class="pipe">
+      <div class="station"><div class="n">1</div><b>Question</b><span>“What is our refund window?”</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">2</div><b>Search</b><span>Find matching chunks in the vector DB</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">3</div><b>Best chunks</b><span>Top 3–5 relevant pieces</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">4</div><b>LLM answers</b><span>Question + chunks together</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">5</div><b>Answer + sources</b><span>“30 days — Policy doc, p.4”</span></div>
+    </div>
+    <button class="play-btn" data-play>▶ Play the pipeline</button>
+  </div>
+  <div class="scene"><div class="scene-label">🧱 Preparation time — done once, before any question</div>
+    <div class="pipe">
+      <div class="station"><div class="n">📄</div><b>Documents</b><span>PDFs, policies, manuals, tickets</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">✂️</div><b>Chunking</b><span>Cut into small pieces — a paragraph or two each, so search finds precise matches</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">🔢</div><b>Embeddings</b><span>Each chunk → numbers (§4)</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">🗄️</div><b>Vector database</b><span>Stores embeddings, finds nearest meanings fast</span></div>
+    </div>
+    <p style="font-size:15.5px;margin:12px 0 0">A <b>vector database</b> in plain words: a library organised by <i>meaning</i> instead of alphabet — ask it a question and it instantly returns the chunks whose meaning is closest. Popular ones: <span class="chip">FAISS</span> <span class="chip">Pinecone</span> <span class="chip">Chroma</span></p>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> RAG = search first, answer second. Chunk → embed → store → retrieve → generate.</div>
+</section>
+
+<section class="sec" id="s15" style="--accent:#0891B2;--tint:#DFF4F9;--tint2:#F2FBFD">
+  <div class="sec-head"><span class="num">15</span><div><h2>RAG vs Fine-tuning — which one, when?</h2><div class="sub">The comparison interviewers love most. Learn this cold.</div></div><span class="tag">Interview favourite ⭐</span></div>
+  <div class="two">
+    <div class="card" style="background:var(--surface);border:2.5px solid var(--accent)"><span class="emoji">📖</span><h3>RAG — the open book</h3><p><b>What changes:</b> nothing in the model — you give it documents at question time.<br><b>Knowledge:</b> update a document, answers update instantly.<br><b>Sources:</b> yes — answers can cite where they came from.<br><b>Best for:</b> facts, private/latest documents, company Q&amp;A.</p></div>
+    <div class="card" style="background:var(--surface);border:2.5px solid #E9A100"><span class="emoji">🏋️</span><h3>Fine-tuning — the coaching</h3><p><b>What changes:</b> the model's behaviour itself (§9).<br><b>Knowledge:</b> baked into weights — updating means retraining.<br><b>Sources:</b> no — it just “knows”, can't show its work.<br><b>Best for:</b> a fixed style, tone, format or specialised task.</p></div>
+  </div>
+  <table><tr><th>Question to ask</th><th>Answer</th></tr>
+  <tr><td>“It doesn't know our new policy.”</td><td><b>RAG</b> — it's a knowledge problem.</td></tr>
+  <tr><td>“It knows the facts but replies too casually for a bank.”</td><td><b>Fine-tuning</b> — it's a behaviour problem.</td></tr>
+  <tr><td>“We need both — our documents, in our voice.”</td><td><b>Both together</b> — very common in real products.</td></tr></table>
+  <div class="remember">💡 <b>Remember:</b> Need new <i>knowledge</i> → RAG. Need new <i>behaviour</i> → fine-tuning. Often, both.</div>
+</section>
+
+<section class="sec" id="s16" style="--accent:#1E9E4A;--tint:#E2F5E8;--tint2:#F3FBF5">
+  <div class="sec-head"><span class="num">16</span><div><h2>Tools &amp; function calling</h2><div class="sub">The model can't calculate or check the weather. So it asks tools that can.</div></div><span class="tag">Capability</span></div>
+  <p class="lead">An LLM is a brain in a jar — brilliant with language, cut off from the real world. <strong>Function calling</strong> gives it hands: when it needs something it can't do, it asks your program to run a <strong>tool</strong> and uses the result.</p>
+  <div class="scene"><div class="scene-label">🎬 “What's 4,812 × 39 — and the weather in Patna?”</div>
+    <div class="pipe">
+      <div class="station"><div class="n">1</div><b>Model decides</b><span>“I need a calculator + weather API”</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">2</div><b>Program runs tools</b><span>calculator(4812, 39) · weather(Patna)</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">3</div><b>Results return</b><span>187,668 · 31°C, sunny</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">4</div><b>Model answers</b><span>In normal, friendly language</span></div>
+    </div>
+    <button class="play-btn" data-play>▶ Play the tool call</button>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> The model never runs the tool itself — it <i>requests</i> it, your program runs it, the model uses the result.</div>
+</section>
+
+<section class="sec" id="s17" style="--accent:#E85D3F;--tint:#FFEDE7;--tint2:#FFF6F2">
+  <div class="sec-head"><span class="num">17</span><div><h2>Agents — from answering to doing</h2><div class="sub">Give the model a goal, tools, and a loop — and it works on its own.</div></div><span class="tag">Capability</span></div>
+  <p class="lead">A chatbot answers once. An <strong>agent</strong> keeps going: it plans the steps, acts with tools, checks the result, and repeats until the goal is done — like a junior teammate, not a search box.</p>
+  <div class="scene"><div class="scene-label">🔁 The agent loop — goal: “Book the cheapest morning train to Delhi under ₹1,500”</div>
+    <div class="loop"><div>🧭 PLAN<br><span style="font-weight:600;font-size:13.5px">Search trains → filter morning → compare prices</span></div><span class="arrow">→</span><div>🛠️ ACT<br><span style="font-weight:600;font-size:13.5px">Runs the search tool</span></div><span class="arrow">→</span><div>👀 CHECK<br><span style="font-weight:600;font-size:13.5px">Cheapest is ₹1,650 — over budget</span></div><span class="arrow">↩</span><div>🔁 REPEAT<br><span style="font-weight:600;font-size:13.5px">Tries the next day, finds ₹1,420 ✓</span></div></div>
+    <p style="text-align:center;font-family:Lexend;font-weight:800;font-size:17px;margin:14px 0 0">Agent = LLM + Tools + Loop + Memory</p>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> Agent = a model with a goal, tools in its hands, and a plan–act–check loop until the job is finished.</div>
+</section>
+
+<section class="sec" id="s18" style="--accent:#D97706;--tint:#FDF0DC;--tint2:#FFF9EE">
+  <div class="sec-head"><span class="num">18</span><div><h2>Multimodal — more than text</h2><div class="sub">Modern models take images and audio in, not just words.</div></div><span class="tag">Capability</span></div>
+  <p class="lead"><strong>Multimodal</strong> means multiple types of input/output — text, images, audio, sometimes video — handled by one model. Under the hood, images and audio are also converted into numbers the same machinery can work with.</p>
+  <div class="scene"><div class="scene-label">🎬 Many inputs, one brain</div>
+    <div class="pipe">
+      <div class="station"><div class="n">📝</div><b>Text</b><span>“What's wrong in this screenshot?”</span></div><span class="arrow">+</span>
+      <div class="station"><div class="n">🖼️</div><b>Image</b><span>A screenshot of an error page</span></div><span class="arrow">+</span>
+      <div class="station"><div class="n">🎙️</div><b>Audio</b><span>Your spoken question</span></div><span class="arrow">→</span>
+      <div class="station"><div class="n">🧠</div><b>One model</b><span>“That's a session-timeout error — the user was idle too long…”</span></div>
+    </div>
+    <button class="play-btn" data-play>▶ Play</button>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> Multimodal = one model, many senses — text, image and audio in; understanding out.</div>
+</section>
+
+<section class="sec" id="s19" style="--accent:#2563EB;--tint:#E3EBFD;--tint2:#F3F7FF">
+  <div class="sec-head"><span class="num">19</span><div><h2>Calling an LLM from code (API)</h2><div class="sub">How your Selenium script — or any program — would talk to a model.</div></div><span class="tag">For developers</span></div>
+  <p class="lead">Programs don't open a chat window. They send an <strong>API request</strong>: a list of messages (system + user, §12) over the internet to the model's service, and get text back. That's it — like calling any REST API you already know from API testing.</p>
+  <div class="two">
+    <div><h3 style="margin-bottom:6px">📤 You send</h3><div class="codebox">{
+  <span class="k">"model"</span>: <span class="s">"a-large-model"</span>,
+  <span class="k">"messages"</span>: [
+    { <span class="k">"role"</span>: <span class="s">"system"</span>,
+      <span class="k">"content"</span>: <span class="s">"You are an expert tester."</span> },
+    { <span class="k">"role"</span>: <span class="s">"user"</span>,
+      <span class="k">"content"</span>: <span class="s">"2 test cases for login?"</span> }
+  ]
+}</div></div>
+    <div><h3 style="margin-bottom:6px">📥 You receive</h3><div class="codebox">{
+  <span class="k">"answer"</span>: <span class="s">"1) Valid login succeeds…
+2) Wrong password shows
+   an error and stays on
+   the login page…"</span>,
+  <span class="k">"tokens_used"</span>: 148
+}</div>
+    <p style="font-size:15px">🌊 <b>Streaming</b> = the answer arrives token by token, like someone typing — that's why ChatGPT appears to “type”. Same answer, delivered live instead of all at once.</p></div>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> API = send a message list, get text back, pay per token. Streaming just delivers it as it's generated.</div>
+</section>
+
+<!-- PART F -->
+<div class="part" id="partF"><div class="letter" style="background:#0891B2">F</div><div><h2>Models, limits &amp; judging</h2><p>The landscape, the honest weaknesses, and how anyone knows an answer is good.</p></div></div>
+
+<section class="sec" id="s20" style="--accent:#0891B2;--tint:#DFF4F9;--tint2:#F2FBFD">
+  <div class="sec-head"><span class="num">20</span><div><h2>The model landscape</h2><div class="sub">Names you'll hear in interviews — and what actually differs between them.</div></div><span class="tag">Landscape</span></div>
+  <div class="grid">
+    <div class="card"><span class="emoji">🔒</span><h3>Closed / company models</h3><p><b>GPT</b> (OpenAI) · <b>Claude</b> (Anthropic) · <b>Gemini</b> (Google). You use them via API, you can't download them. Usually the most capable, always the easiest to start with.</p></div>
+    <div class="card"><span class="emoji">🔓</span><h3>Open models</h3><p><b>Llama</b> (Meta) and others like Mistral. Downloadable — run them on your own machines, full control and privacy, but you handle the hosting and they're often a step behind the frontier.</p></div>
+  </div>
+  <div class="scene"><div class="scene-label">⚖️ The size trade-off — every model choice is this balance</div>
+    <div class="balance">
+      <div class="pan"><b style="font-size:17px">🪶 Small model</b><p style="margin:4px 0 0;font-size:15px">Fast ⚡ · Cheap 💰 · Runs on a laptop<br>Good for simple, high-volume tasks</p></div>
+      <div style="align-self:center;font-size:28px">⚖️</div>
+      <div class="pan"><b style="font-size:17px">🦣 Large model</b><p style="margin:4px 0 0;font-size:15px">Smarter 🧠 · Better reasoning<br>Slower and pricier per token</p></div>
+    </div>
+    <p style="font-size:15px;margin:10px 0 0">“Parameters” (§2) is the size dial: 7B in a small model vs hundreds of billions in the biggest. Bigger is not always better — it's a cost/quality trade, like choosing a test suite's scope.</p>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> Closed = rent the best brain by API. Open = own a slightly smaller brain outright. Size trades speed and cost against smarts.</div>
+</section>
+
+<section class="sec" id="s21" style="--accent:#D92B2B;--tint:#FDE3E3;--tint2:#FFF4F4">
+  <div class="sec-head"><span class="num">21</span><div><h2>Limits of LLMs — the honest list</h2><div class="sub">Saying these clearly in an interview makes you sound senior, not negative.</div></div><span class="tag">Honesty ⭐</span></div>
+  <div class="grid">
+    <div class="card"><span class="emoji">📅</span><h3>No real-time knowledge</h3><p>Training stopped at a <b>cut-off date</b>. It doesn't know yesterday's news or your new policy — unless RAG or a tool supplies it.</p></div>
+    <div class="card"><span class="emoji">🎭</span><h3>Can be confidently wrong</h3><p>Hallucination (§13). Fluency is not evidence of truth.</p></div>
+    <div class="card"><span class="emoji">🧮</span><h3>No reasoning guarantee</h3><p>It produces reasoning-<i>shaped</i> text. Long maths, logic and counting can quietly go wrong mid-answer.</p></div>
+    <div class="card"><span class="emoji">🪟</span><h3>Forgets beyond the window</h3><p>Anything outside the context window (§7) simply doesn't exist for it.</p></div>
+    <div class="card"><span class="emoji">🪙</span><h3>Cost per token</h3><p>Every token in and out is metered. Long prompts and long answers cost real money at scale.</p></div>
+    <div class="card"><span class="emoji">⚖️</span><h3>Bias from data</h3><p>It learned from human text — including human biases, which can leak into answers.</p></div>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> Frozen knowledge, fluent mistakes, finite memory, metered cost — design around all four.</div>
+</section>
+
+<section class="sec" id="s22" style="--accent:#7C4DBD;--tint:#EFE8FB;--tint2:#F8F4FE">
+  <div class="sec-head"><span class="num">22</span><div><h2>Evaluation — judging without an answer key</h2><div class="sub">For normal software, expected result is fixed. For AI, it isn't. So how do you judge?</div></div><span class="tag">Judging</span></div>
+  <p class="lead">Ask a chatbot “Explain photosynthesis” ten times and you get ten different, mostly-good answers. There is <strong>no single right string to compare against</strong> — so evaluation changes from <i>matching</i> to <i>judging</i>.</p>
+  <div class="grid">
+    <div class="card"><span class="emoji">👩‍⚖️</span><h3>Human review</h3><p>People score answers for correctness, helpfulness and tone. Slow and costly — but still the gold standard.</p></div>
+    <div class="card"><span class="emoji">📋</span><h3>Scoring rubrics</h3><p>A checklist: Is it factually right? Does it answer the question? Any unsafe content? Score 1–5 on each — turns opinion into something repeatable.</p></div>
+    <div class="card"><span class="emoji">🎯</span><h3>Meaning, not exact words</h3><p>Compare the <i>meaning</i> of the answer with the expected meaning (embeddings, §4, can even automate the similarity check).</p></div>
+    <div class="card"><span class="emoji">🧪</span><h3>Test sets of questions</h3><p>A fixed bank of questions with known-good answers, run after every model or prompt change — regression testing, AI edition (§23).</p></div>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> Evaluating AI is testing without a fixed expected result — you judge meaning and quality against a rubric, not an exact string.</div>
+</section>
+
+<!-- PART G -->
+<div class="part" id="partG"><div class="letter" style="background:#E85D3F">G</div><div><h2>GenAI for a tester — your edge</h2><p>Almost no SDET candidate can talk about both sides of this. You can.</p></div></div>
+
+<section class="sec" id="s23" style="--accent:#E85D3F;--tint:#FFEDE7;--tint2:#FFF6F2">
+  <div class="sec-head"><span class="num">23</span><div><h2>AI in testing + Testing AI apps</h2><div class="sub">Two different jobs. Interviewers are impressed when you separate them.</div></div><span class="tag">Your edge ⭐</span></div>
+  <h3 style="margin-top:14px">🅰️ AI helping testers (AI <i>in</i> testing)</h3>
+  <div class="grid">
+    <div class="card"><span class="emoji">📝</span><h3>Test-case generation</h3><p>Feed a requirement, get draft test cases — positive, negative, boundary — in seconds. You review and sharpen them; the blank page disappears.</p></div>
+    <div class="card"><span class="emoji">💡</span><h3>Explaining code &amp; errors</h3><p>Paste a stack trace or an unfamiliar framework method; get a plain-English explanation. A patient senior, on demand.</p></div>
+    <div class="card"><span class="emoji">🩹</span><h3>Self-healing locators</h3><p>A button's ID changes and your Selenium locator breaks. AI-assisted tools find the element another way (text, position, nearby labels) and heal the script instead of failing the suite.</p></div>
+    <div class="card"><span class="emoji">🐞</span><h3>Drafting bug reports</h3><p>Turn rough notes and a screenshot into a clean report — steps, expected vs actual, severity suggestion.</p></div>
+  </div>
+  <h3 style="margin-top:18px">🅱️ Testing AI apps (testing <i>of</i> AI)</h3>
+  <div class="grid">
+    <div class="card"><span class="emoji">🎲</span><h3>Non-determinism</h3><p>Same question, different answer each run. Exact-match assertions are useless — you assert on <b>meaning, keywords and constraints</b> instead.</p></div>
+    <div class="card"><span class="emoji">🕵️</span><h3>Hallucination testing</h3><p>Deliberately ask about things that don't exist (“our 1998 refund policy”) and check the app admits ignorance instead of inventing an answer.</p></div>
+    <div class="card"><span class="emoji">⌨️</span><h3>Prompt regression</h3><p>Someone edits the system prompt — does quality silently drop? Run the fixed question bank (§22) after every prompt change.</p></div>
+    <div class="card"><span class="emoji">🛡️</span><h3>Safety &amp; edge inputs</h3><p>Abusive prompts, attempts to leak the system prompt, other customers' data in RAG results — a whole new test surface.</p></div>
+  </div>
+  <p style="font-size:15px;color:var(--muted)">📌 Honest framing for interviews: present this section as <b>awareness you're actively learning</b> — “I'm exploring how AI fits into testing workflows” — not as project experience. That honesty is itself a strength.</p>
+  <div class="remember">💡 <b>Remember:</b> AI <i>in</i> testing makes testers faster; testing <i>of</i> AI means judging meaning, not matching strings.</div>
+</section>
+
+<!-- FINALE -->
+<div class="part"><div class="letter" style="background:#1E1B16">★</div><div><h2>Finale — revise &amp; perform</h2><p>Everything above, compressed for the morning of the interview.</p></div></div>
+
+<section class="sec" id="s24" style="--accent:#1E9E4A;--tint:#E2F5E8;--tint2:#F3FBF5">
+  <div class="sec-head"><span class="num">24</span><div><h2>Quick revision grid</h2><div class="sub">Every key term, one line each. Read this the morning of the interview.</div></div><span class="tag">Revise 📌</span></div>
+  <div class="revgrid">
+    <div class="rev"><b>AI</b><span>Any machine doing tasks that look smart.</span></div>
+    <div class="rev"><b>ML</b><span>AI that learns patterns from data, not hand-written rules.</span></div>
+    <div class="rev"><b>GenAI</b><span>AI that creates new content — text, image, code.</span></div>
+    <div class="rev"><b>LLM</b><span>A huge language model that predicts text, token by token.</span></div>
+    <div class="rev"><b>Parameter / weight</b><span>An adjustable dial inside the model, set during training.</span></div>
+    <div class="rev"><b>Token</b><span>A chunk of text (~4 chars) with an ID — the model's unit.</span></div>
+    <div class="rev"><b>Embedding</b><span>A token as a list of numbers; similar meanings sit close.</span></div>
+    <div class="rev"><b>Vector database</b><span>Stores embeddings; finds nearest meanings fast (FAISS, Pinecone, Chroma).</span></div>
+    <div class="rev"><b>Transformer</b><span>The architecture behind modern LLMs, built on attention.</span></div>
+    <div class="rev"><b>Attention</b><span>Every word weighing how much every other word matters.</span></div>
+    <div class="rev"><b>Context window</b><span>How much text the model can see at once — its working memory.</span></div>
+    <div class="rev"><b>Pretraining</b><span>Learning language by predicting next tokens on massive text, once.</span></div>
+    <div class="rev"><b>Fine-tuning</b><span>Extra training on focused examples to change behaviour.</span></div>
+    <div class="rev"><b>RLHF</b><span>Humans rank answers; the model learns what people prefer.</span></div>
+    <div class="rev"><b>LoRA</b><span>Cheap fine-tuning — train a small add-on, not the whole model.</span></div>
+    <div class="rev"><b>Inference</b><span>Using the trained model to answer. Dials frozen.</span></div>
+    <div class="rev"><b>Temperature</b><span>Randomness dial — low = safe/factual, high = creative.</span></div>
+    <div class="rev"><b>Top-k / Top-p</b><span>Limits on which candidate tokens the random pick can choose from.</span></div>
+    <div class="rev"><b>Prompt</b><span>Everything you send the model.</span></div>
+    <div class="rev"><b>System prompt</b><span>Standing instructions for the whole conversation.</span></div>
+    <div class="rev"><b>Few-shot</b><span>Showing 2–3 examples in the prompt before the real question.</span></div>
+    <div class="rev"><b>Chain-of-thought</b><span>“Think step by step” — reasoning shown in the open.</span></div>
+    <div class="rev"><b>Hallucination</b><span>Confident, fluent, false output.</span></div>
+    <div class="rev"><b>RAG</b><span>Search real documents first, then answer using them.</span></div>
+    <div class="rev"><b>Chunking</b><span>Cutting documents into small pieces so search stays precise.</span></div>
+    <div class="rev"><b>Function calling</b><span>The model requests a tool; your program runs it.</span></div>
+    <div class="rev"><b>Agent</b><span>LLM + tools + plan–act–check loop + memory, working toward a goal.</span></div>
+    <div class="rev"><b>Multimodal</b><span>One model handling text, image and audio.</span></div>
+    <div class="rev"><b>API</b><span>How programs call a model: send messages, get text, pay per token.</span></div>
+  </div>
+  <div class="remember">💡 <b>Remember:</b> If you can say every line in this grid without looking, you know more GenAI than most candidates in the room.</div>
+</section>
+
+<section class="sec" id="s25" style="--accent:#C2187A;--tint:#FBE3F1;--tint2:#FDF3F9">
+  <div class="sec-head"><span class="num">25</span><div><h2>“Say it in an interview”</h2><div class="sub">Model answers — one calm paragraph each. Tap to open, practise out loud.</div></div><span class="tag">Perform 🎤</span></div>
+  <details open><summary>❓ What is an LLM?</summary><p>“An LLM is a Large Language Model — a neural network with billions of parameters, trained on massive amounts of text to predict the next token. Because it was trained at that scale, it can generate fluent text, answer questions, summarise and write code. It doesn't store facts like a database; it stores patterns of language, which is also why it can sometimes be confidently wrong.”</p></details>
+  <details><summary>❓ What is Generative AI?</summary><p>“Generative AI is the branch of AI that creates new content instead of just analysing existing data. Traditional AI classifies — spam or not spam. GenAI generates — it writes the email, draws the image, drafts the code. LLMs like GPT and Claude are the text side of GenAI.”</p></details>
+  <details><summary>❓ How does ChatGPT work?</summary><p>“In three stages. First, pretraining: the model reads huge amounts of text and learns to predict the next token, which tunes billions of weights. Second, fine-tuning with human feedback — SFT and RLHF — teaches it to be a helpful assistant rather than just a text completer. Third, when I chat with it, that's inference: my text is tokenised, the model predicts the answer token by token using attention over the context window, and temperature controls how creative the picks are.”</p></details>
+  <details><summary>❓ RAG vs fine-tuning?</summary><p>“RAG gives the model knowledge at question time — you search your documents and pass the relevant chunks with the question, so answers are current and can cite sources. Fine-tuning changes the model's behaviour through extra training — style, tone, format. My rule of thumb: if the problem is missing knowledge, use RAG; if it's wrong behaviour, fine-tune; real products often use both.”</p></details>
+  <details><summary>❓ What is hallucination, and how do you handle it?</summary><p>“Hallucination is when the model produces fluent, confident text that is factually wrong. It happens because the model predicts what sounds likely, not what is verified. In practice you handle it by grounding answers with RAG, asking for sources, keeping temperature low for factual tasks, and verifying critical outputs — never treating fluency as proof.”</p></details>
+  <details><summary>❓ How would you test a chatbot?</summary><p>“Differently from deterministic software, because the same question can give different valid answers — so I test meaning and constraints, not exact strings. I'd build a fixed question bank with rubrics for correctness and tone, test hallucination with questions about things that don't exist, test the prompts themselves with regression runs after any prompt change, and cover safety cases — prompt leakage and cross-customer data in RAG results. I'm exploring this area actively; it's where my testing background meets GenAI.”</p></details>
+  <div class="card" style="margin-top:14px"><span class="emoji">🤝</span><h3>One honest note</h3><p>These notes are <b>concept learning for interviews</b>. Present them exactly that way — as awareness and preparation, not project experience. Interviewers can tell the difference, and the honest version (“I'm learning this and here's how it connects to testing”) is the one that builds trust.</p></div>
+  <div class="remember">💡 <b>Remember:</b> Short, structured, honest. Define it → how it works → one example → one limitation. That shape answers almost any GenAI question.</div>
+</section>
+
+<p class="progress-note">🎉 You made it to the end — that's the whole map: what it is, how it works, how it's made, how to control it, how to make it useful, and how to test it.</p>
+</div>
+<footer>Created with ♡ by Aevi<br><span style="font-size:13.5px">Gen AI &amp; LLM — complete study notes · Learn it once, revise from §24, perform with §25.</span></footer>
+
+<script>
+(function(){
+  // Play / replay: retrigger scene animations + dial fills
+  document.querySelectorAll('[data-play]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var scene = btn.closest('.scene'); if(!scene) return;
+      scene.classList.remove('playing'); void scene.offsetWidth; scene.classList.add('playing');
+      if(btn.hasAttribute('data-dials')){
+        scene.querySelectorAll('.dialbar i').forEach(function(bar){
+          bar.style.width='0%'; setTimeout(function(){ bar.style.width = bar.getAttribute('data-w')||'70%'; }, 60);
+        });
+      }
+      btn.textContent = '↻ Replay';
+    });
+  });
+  // Initial dial widths
+  document.querySelectorAll('.dialbar i').forEach(function(bar){ bar.style.width = bar.getAttribute('data-w')||'70%'; });
+
+  // Next-token demo
+  var steps = [
+    {sent:'The cat sat on the <span class="new">mat</span>', rows:[['mat',62],['floor',21],['roof',9],['moon',3]], picked:'mat'},
+    {sent:'The cat sat on the mat <span class="new">and</span>', rows:[['and',48],['.',30],['quietly',12],['slept',6]], picked:'and'},
+    {sent:'The cat sat on the mat and <span class="new">slept</span>', rows:[['slept',44],['purred',27],['waited',15],['ate',7]], picked:'slept'},
+    {sent:'The cat sat on the mat and slept <span class="new">peacefully.</span> ✅', rows:[['peacefully',39],['all',24],['soundly',20],['.',11]], picked:'peacefully.'}
+  ];
+  var si = 0, sentEl = document.getElementById('nextSent'), barsEl = document.getElementById('nextBars'), nextBtn = document.getElementById('nextPlay');
+  if(nextBtn){
+    nextBtn.addEventListener('click', function(){
+      var s = steps[si % steps.length]; si++;
+      sentEl.innerHTML = s.sent;
+      barsEl.innerHTML = s.rows.map(function(r){ return '<div class="bar-row"><span>'+r[0]+'</span><div class="bar-track"><div class="bar-fill" style="width:'+r[1]+'%"></div></div><span>'+r[1]+'%</span></div>'; }).join('');
+      nextBtn.textContent = si>=steps.length ? '↻ Replay the loop' : '▶ Next token →';
+      if(si>=steps.length) si=0;
+    });
+  }
+
+  // Inference typing demo
+  var inferBtn = document.getElementById('inferPlay'), inferOut = document.getElementById('inferOut');
+  if(inferBtn){
+    inferBtn.addEventListener('click', function(){
+      var text = 'TC-01: Valid credentials → user reaches the dashboard.'; var i=0; inferOut.textContent='';
+      inferBtn.textContent='↻ Replay inference';
+      var t = setInterval(function(){ inferOut.textContent = text.slice(0, ++i); if(i>=text.length) clearInterval(t); }, 28);
+    });
+  }
+
+  // Temperature interactive
+  var words = [['Selenium',58],['automation',20],['Playwright',11],['discipline',6],['magic 🪄',3]];
+  var range = document.getElementById('tempRange'), tVal = document.getElementById('tempVal'), tMood = document.getElementById('tempMood'), tBars = document.getElementById('tempBars'), tOut = document.getElementById('tempOut');
+  function renderTemp(){
+    var t = (+range.value)/10; tVal.textContent = t.toFixed(1);
+    var sharp = t<=0.05 ? 8 : Math.max(0.6, 2.6 - t*1.1);
+    var probs = words.map(function(w){ return Math.pow(w[1], sharp); });
+    var sum = probs.reduce(function(a,b){return a+b;},0);
+    tBars.innerHTML = words.map(function(w,i){ var p = Math.round(probs[i]/sum*100); return '<div class="bar-row"><span>'+w[0]+'</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.max(p,2)+'%"></div></div><span>'+p+'%</span></div>'; }).join('');
+    if(t<=0.2){ tMood.textContent='— safe & factual 🎯'; tOut.innerHTML='The best testing tool is <b>Selenium — widely used for web automation.</b>'; }
+    else if(t<=0.9){ tMood.textContent='— balanced ⚖️'; tOut.innerHTML='The best testing tool is <b>the one your team actually maintains well.</b>'; }
+    else if(t<=1.4){ tMood.textContent='— creative ✨'; tOut.innerHTML='The best testing tool is <b>curiosity — it finds the bugs nobody wrote cases for.</b>'; }
+    else { tMood.textContent='— wild 🎲 (handle with care)'; tOut.innerHTML='The best testing tool is <b>a purple magnifying glass that dreams in Java.</b> ⚠️ Fun — but would you ship this in a report?'; }
+  }
+  if(range){ range.addEventListener('input', renderTemp); renderTemp(); }
+})();
+</script>
+</body>
+</html>
