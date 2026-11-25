@@ -39,6 +39,13 @@ Abhishek's SDET interview preparation — interactive explainers and study guide
   class, abstract classes and interfaces, generics, lambdas, exception
   handling, cloning, collections and enums. 77 concepts, 47 code
   snippets, rules to remember and interview takeaways per section.
+- **`Docker_Notes.pdf`** — Docker Notes: the 10 core Docker concepts in
+  plain words — Docker vs virtual machines, image vs container,
+  Dockerfile, build and run, port mapping, volumes, networks,
+  environment variables, Docker Compose, and registry/Docker Hub —
+  with commands in VS Code style, 8 interview Q&As including the
+  honest "have you used Docker?" answer, and a one-page quick
+  revision.
 
 ## Live
 
@@ -50,6 +57,7 @@ GitHub Pages: https://abhishektests-git.github.io/interview-preparation/
 - Java OOP notes (PDF): https://abhishektests-git.github.io/interview-preparation/Java_OOP_Notes.pdf
 - SQL window functions notes (PDF): https://abhishektests-git.github.io/interview-preparation/SQL_Window_Functions_Notes.pdf
 - Interview question bank (PDF): https://abhishektests-git.github.io/interview-preparation/Interview_Question_Bank.pdf
+- Docker notes (PDF): https://abhishektests-git.github.io/interview-preparation/Docker_Notes.pdf
 
 ## About
 
