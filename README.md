@@ -46,6 +46,15 @@ Abhishek's SDET interview preparation — interactive explainers and study guide
   with commands in VS Code style, 8 interview Q&As including the
   honest "have you used Docker?" answer, and a one-page quick
   revision.
+- **`genai-llm-animated-explainer.html`** — Gen AI & LLMs Animated
+  Explainer: beginner notes that move — a chat demo that generates an
+  answer token by token, a sentence splitting into token chips,
+  an embeddings word map where similar words cluster, next-token
+  probability bars, attention arcs, training vs inference, a
+  temperature slider you can play with, a hallucination that gets
+  stamped "sounds right ≠ is right", a 5-station RAG pipeline, and
+  tool calling, agents and multimodal — plus a quick-revision grid.
+  Awareness learning for interviews, honestly framed.
 
 ## Live
 
@@ -58,6 +67,7 @@ GitHub Pages: https://abhishektests-git.github.io/interview-preparation/
 - SQL window functions notes (PDF): https://abhishektests-git.github.io/interview-preparation/SQL_Window_Functions_Notes.pdf
 - Interview question bank (PDF): https://abhishektests-git.github.io/interview-preparation/Interview_Question_Bank.pdf
 - Docker notes (PDF): https://abhishektests-git.github.io/interview-preparation/Docker_Notes.pdf
+- Gen AI & LLMs animated explainer: https://abhishektests-git.github.io/interview-preparation/genai-llm-animated-explainer.html
 
 ## About
 
