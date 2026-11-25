@@ -55,6 +55,18 @@ Abhishek's SDET interview preparation — interactive explainers and study guide
   stamped "sounds right ≠ is right", a 5-station RAG pipeline, and
   tool calling, agents and multimodal — plus a quick-revision grid.
   Awareness learning for interviews, honestly framed.
+- **`genai-llm-complete-notes.html`** — Gen AI & LLM Complete Study
+  Notes: the full from-scratch course — AI vs ML vs deep learning vs
+  GenAI, what an LLM really is (parameters, weights), tokens,
+  embeddings, next-token prediction, attention and transformers,
+  context window, pretraining, fine-tuning, RLHF and LoRA, inference,
+  temperature and sampling, prompt engineering (system prompts,
+  few-shot, chain-of-thought), hallucination, RAG with chunking and
+  vector databases, RAG vs fine-tuning, tools, agents, multimodal,
+  LLM APIs, the model landscape, limits, evaluation, and GenAI for
+  testers — 25 animated sections with a 29-term revision grid and
+  six model interview answers. Self-contained: learn the whole
+  topic from this one page.
 
 ## Live
 
@@ -68,6 +80,7 @@ GitHub Pages: https://abhishektests-git.github.io/interview-preparation/
 - Interview question bank (PDF): https://abhishektests-git.github.io/interview-preparation/Interview_Question_Bank.pdf
 - Docker notes (PDF): https://abhishektests-git.github.io/interview-preparation/Docker_Notes.pdf
 - Gen AI & LLMs animated explainer: https://abhishektests-git.github.io/interview-preparation/genai-llm-animated-explainer.html
+- Gen AI & LLM complete study notes: https://abhishektests-git.github.io/interview-preparation/genai-llm-complete-notes.html
 
 ## About
 
