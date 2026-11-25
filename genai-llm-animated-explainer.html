@@ -1,0 +1,1026 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href="data:," />
+    <title>Gen AI &amp; LLMs — Animated Notes for Newbies</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        --ink:#1d2433;
+        --ink-soft:#3d4659;
+        --page:#f6f7fb;
+        --card:#ffffff;
+        --line:#e3e6ef;
+        --radius:18px;
+      }
+      *{ box-sizing:border-box; }
+      html{ scroll-behavior:smooth; }
+      body{
+        margin:0;
+        background:var(--page);
+        color:var(--ink);
+        font-family:"Nunito",system-ui,sans-serif;
+        font-size:16.5px;
+        line-height:1.55;
+        -webkit-font-smoothing:antialiased;
+      }
+      .wrap{ max-width:880px; margin:0 auto; padding:20px 16px 40px; }
+
+      /* ---------- header ---------- */
+      header.hero{ padding:18px 4px 6px; text-align:left; }
+      .hero h1{
+        font-family:"Fredoka",sans-serif; font-weight:700;
+        font-size:clamp(30px,6.5vw,46px); line-height:1.12; margin:0 0 10px;
+        letter-spacing:.2px;
+      }
+      .hero h1 .hl-teal{ color:#0b7a78; } .hero h1 .hl-pink{ color:#d6336c; } .hero h1 .hl-violet{ color:#6d3fd4; }
+      .hero p{ font-size:18px; color:var(--ink-soft); margin:0 0 6px; max-width:56ch; }
+      .hero .hint{ font-weight:800; color:var(--ink); }
+      nav.toc{ display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 4px; }
+      nav.toc a{
+        text-decoration:none; font-weight:800; font-size:14.5px; color:var(--ink);
+        background:var(--card); border:2px solid var(--line); border-radius:999px;
+        padding:8px 14px; min-height:38px; display:inline-flex; align-items:center;
+      }
+      nav.toc a i{ font-style:normal; width:10px; height:10px; border-radius:50%; margin-right:8px; flex:none; }
+
+      /* ---------- sections ---------- */
+      section.scene{
+        --acc:#0b7a78; --acc-bright:#12a5a3; --soft:#e2f4f3; --soft2:#f2fbfa;
+        background:var(--card);
+        border:2px solid var(--line);
+        border-top:6px solid var(--acc);
+        border-radius:var(--radius);
+        padding:20px 18px 18px;
+        margin:22px 0;
+        box-shadow:0 2px 10px rgba(29,36,51,.05);
+      }
+      section.scene.acc-teal  { --acc:#0b7a78; --acc-bright:#12a5a3; --soft:#dff4f2; --soft2:#f0faf9; }
+      section.scene.acc-orange{ --acc:#d96c06; --acc-bright:#f08c1a; --soft:#fdeeda; --soft2:#fff7ec; }
+      section.scene.acc-violet{ --acc:#6d3fd4; --acc-bright:#8b5cf0; --soft:#ece4fd; --soft2:#f6f1fe; }
+      section.scene.acc-blue  { --acc:#1c64c8; --acc-bright:#3b8bf0; --soft:#e0edfd; --soft2:#f0f6fe; }
+      section.scene.acc-pink  { --acc:#d6336c; --acc-bright:#ef5b8f; --soft:#fde3ec; --soft2:#fff1f5; }
+      section.scene.acc-green { --acc:#1e8a3c; --acc-bright:#2fb457; --soft:#e0f5e6; --soft2:#f0faf2; }
+      section.scene.acc-coral { --acc:#d9483b; --acc-bright:#f06455; --soft:#fde7e4; --soft2:#fff3f1; }
+      section.scene.acc-amber { --acc:#b07d05; --acc-bright:#dda812; --soft:#fbf0cd; --soft2:#fdf8e7; }
+      section.scene.acc-cyan  { --acc:#0783a5; --acc-bright:#14a8cf; --soft:#dcf3fa; --soft2:#effafd; }
+      section.scene.acc-magenta{--acc:#b02a9e; --acc-bright:#cf4dbc; --soft:#fae2f6; --soft2:#fdf1fb; }
+      section.scene.acc-slate { --acc:#43536e; --acc-bright:#5f7494; --soft:#e6ebf2; --soft2:#f3f6fa; }
+
+      .scene-head{ display:flex; gap:12px; align-items:flex-start; margin-bottom:6px; }
+      .num{
+        flex:none; width:40px; height:40px; border-radius:12px;
+        background:var(--acc); color:#fff; font-family:"Fredoka",sans-serif;
+        font-weight:700; font-size:20px; display:flex; align-items:center; justify-content:center;
+      }
+      .scene-head h2{ font-family:"Fredoka",sans-serif; font-weight:600; font-size:clamp(21px,4.6vw,27px); margin:2px 0 2px; line-height:1.2; }
+      .scene-head .sub{ color:var(--ink-soft); font-size:16px; margin:0; }
+      .stage{
+        background:var(--soft2); border:2px solid var(--soft);
+        border-radius:14px; padding:16px 14px; margin:14px 0 12px;
+        min-height:120px; position:relative; overflow:hidden;
+      }
+      .controls{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+      button.play{
+        font-family:"Nunito",sans-serif; font-weight:900; font-size:16px;
+        background:var(--acc); color:#fff; border:none; border-radius:999px;
+        padding:10px 22px; min-height:44px; cursor:pointer;
+        box-shadow:0 3px 0 rgba(0,0,0,.18);
+        transition:transform .15s ease, opacity .15s ease;
+      }
+      button.play:active{ transform:translateY(2px); box-shadow:none; }
+      button.play:disabled{ opacity:.55; cursor:default; }
+      .controls .status{ font-size:14.5px; font-weight:700; color:var(--ink-soft); }
+      .remember{
+        margin-top:14px; background:var(--soft); border-radius:12px;
+        padding:12px 14px; font-size:16.5px;
+      }
+      .remember b{ color:var(--acc); text-transform:uppercase; letter-spacing:.6px; font-size:13.5px; display:block; margin-bottom:2px; }
+      .note-line{ font-size:16px; color:var(--ink-soft); margin:10px 0 0; }
+      .note-line b{ color:var(--ink); }
+
+      /* ---------- scene 1 : chat ---------- */
+      .chat{ display:flex; flex-direction:column; gap:12px; }
+      .bubble{ max-width:88%; padding:12px 15px; border-radius:16px; font-size:16.5px; line-height:1.5; }
+      .bubble.user{ align-self:flex-end; background:#1c64c8; color:#fff; border-bottom-right-radius:5px; }
+      .bubble.bot{ align-self:flex-start; background:#fff; border:2px solid var(--soft); border-bottom-left-radius:5px; min-height:52px; }
+      .bubble .who{ display:block; font-size:13px; font-weight:900; letter-spacing:.5px; text-transform:uppercase; opacity:.75; margin-bottom:3px; }
+      .bubble.bot .word{ opacity:0; display:inline; }
+      .bubble.bot .word.on{ opacity:1; transition:opacity .25s ease; }
+      .typing-dots{ display:none; gap:5px; padding:6px 2px; }
+      .typing-dots.show{ display:inline-flex; }
+      .typing-dots span{ width:8px; height:8px; border-radius:50%; background:var(--acc-bright); animation:bob 1s ease-in-out infinite; }
+      .typing-dots span:nth-child(2){ animation-delay:.15s; } .typing-dots span:nth-child(3){ animation-delay:.3s; }
+      @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-4px);} }
+      .caret{ display:inline-block; width:9px; height:1.05em; background:var(--acc); vertical-align:text-bottom; margin-left:2px; animation:blink 1s steps(1) infinite; }
+      @keyframes blink{ 50%{ opacity:0; } }
+      .analogy{
+        margin-top:14px; background:#fff; border:2px dashed var(--acc-bright); border-radius:12px; padding:12px 14px; font-size:16.5px;
+      }
+      .analogy b{ color:var(--acc); }
+
+      /* ---------- scene 2 : tokens ---------- */
+      .sentence-line{ font-size:clamp(19px,4.6vw,24px); font-weight:800; text-align:center; padding:8px 0 4px; transition:opacity .4s ease; }
+      .sentence-line.dim{ opacity:.18; }
+      .token-row{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; min-height:86px; align-items:flex-start; padding-top:6px; }
+      .token{ text-align:center; opacity:0; transform:translateY(14px) scale(.85); }
+      .token.on{ opacity:1; transform:none; transition:opacity .35s ease, transform .35s cubic-bezier(.2,1.4,.4,1); }
+      .token .chip{
+        font-family:"JetBrains Mono",monospace; font-weight:700; font-size:17px; white-space:pre;
+        color:#fff; border-radius:10px; padding:8px 10px; display:inline-block;
+      }
+      .token .tid{ display:block; margin-top:5px; font-family:"JetBrains Mono",monospace; font-size:13.5px; font-weight:700; color:var(--ink-soft); }
+      .token-count{ text-align:center; font-weight:900; font-size:18px; min-height:28px; }
+      .token-count .big{ color:var(--acc); font-size:24px; }
+
+      /* ---------- scene 3 : embeddings ---------- */
+      .map-box{ position:relative; height:330px; background:#fff; border-radius:12px; border:2px solid var(--soft); overflow:hidden; }
+      .map-box .axis{ position:absolute; font-size:13px; font-weight:800; color:#8a93a8; letter-spacing:.4px; }
+      .cluster-label{
+        position:absolute; font-weight:900; font-size:14px; color:var(--acc);
+        background:var(--soft); padding:3px 10px; border-radius:999px; opacity:0; transition:opacity .6s ease .7s;
+      }
+      .map-box.played .cluster-label{ opacity:1; }
+      .dot{
+        position:absolute; transform:translate(-50%,-50%);
+        display:flex; flex-direction:column; align-items:center; gap:2px;
+        transition:left 1.5s cubic-bezier(.3,.9,.3,1), top 1.5s cubic-bezier(.3,.9,.3,1);
+        z-index:2;
+      }
+      .dot .ball{ width:20px; height:20px; border-radius:50%; border:3px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,.25); }
+      .dot .lbl{ font-size:14.5px; font-weight:800; background:rgba(255,255,255,.9); padding:0 5px; border-radius:6px; }
+      .fun-line{ margin-top:12px; text-align:center; font-family:"JetBrains Mono",monospace; font-weight:700; font-size:16px; opacity:0; transition:opacity .5s ease; }
+      .fun-line.on{ opacity:1; }
+      .fun-line b{ color:var(--acc); }
+
+      /* ---------- shared probability bars ---------- */
+      .bars{ display:flex; flex-direction:column; gap:9px; margin-top:12px; }
+      .bar-row{ display:grid; grid-template-columns:74px 1fr 52px; align-items:center; gap:10px; font-size:16px; }
+      .bar-row .w{ font-weight:800; font-family:"JetBrains Mono",monospace; font-size:15.5px; }
+      .bar-track{ height:22px; background:#fff; border:2px solid var(--soft); border-radius:999px; overflow:hidden; }
+      .bar-fill{ height:100%; width:0; border-radius:999px; background:var(--acc-bright); transition:width .9s cubic-bezier(.3,.9,.3,1); }
+      .bar-row.winner .bar-fill{ background:var(--acc); }
+      .bar-row.winner .w{ color:var(--acc); }
+      .bar-row .pct{ font-weight:900; font-family:"JetBrains Mono",monospace; font-size:15px; text-align:right; }
+      .pred-sentence{ font-size:clamp(19px,4.8vw,25px); font-weight:800; line-height:1.4; }
+      .pred-sentence .new-word{ color:var(--acc); display:inline-block; animation:pop .45s cubic-bezier(.2,1.6,.4,1); }
+      @keyframes pop{ 0%{ transform:scale(.4); opacity:0;} 100%{ transform:scale(1); opacity:1;} }
+      .step-tag{ display:inline-block; font-size:13.5px; font-weight:900; letter-spacing:.5px; text-transform:uppercase; color:var(--acc); background:var(--soft); border-radius:999px; padding:3px 11px; margin-bottom:8px; }
+
+      /* ---------- scene 5 : attention ---------- */
+      .att-wrap{ position:relative; padding-top:6px; }
+      .att-words{ display:flex; flex-wrap:wrap; gap:8px; position:relative; z-index:2; padding-top:74px; }
+      .att-word{
+        font-weight:800; font-size:17px; background:#fff; border:2px solid var(--soft);
+        border-radius:10px; padding:7px 11px; transition:all .4s ease;
+      }
+      .att-word.hot{ border-color:var(--acc); background:var(--soft); color:var(--acc); transform:scale(1.1); }
+      .att-word.warm{ border-color:var(--acc-bright); background:var(--soft); }
+      .att-svg{ position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; overflow:visible; }
+      .att-svg path{ fill:none; stroke-linecap:round; }
+      .att-legend{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+      .att-legend span{ font-size:14.5px; font-weight:800; background:#fff; border:2px solid var(--soft); border-radius:999px; padding:5px 12px; }
+      .att-legend b{ color:var(--acc); font-family:"JetBrains Mono",monospace; }
+
+      /* ---------- scene 6 : training vs inference ---------- */
+      .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+      @media (max-width:640px){ .two-col{ grid-template-columns:1fr; } }
+      .station{
+        background:#fff; border:2px solid var(--soft); border-radius:14px; padding:14px;
+      }
+      .station h3{ margin:0 0 4px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:19px; color:var(--acc); }
+      .station .cap{ font-size:15px; color:var(--ink-soft); margin:0 0 12px; font-weight:700; }
+      .flow-lane{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; min-height:44px; }
+      .flow-chip{
+        font-weight:800; font-size:14.5px; background:var(--soft); border-radius:9px; padding:7px 11px;
+        border:2px solid transparent; transition:all .45s ease;
+      }
+      .flow-chip.on{ background:#fff; border-color:var(--acc-bright); box-shadow:0 3px 8px rgba(0,0,0,.1); }
+      .flow-arrow{ font-weight:900; color:var(--acc-bright); opacity:.3; transition:opacity .3s; }
+      .flow-arrow.on{ opacity:1; }
+      .model-box{
+        font-family:"Fredoka",sans-serif; font-weight:600; font-size:17px; text-align:center;
+        background:var(--acc); color:#fff; border-radius:12px; padding:12px 8px; margin:12px 0;
+        transition:transform .3s ease;
+      }
+      .model-box.pulse{ animation:gentlePulse .8s ease; }
+      @keyframes gentlePulse{ 0%{ transform:scale(1);} 40%{ transform:scale(1.045);} 100%{ transform:scale(1);} }
+      .weights-bar{ height:14px; background:var(--soft); border-radius:999px; overflow:hidden; margin-top:6px; }
+      .weights-fill{ height:100%; width:0; background:var(--acc-bright); border-radius:999px; transition:width 1.6s ease; }
+      .weights-lbl{ font-size:13.5px; font-weight:800; color:var(--ink-soft); margin-top:5px; }
+      .mini-cards{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:14px; }
+      @media (max-width:640px){ .mini-cards{ grid-template-columns:1fr; } }
+      .mini-card{ background:var(--soft2); border:2px solid var(--soft); border-radius:12px; padding:12px 13px; font-size:15.5px; }
+      .mini-card b{ display:block; color:var(--acc); font-size:16px; margin-bottom:3px; }
+
+      /* ---------- scene 7 : temperature ---------- */
+      .temp-top{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+      .temp-val{ font-family:"Fredoka",sans-serif; font-size:30px; font-weight:700; color:var(--acc); min-width:74px; }
+      .temp-mood{ font-weight:900; font-size:16.5px; }
+      input[type=range]{ flex:1; min-width:170px; accent-color:var(--acc); height:36px; cursor:pointer; }
+      .temp-scale{ display:flex; justify-content:space-between; font-size:13.5px; font-weight:800; color:var(--ink-soft); margin-top:-4px; }
+      .temp-out{
+        margin-top:14px; background:#fff; border:2px solid var(--soft); border-radius:12px; padding:13px 15px; font-size:18px; font-weight:700;
+      }
+      .temp-out .tag{ display:block; margin-top:5px; font-size:14.5px; font-weight:800; color:var(--acc); }
+      .chip-row{ display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+      .chip-line{ background:#fff; border:2px solid var(--soft); border-radius:11px; padding:10px 13px; font-size:15.5px; }
+      .chip-line b{ color:var(--acc); font-family:"JetBrains Mono",monospace; font-size:15px; }
+
+      /* ---------- scene 8 : hallucination ---------- */
+      .stamp-zone{ position:relative; }
+      .stamp{
+        position:absolute; right:8px; top:38%; transform:rotate(-10deg) scale(1.8); opacity:0;
+        background:#d9483b; color:#fff; font-family:"Fredoka",sans-serif; font-weight:700;
+        font-size:clamp(16px,4.4vw,22px); letter-spacing:.5px; padding:9px 16px; border-radius:10px;
+        border:3px solid #fff; box-shadow:0 6px 18px rgba(0,0,0,.25); pointer-events:none; text-align:center;
+      }
+      .stamp.on{ opacity:1; transform:rotate(-10deg) scale(1); transition:all .35s cubic-bezier(.2,1.6,.4,1); }
+
+      /* ---------- scene 9 : RAG pipeline ---------- */
+      .rag-pipe{ display:flex; align-items:stretch; gap:0; position:relative; padding:8px 0 30px; }
+      .rag-station{
+        flex:1; text-align:center; padding:0 3px; transition:opacity .4s ease; position:relative;
+      }
+      .rag-station .rs-box{
+        background:#fff; border:3px solid var(--soft); border-radius:14px; padding:12px 6px 10px; min-height:96px;
+        display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; transition:all .4s ease;
+      }
+      .rag-station .rs-ico{ font-size:24px; line-height:1; }
+      .rag-station .rs-name{ font-weight:900; font-size:14px; line-height:1.25; }
+      .rag-station .rs-sub{ font-size:12.5px; font-weight:700; color:var(--ink-soft); line-height:1.3; }
+      .rag-station.lit{ opacity:1; }
+      .rag-station.lit .rs-box{ border-color:var(--acc); background:var(--soft2); transform:translateY(-4px); box-shadow:0 6px 14px rgba(0,0,0,.1); }
+      .rag-arrow{ align-self:center; font-size:19px; font-weight:900; color:var(--acc-bright); flex:none; padding-bottom:26px; }
+      .rag-traveller{
+        position:absolute; left:0; top:0; z-index:3; background:var(--acc); color:#fff;
+        font-family:"JetBrains Mono",monospace; font-weight:700; font-size:13px;
+        padding:5px 11px; border-radius:999px; opacity:0; pointer-events:none;
+        transition:left .8s ease, top .8s ease, opacity .3s ease; white-space:nowrap;
+        box-shadow:0 4px 10px rgba(0,0,0,.2);
+      }
+      @media (max-width:640px){
+        .rag-pipe{ flex-direction:column; gap:8px; padding-bottom:8px; }
+        .rag-arrow{ transform:rotate(90deg); padding:0; align-self:center; }
+        .rag-station .rs-box{ min-height:0; flex-direction:row; justify-content:flex-start; padding:11px 13px; text-align:left; gap:10px; }
+        .rag-station .rs-name{ font-size:15.5px; }
+      }
+      .rag-answer{ margin-top:6px; opacity:0; transform:translateY(10px); transition:all .5s ease; }
+      .rag-answer.on{ opacity:1; transform:none; }
+
+      /* ---------- scene 10 : three cards ---------- */
+      .trio{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+      @media (max-width:760px){ .trio{ grid-template-columns:1fr; } }
+      .trio-card{ background:#fff; border:2px solid var(--soft); border-radius:14px; padding:14px; display:flex; flex-direction:column; }
+      .trio-card h3{ margin:0 0 4px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:19px; color:var(--acc); }
+      .trio-card .cap{ font-size:15px; color:var(--ink-soft); font-weight:700; margin:0 0 12px; }
+      .step-list{ display:flex; flex-direction:column; gap:8px; flex:1; }
+      .step-item{
+        background:var(--soft2); border:2px solid var(--soft); border-radius:10px; padding:9px 12px;
+        font-size:15.5px; font-weight:700; transition:all .4s ease;
+      }
+      .step-item.on{ border-color:var(--acc-bright); background:#fff; box-shadow:0 3px 8px rgba(0,0,0,.1); }
+      .step-item.done{ opacity:1; border-color:var(--acc); background:var(--soft); }
+      .step-item .mono{ font-family:"JetBrains Mono",monospace; font-size:14.5px; }
+      .trio-card button.play{ align-self:flex-start; margin-top:12px; padding:8px 18px; min-height:40px; font-size:15px; }
+      .loop-badge{ display:inline-block; font-size:13px; font-weight:900; color:var(--acc); background:var(--soft); border-radius:999px; padding:2px 10px; margin-left:6px; vertical-align:middle; }
+      .pic-thumb{ display:block; width:100%; border-radius:9px; margin-bottom:6px; }
+
+      /* ---------- scene 11 : revision ---------- */
+      .term-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; margin-top:6px; }
+      .term-card{ border-radius:13px; padding:12px 13px; border:2px solid; font-size:15px; line-height:1.45; }
+      .term-card b{ display:block; font-family:"Fredoka",sans-serif; font-weight:600; font-size:16.5px; margin-bottom:2px; }
+      .tc-0{ background:#dff4f2; border-color:#9adcd9; } .tc-0 b{ color:#0b7a78; }
+      .tc-1{ background:#fdeeda; border-color:#f8cd8f; } .tc-1 b{ color:#b85e04; }
+      .tc-2{ background:#ece4fd; border-color:#c4aef7; } .tc-2 b{ color:#5b2fc4; }
+      .tc-3{ background:#e0edfd; border-color:#a5c8f8; } .tc-3 b{ color:#1756ab; }
+      .tc-4{ background:#fde3ec; border-color:#f6aec6; } .tc-4 b{ color:#bc2a58; }
+      .tc-5{ background:#e0f5e6; border-color:#9edcae; } .tc-5 b{ color:#17702f; }
+      .interview-box{
+        margin-top:16px; background:#fff; border:3px solid var(--acc); border-radius:14px; padding:16px;
+      }
+      .interview-box h3{ margin:0 0 8px; font-family:"Fredoka",sans-serif; font-weight:600; font-size:20px; color:var(--acc); }
+      .interview-box p{ margin:0; font-size:17px; line-height:1.6; }
+      .honest-box{
+        margin-top:12px; background:#fbf0cd; border:2px solid #e8cd6d; border-radius:14px; padding:14px 16px; font-size:16px;
+      }
+      .honest-box b{ color:#8a6503; }
+
+      footer{ text-align:center; padding:26px 10px 8px; font-weight:800; color:var(--ink-soft); font-size:16px; }
+      footer .heart{ color:#d6336c; }
+
+      @media (prefers-reduced-motion: reduce){
+        html{ scroll-behavior:auto; }
+        *, *::before, *::after{ animation-duration:.001s !important; transition-duration:.001s !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <header class="hero">
+        <h1>Generative AI &amp; <span class="hl-teal">LLMs</span>, explained with <span class="hl-pink">moving pictures</span> — <span class="hl-violet">no boring bits</span></h1>
+        <p>Beginner notes on how ChatGPT-style models actually work. Every idea below is a tiny animated scene — short lines, simple stories, zero textbook paragraphs.</p>
+        <p class="hint">How to use this page: scroll, press ▶ Play on each scene, read the one-line “Remember” at the bottom of every card. That’s the whole revision.</p>
+        <nav class="toc" aria-label="Sections">
+          <a href="#s1"><i style="background:#12a5a3"></i>What is an LLM?</a>
+          <a href="#s2"><i style="background:#f08c1a"></i>Tokens</a>
+          <a href="#s3"><i style="background:#8b5cf0"></i>Embeddings</a>
+          <a href="#s4"><i style="background:#3b8bf0"></i>Next-token prediction</a>
+          <a href="#s5"><i style="background:#ef5b8f"></i>Attention</a>
+          <a href="#s6"><i style="background:#2fb457"></i>Training vs Inference</a>
+          <a href="#s7"><i style="background:#f06455"></i>Temperature</a>
+          <a href="#s8"><i style="background:#dda812"></i>Hallucination</a>
+          <a href="#s9"><i style="background:#14a8cf"></i>RAG</a>
+          <a href="#s10"><i style="background:#cf4dbc"></i>Tools, Agents, Multimodal</a>
+          <a href="#s11"><i style="background:#5f7494"></i>Quick revision</a>
+        </nav>
+      </header>
+
+      <!-- ============ 1. WHAT IS GEN AI / AN LLM ============ -->
+      <section class="scene acc-teal" id="s1">
+        <div class="scene-head">
+          <div class="num">1</div>
+          <div>
+            <h2>What is Generative AI? What is an LLM?</h2>
+            <p class="sub">Old AI picked answers from a fixed list. Generative AI <b>creates</b> brand-new text, images and code. An LLM (Large Language Model) is the text kind.</p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="chat">
+            <div class="bubble user"><span class="who">You</span><span id="chatPrompt"></span><span class="caret" id="promptCaret"></span></div>
+            <div class="bubble bot"><span class="who">LLM</span><span class="typing-dots" id="chatDots"><span></span><span></span><span></span></span><span id="chatAnswer"></span></div>
+          </div>
+          <div class="analogy"><b>The one-line story:</b> an LLM is <b>autocomplete that read the whole library</b>. Your phone keyboard guesses the next word after seeing a little of your typing — an LLM does the same trick after reading billions of pages.</div>
+        </div>
+        <div class="controls">
+          <button class="play" data-play="s1">▶ Play</button>
+          <span class="status" id="status-s1">Watch the answer appear word by word — that’s really how it generates.</span>
+        </div>
+        <p class="note-line"><b>Important:</b> an LLM is <b>not a search engine</b>. It doesn’t look facts up — it <b>predicts</b> text that sounds right. Looking facts up is RAG’s job (scene 9).</p>
+        <div class="remember"><b>Remember</b>Generative AI creates new content; an LLM is a giant next-word predictor trained on text.</div>
+      </section>
+
+      <!-- ============ 2. TOKENS ============ -->
+      <section class="scene acc-orange" id="s2">
+        <div class="scene-head">
+          <div class="num">2</div>
+          <div>
+            <h2>Tokens — the model can’t read words</h2>
+            <p class="sub">Before anything else, your text is chopped into small pieces called <b>tokens</b>. Each piece gets a number (an ID). The model only ever sees numbers.</p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="sentence-line" id="tokenSentence">“Testing makes software reliable”</div>
+          <div class="token-row" id="tokenRow"></div>
+          <div class="token-count" id="tokenCount"></div>
+        </div>
+        <div class="controls">
+          <button class="play" data-play="s2">▶ Play</button>
+          <span class="status">Watch one sentence break into numbered pieces.</span>
+        </div>
+        <div class="remember"><b>Remember</b>The model never sees words — only token numbers. Rough rule: <b>~4 characters ≈ 1 token</b>, so 100 tokens ≈ 75 words.</div>
+      </section>
+
+      <!-- ============ 3. EMBEDDINGS ============ -->
+      <section class="scene acc-violet" id="s3">
+        <div class="scene-head">
+          <div class="num">3</div>
+          <div>
+            <h2>Embeddings — meaning becomes a location</h2>
+            <p class="sub">Every token is turned into a list of numbers (a vector) that captures its meaning. Plot those numbers on a map, and words with similar meanings land close together.</p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="map-box" id="mapBox">
+            <span class="axis" style="left:10px;bottom:8px;">→ more “royal / human” this way</span>
+            <span class="cluster-label" style="left:6%;top:5%;">Royalty &amp; people</span>
+            <span class="cluster-label" style="right:5%;top:5%;">Food</span>
+            <span class="cluster-label" style="right:6%;bottom:9%;">Animals</span>
+          </div>
+          <div class="fun-line" id="funLine">king − man + woman ≈ <b>queen</b> — the map even does maths!</div>
+        </div>
+        <div class="controls">
+          <button class="play" data-play="s3">▶ Play</button>
+          <span class="status">The dots start jumbled. Press play and watch them find their neighbourhoods.</span>
+        </div>
+        <div class="remember"><b>Remember</b>Embeddings turn meaning into numbers — so <b>meaning becomes distance</b>: close on the map = close in meaning.</div>
+      </section>
+
+      <!-- ============ 4. NEXT-TOKEN PREDICTION ============ -->
+      <section class="scene acc-blue" id="s4">
+        <div class="scene-head">
+          <div class="num">4</div>
+          <div>
+            <h2>Next-token prediction — the whole trick</h2>
+            <p class="sub">This is all an LLM really does: read what came so far, guess the <b>next</b> token with probabilities, pick one, then repeat. Sentences are built one token at a time.</p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="pred-sentence" id="predSentence">The cat sat on the</div>
+          <div id="predSteps"></div>
+        </div>
+        <div class="controls">
+          <button class="play" data-play="s4">▶ Play</button>
+          <span class="status">Two rounds of guessing — watch the winner join the sentence each time.</span>
+        </div>
+        <div class="remember"><b>Remember</b>An LLM is a <b>next-token guessing machine with probabilities</b> — no guessing, no answer.</div>
+      </section>
+
+      <!-- ============ 5. ATTENTION ============ -->
+      <section class="scene acc-pink" id="s5">
+        <div class="scene-head">
+          <div class="num">5</div>
+          <div>
+            <h2>Attention — who is “it” talking about?</h2>
+            <p class="sub">Read this sentence: who was tired — the animal, or the street? You knew instantly. <b>Attention</b> is how the model knows: every word looks at all the other words and decides who matters.</p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="att-wrap" id="attWrap">
+            <svg class="att-svg" id="attSvg" aria-hidden="true"></svg>
+            <div class="att-words" id="attWords"></div>
+          </div>
+          <div class="att-legend">
+            <span><b>“it” → animal</b> · 82% attention — thick line</span>
+            <span><b>“it” → street</b> · 6% attention — thin line</span>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="play" data-play="s5">▶ Play</button>
+          <span class="status">Press play — the word “it” reaches out and grabs the word it refers to.</span>
+        </div>
+        <div class="remember"><b>Remember</b>Attention = <b>every word looks at the other words and decides who matters</b>. It’s the core invention inside the Transformer.</div>
+      </section>
+
+      <!-- ============ 6. TRAINING VS INFERENCE ============ -->
+      <section class="scene acc-green" id="s6">
+        <div class="scene-head">
+          <div class="num">6</div>
+          <div>
+            <h2>Training vs Inference — study once, answer forever</h2>
+            <p class="sub">Think of an exam. <b>Training</b> is the months of studying. <b>Inference</b> is sitting in the exam hall, answering questions using what you studied.</p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="two-col">
+            <div class="station">
+              <h3>🎓 Training</h3>
+              <p class="cap">Learns patterns once. Slow and very expensive.</p>
+              <div class="flow-lane" id="trainLane">
+                <span class="flow-chip">📚 Books</span><span class="flow-arrow">→</span>
+                <span class="flow-chip">🌐 Websites</span><span class="flow-arrow">→</span>
+                <span class="flow-chip">💻 Code</span>
+              </div>
+              <div class="model-box" id="trainModel">The Model</div>
+              <div class="weights-bar"><div class="weights-fill" id="weightsFill"></div></div>
+              <div class="weights-lbl">Weights filling up = everything it learnt, stored as billions of numbers</div>
+            </div>
+            <div class="station">
+              <h3>💬 Inference</h3>
+              <p class="cap">Uses what it learnt. Happens on every single chat.</p>
+              <div class="flow-lane" id="infLane">
+                <span class="flow-chip">❓ Your question</span><span class="flow-arrow">→</span>
+              </div>
+              <div class="model-box" id="infModel">The Model</div>
+              <div class="flow-lane">
+                <span class="flow-arrow">→</span><span class="flow-chip" id="infAnswer">✅ Answer flows out</span>
+              </div>
+            </div>
+          </div>
+          <div class="mini-cards">
+            <div class="mini-card"><b>Fine-tuning</b>Extra coaching after training, on specific examples — like practising only interview questions after studying the whole syllabus.</div>
+            <div class="mini-card"><b>Weights</b>What the model <i>learnt</i> during training. Fixed. Baked in. Doesn’t change while you chat.</div>
+            <div class="mini-card"><b>Context</b>What you <i>just told it</i> in this chat. Temporary — forgotten when the chat ends.</div>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="play" data-play="s6">▶ Play</button>
+          <span class="status">Left side learns once. Right side answers every time.</span>
+        </div>
+        <div class="remember"><b>Remember</b>Training = learning (once, costly). Inference = using what it learnt (every chat, fast).</div>
+      </section>
+
+      <!-- ============ 7. SAMPLING & TEMPERATURE ============ -->
+      <section class="scene acc-coral" id="s7">
+        <div class="scene-head">
+          <div class="num">7</div>
+          <div>
+            <h2>Sampling &amp; Temperature — how wild should the guess be?</h2>
+            <p class="sub">The model has probabilities for the next token. <b>Sampling</b> is how it picks one. <b>Temperature</b> is the dial that controls how adventurous the picking is. Drag it and watch the bars change shape.</p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="temp-top">
+            <div class="temp-val" id="tempVal">0.7</div>
+            <div>
+              <div class="temp-mood" id="tempMood">Balanced — mostly safe, a little variety</div>
+              <div style="font-size:14.5px;font-weight:700;color:var(--ink-soft);">Next word after “The cat sat on the…”</div>
+            </div>
+          </div>
+          <input type="range" id="tempSlider" min="0" max="100" value="70" aria-label="Temperature from 0 to 1" />
+          <div class="temp-scale"><span>0 · frozen, safe</span><span>1 · wild, creative</span></div>
+          <div class="bars" id="tempBars"></div>
+          <div class="temp-out"><span id="tempOutText">“The cat sat on the mat and purred.”</span><span class="tag" id="tempOutTag">A natural, sensible continuation.</span></div>
+          <div class="chip-row">
+            <div class="chip-line"><b>greedy</b> — always pick the top bar. Same answer every time; safe but can get repetitive.</div>
+            <div class="chip-line"><b>top-k</b> — pick randomly, but only from the <b>k</b> best guesses (say the top 40).</div>
+            <div class="chip-line"><b>top-p</b> — pick from the smallest set of guesses whose probabilities add up to <b>p</b> (say 90%).</div>
+          </div>
+        </div>
+        <div class="controls">
+          <span class="status">No play button needed — this scene is yours. Slide the temperature and watch “mat” lose its crown.</span>
+        </div>
+        <div class="remember"><b>Remember</b>Low temperature = one bar dominates, safe and repetitive. High temperature = bars flatten out, creative but risky.</div>
+      </section>
+
+      <!-- ============ 8. HALLUCINATION ============ -->
+      <section class="scene acc-amber" id="s8">
+        <div class="scene-head">
+          <div class="num">8</div>
+          <div>
+            <h2>Hallucination — confident, fluent… and made up</h2>
+            <p class="sub">Ask about something that doesn’t exist, and the model won’t say “I don’t know”. It predicts text that <i>sounds</i> like a real answer — and invents the rest.</p>
+          </div>
+        </div>
+        <div class="stage stamp-zone">
+          <div class="chat">
+            <div class="bubble user"><span class="who">You</span>Who wrote the famous testing book “The Silent Tester”, and what award did it win?</div>
+            <div class="bubble bot"><span class="who">LLM</span><span class="typing-dots" id="halDots"><span></span><span></span><span></span></span><span id="halAnswer"></span></div>
+          </div>
+          <div class="stamp" id="halStamp">SOUNDS RIGHT<br />≠ IS RIGHT</div>
+          <p class="note-line" style="margin-top:14px;">There is <b>no such book and no such author</b>. The model never checked — it just continued the pattern of how book answers usually sound.</p>
+        </div>
+        <div class="controls">
+          <button class="play" data-play="s8">▶ Play</button>
+          <span class="status">Watch a completely fake “fact” get delivered with total confidence.</span>
+        </div>
+        <div class="remember"><b>Remember</b>The model predicts <b>likely</b> text; it does not check truth. Fluent + confident can still be wrong — verify important facts.</div>
+      </section>
+
+      <!-- ============ 9. RAG ============ -->
+      <section class="scene acc-cyan" id="s9">
+        <div class="scene-head">
+          <div class="num">9</div>
+          <div>
+            <h2>RAG — give the model an open book</h2>
+            <p class="sub">RAG (Retrieval-Augmented Generation) fixes the memory problem: before answering, the system first <b>searches your documents</b>, picks the best pieces, and hands them to the LLM along with the question.</p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="rag-pipe" id="ragPipe">
+            <div class="rag-traveller" id="ragTraveller">your question</div>
+            <div class="rag-station"><div class="rs-box"><span class="rs-ico">❓</span><span class="rs-name">1 · Question</span><span class="rs-sub">“What is the refund window?”</span></div></div>
+            <div class="rag-arrow">→</div>
+            <div class="rag-station"><div class="rs-box"><span class="rs-ico">🔍</span><span class="rs-name">2 · Search</span><span class="rs-sub">the documents are searched</span></div></div>
+            <div class="rag-arrow">→</div>
+            <div class="rag-station"><div class="rs-box"><span class="rs-ico">📄</span><span class="rs-name">3 · Best chunks</span><span class="rs-sub">the top matching pieces are picked</span></div></div>
+            <div class="rag-arrow">→</div>
+            <div class="rag-station"><div class="rs-box"><span class="rs-ico">🧠</span><span class="rs-name">4 · LLM answers</span><span class="rs-sub">question + chunks go in together</span></div></div>
+            <div class="rag-arrow">→</div>
+            <div class="rag-station"><div class="rs-box"><span class="rs-ico">✅</span><span class="rs-name">5 · Answer</span><span class="rs-sub">with sources you can check</span></div></div>
+          </div>
+          <div class="rag-answer" id="ragAnswer">
+            <div class="bubble bot" style="max-width:100%;"><span class="who">Answer</span>“The refund window is <b>30 days</b> from the purchase date.” <span style="font-weight:800;color:var(--acc);">— Source: policy document, page 4</span></div>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="play" data-play="s9">▶ Play</button>
+          <span class="status">Follow the travelling pill — that’s your question (then the chunks) moving through the pipeline.</span>
+        </div>
+        <div class="remember"><b>Remember</b>RAG = <b>open-book exam</b> instead of a memory-only exam. The model answers from <i>your</i> documents, with sources — so fewer made-up answers.</div>
+      </section>
+
+      <!-- ============ 10. TOOLS, AGENTS, MULTIMODAL ============ -->
+      <section class="scene acc-magenta" id="s10">
+        <div class="scene-head">
+          <div class="num">10</div>
+          <div>
+            <h2>Tools, Agents &amp; Multimodal — beyond plain chat</h2>
+            <p class="sub">Three upgrades that turn a text predictor into something that can <b>do</b> things. Each card has its own tiny play button.</p>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="trio">
+            <div class="trio-card">
+              <h3>🔧 Tool calling</h3>
+              <p class="cap">The LLM can ask an outside tool for help, then use the result.</p>
+              <div class="step-list" data-steps="toolSteps">
+                <div class="step-item">You ask: <span class="mono">457 × 32 = ?</span></div>
+                <div class="step-item">LLM thinks: “Maths isn’t my strength — <b>call the calculator</b>.”</div>
+                <div class="step-item">Calculator returns: <span class="mono">14624</span></div>
+                <div class="step-item">LLM answers using it: <span class="mono">457 × 32 = 14,624</span></div>
+              </div>
+              <button class="play" data-miniplay="toolSteps">▶ Play</button>
+            </div>
+            <div class="trio-card">
+              <h3>🤖 Agents</h3>
+              <p class="cap">An LLM that plans steps and loops until the job is done.<span class="loop-badge">plan → act → check → repeat</span></p>
+              <div class="step-list" data-steps="agentSteps">
+                <div class="step-item"><b>Goal:</b> “Book the cheapest flight to Delhi.”</div>
+                <div class="step-item"><b>Plan:</b> search flights → compare prices → check timings.</div>
+                <div class="step-item"><b>Act:</b> runs the search tool.</div>
+                <div class="step-item"><b>Check:</b> “Prices found, but one lands at 2 AM — search again.”</div>
+                <div class="step-item"><b>Done:</b> best sensible flight picked, summary given.</div>
+              </div>
+              <button class="play" data-miniplay="agentSteps">▶ Play</button>
+            </div>
+            <div class="trio-card">
+              <h3>🖼️ Multimodal</h3>
+              <p class="cap">Not just text — the model can also take in images (and audio/video).</p>
+              <div class="step-list" data-steps="mmSteps">
+                <div class="step-item">
+                  <svg class="pic-thumb" viewBox="0 0 200 92" role="img" aria-label="A simple drawing of a cat sitting on a mat">
+                    <rect x="0" y="0" width="200" height="92" rx="8" fill="#dcf3fa"/>
+                    <ellipse cx="100" cy="78" rx="62" ry="9" fill="#f08c1a"/>
+                    <circle cx="86" cy="46" r="15" fill="#43536e"/>
+                    <circle cx="118" cy="52" r="19" fill="#43536e"/>
+                    <polygon points="76,36 80,24 88,34" fill="#43536e"/>
+                    <polygon points="90,33 98,23 100,36" fill="#43536e"/>
+                    <circle cx="81" cy="44" r="2.4" fill="#fff"/><circle cx="92" cy="44" r="2.4" fill="#fff"/>
+                    <path d="M136 52 q16 4 12 16" stroke="#43536e" stroke-width="5" fill="none" stroke-linecap="round"/>
+                  </svg>
+                  You send this picture + ask: “What’s in this picture?”
+                </div>
+                <div class="step-item">The model “sees” the image and reads your text together.</div>
+                <div class="step-item">Answer: “A cat sitting on an orange mat.”</div>
+              </div>
+              <button class="play" data-miniplay="mmSteps">▶ Play</button>
+            </div>
+          </div>
+        </div>
+        <div class="remember"><b>Remember</b>Tools = the LLM borrows abilities. Agents = the LLM plans and loops. Multimodal = more than text goes in.</div>
+      </section>
+
+      <!-- ============ 11. QUICK REVISION ============ -->
+      <section class="scene acc-slate" id="s11">
+        <div class="scene-head">
+          <div class="num">11</div>
+          <div>
+            <h2>Quick revision — every term in one line</h2>
+            <p class="sub">The night-before-the-interview grid. If you can say each of these out loud, you know this topic.</p>
+          </div>
+        </div>
+        <div class="term-grid">
+          <div class="term-card tc-0"><b>Token</b>A small piece of text (part of a word) turned into a number — the only thing the model actually reads.</div>
+          <div class="term-card tc-1"><b>Embedding</b>A list of numbers that captures a token’s meaning; similar meanings sit close together.</div>
+          <div class="term-card tc-2"><b>Context window</b>How much text the model can “see” at once — its short-term memory for this chat.</div>
+          <div class="term-card tc-3"><b>Transformer</b>The architecture (design) behind modern LLMs, built around attention.</div>
+          <div class="term-card tc-4"><b>Attention</b>How each word weighs the other words to understand who matters in a sentence.</div>
+          <div class="term-card tc-5"><b>Pretraining</b>The first, huge training phase: predicting text from books, websites and code.</div>
+          <div class="term-card tc-0"><b>Fine-tuning</b>Extra training on specific examples to make the model better at a particular job.</div>
+          <div class="term-card tc-1"><b>Inference</b>Using the trained model to generate an answer — what happens on every chat.</div>
+          <div class="term-card tc-2"><b>Temperature</b>The dial for randomness: low = safe and repetitive, high = creative and risky.</div>
+          <div class="term-card tc-3"><b>Top-k / Top-p</b>Ways to limit the guessing pool: only the k best tokens, or the smallest set adding up to probability p.</div>
+          <div class="term-card tc-4"><b>Hallucination</b>When the model confidently generates something false, because it predicts likely text, not truth.</div>
+          <div class="term-card tc-5"><b>RAG</b>Searching your documents first and answering from them — open-book instead of memory-only.</div>
+          <div class="term-card tc-0"><b>Chunking</b>Cutting documents into small pieces so the search step in RAG can find and pass the right ones.</div>
+          <div class="term-card tc-1"><b>Agent</b>An LLM that plans steps, uses tools, checks its own progress and loops until the task is done.</div>
+        </div>
+        <div class="interview-box">
+          <h3>🎤 Say it in an interview — “What is an LLM?”</h3>
+          <p>“An LLM is a large language model — an AI trained on a huge amount of text to predict the next token, given everything before it. It reads text as tokens, understands relationships between words through attention, and generates answers one token at a time. It predicts likely text rather than looking facts up, which is why techniques like RAG are used to ground it in real documents.”</p>
+        </div>
+        <div class="honest-box"><b>One honest note:</b> this page is <b>awareness learning for interviews</b> — understanding the concepts well enough to explain them clearly. It is concept knowledge, not project experience, and should be presented that way.</div>
+        <div class="remember"><b>Remember</b>Tokens in → embeddings give meaning → attention connects words → next-token prediction writes the answer. Everything else is an upgrade on that loop.</div>
+      </section>
+
+      <footer>Created with <span class="heart">♡</span> by Aevi</footer>
+    </div>
+
+    <script>
+      (function(){
+        "use strict";
+        var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        function $(s, c){ return (c||document).querySelector(s); }
+        function $$(s, c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); }
+        function wait(ms){ return new Promise(function(r){ setTimeout(r, REDUCED ? Math.min(ms, 60) : ms); }); }
+
+        /* ============ Scene 1 : chat typing ============ */
+        var s1Prompt = "Explain Generative AI like I’m five.";
+        var s1Answer = "Generative AI makes brand-new things — stories, pictures, code — instead of just choosing from ready-made answers. An LLM is the writing kind: it learnt from billions of pages, and it writes by guessing the most likely next word, again and again, until the answer is complete.";
+        var s1Running = false;
+        async function playS1(btn){
+          if (s1Running) return; s1Running = true; btn.disabled = true;
+          var p = $("#chatPrompt"), a = $("#chatAnswer"), dots = $("#chatDots"), caret = $("#promptCaret");
+          p.textContent = ""; a.innerHTML = ""; dots.classList.remove("show"); caret.style.display = "inline-block";
+          for (var i = 0; i < s1Prompt.length; i++){
+            p.textContent += s1Prompt[i];
+            await wait(38);
+          }
+          caret.style.display = "none";
+          dots.classList.add("show");
+          await wait(850);
+          dots.classList.remove("show");
+          var words = s1Answer.split(" ");
+          words.forEach(function(w, idx){
+            var sp = document.createElement("span");
+            sp.className = "word"; sp.textContent = w + (idx < words.length - 1 ? " " : "");
+            a.appendChild(sp);
+          });
+          var spans = $$(".word", a);
+          for (var j = 0; j < spans.length; j++){
+            spans[j].classList.add("on");
+            await wait(95);
+          }
+          $("#status-s1").textContent = "Notice: it never “looked up” an answer — it generated one, token by token.";
+          btn.disabled = false; btn.textContent = "↻ Replay"; s1Running = false;
+        }
+
+        /* ============ Scene 2 : tokens ============ */
+        var TOKENS = [
+          { t: "Test",  id: 9642 }, { t: "ing",   id: 287  },
+          { t: " makes", id: 3621 }, { t: " soft", id: 5890 },
+          { t: "ware",  id: 1124 }, { t: " re",   id: 264  },
+          { t: "li",    id: 773  }, { t: "able",  id: 991  }
+        ];
+        var TOKEN_COLORS = ["#d96c06","#1c64c8","#1e8a3c","#d6336c","#6d3fd4","#0783a5","#d9483b","#b07d05"];
+        var tokenRow = $("#tokenRow");
+        TOKENS.forEach(function(tk, i){
+          var d = document.createElement("div"); d.className = "token";
+          d.innerHTML = '<span class="chip" style="background:' + TOKEN_COLORS[i] + '"></span><span class="tid">id ' + tk.id + "</span>";
+          d.querySelector(".chip").textContent = tk.t;
+          tokenRow.appendChild(d);
+        });
+        var s2Running = false;
+        async function playS2(btn){
+          if (s2Running) return; s2Running = true; btn.disabled = true;
+          var chips = $$(".token", tokenRow), line = $("#tokenSentence"), count = $("#tokenCount");
+          chips.forEach(function(c){ c.classList.remove("on"); });
+          line.classList.remove("dim"); count.innerHTML = "";
+          await wait(500);
+          line.classList.add("dim");
+          for (var i = 0; i < chips.length; i++){
+            chips[i].classList.add("on");
+            count.innerHTML = '<span class="big">' + (i + 1) + "</span> token" + (i === 0 ? "" : "s") + " so far…";
+            await wait(340);
+          }
+          count.innerHTML = '<span class="big">8 tokens</span> · 31 characters · 31 ÷ 8 ≈ 4 characters per token ✓';
+          btn.disabled = false; btn.textContent = "↻ Replay"; s2Running = false;
+        }
+
+        /* ============ Scene 3 : embeddings map ============ */
+        var WORDS = [
+          { w: "king",   c: "#6d3fd4", sx: 46, sy: 46, tx: 15, ty: 22 },
+          { w: "queen",  c: "#8b5cf0", sx: 54, sy: 40, tx: 27, ty: 13 },
+          { w: "man",    c: "#1c64c8", sx: 40, sy: 56, tx: 13, ty: 46 },
+          { w: "woman",  c: "#3b8bf0", sx: 58, sy: 58, tx: 26, ty: 38 },
+          { w: "apple",  c: "#d9483b", sx: 48, sy: 36, tx: 70, ty: 16 },
+          { w: "banana", c: "#dda812", sx: 52, sy: 62, tx: 84, ty: 26 },
+          { w: "cat",    c: "#1e8a3c", sx: 44, sy: 50, tx: 69, ty: 66 },
+          { w: "dog",    c: "#2fb457", sx: 56, sy: 48, tx: 83, ty: 57 }
+        ];
+        var mapBox = $("#mapBox");
+        WORDS.forEach(function(o){
+          var d = document.createElement("div"); d.className = "dot";
+          d.style.left = o.sx + "%"; d.style.top = o.sy + "%";
+          d.innerHTML = '<span class="ball" style="background:' + o.c + '"></span><span class="lbl">' + o.w + "</span>";
+          d.dataset.tx = o.tx; d.dataset.ty = o.ty;
+          mapBox.appendChild(d);
+        });
+        var s3Running = false;
+        async function playS3(btn){
+          if (s3Running) return; s3Running = true; btn.disabled = true;
+          var dots = $$(".dot", mapBox);
+          mapBox.classList.remove("played"); $("#funLine").classList.remove("on");
+          dots.forEach(function(d, i){ d.style.left = WORDS[i].sx + "%"; d.style.top = WORDS[i].sy + "%"; });
+          await wait(450);
+          dots.forEach(function(d){ d.style.left = d.dataset.tx + "%"; d.style.top = d.dataset.ty + "%"; });
+          await wait(REDUCED ? 100 : 1500);
+          mapBox.classList.add("played");
+          $("#funLine").classList.add("on");
+          btn.disabled = false; btn.textContent = "↻ Replay"; s3Running = false;
+        }
+
+        /* ============ Scene 4 : next-token prediction ============ */
+        var PRED_STEPS = [
+          { tag: "Round 1 — after “The cat sat on the”", bars: [ ["mat", 72], ["floor", 15], ["roof", 5], ["moon", 1] ], win: "mat" },
+          { tag: "Round 2 — the sentence grew, guess again", bars: [ ["slept", 55], ["purred", 25], ["ate", 10], ["flew", 2] ], win: "slept" }
+        ];
+        var s4Running = false;
+        async function playS4(btn){
+          if (s4Running) return; s4Running = true; btn.disabled = true;
+          var sent = $("#predSentence"), stepsBox = $("#predSteps");
+          sent.innerHTML = "The cat sat on the"; stepsBox.innerHTML = "";
+          await wait(400);
+          for (var s = 0; s < PRED_STEPS.length; s++){
+            var step = PRED_STEPS[s];
+            var box = document.createElement("div");
+            box.innerHTML = '<span class="step-tag">' + step.tag + '</span>';
+            var bars = document.createElement("div"); bars.className = "bars";
+            step.bars.forEach(function(b){
+              var row = document.createElement("div");
+              row.className = "bar-row" + (b[0] === step.win ? " winner" : "");
+              row.innerHTML = '<span class="w"></span><div class="bar-track"><div class="bar-fill"></div></div><span class="pct">' + b[1] + "%</span>";
+              row.querySelector(".w").textContent = b[0];
+              row.querySelector(".bar-fill").dataset.w = b[1];
+              bars.appendChild(row);
+            });
+            box.appendChild(bars); stepsBox.appendChild(box);
+            await wait(150);
+            $$(".bar-fill", bars).forEach(function(f){ f.style.width = f.dataset.w + "%"; });
+            await wait(1150);
+            var nw = document.createElement("span");
+            nw.className = "new-word"; nw.textContent = " " + step.win;
+            sent.appendChild(nw);
+            if (s === 0){
+              var and = document.createElement("span"); and.textContent = " and";
+              sent.appendChild(and);
+            }
+            await wait(800);
+            if (s === 0) box.style.opacity = ".45";
+          }
+          var fullStop = document.createElement("span"); fullStop.textContent = ".";
+          sent.appendChild(fullStop);
+          btn.disabled = false; btn.textContent = "↻ Replay"; s4Running = false;
+        }
+
+        /* ============ Scene 5 : attention ============ */
+        var ATT_WORDS = ["The", "animal", "didn’t", "cross", "the", "street", "because", "it", "was", "tired"];
+        var attWordsBox = $("#attWords"), attSvg = $("#attSvg");
+        ATT_WORDS.forEach(function(w){
+          var sp = document.createElement("span"); sp.className = "att-word"; sp.textContent = w;
+          sp.dataset.word = w; attWordsBox.appendChild(sp);
+        });
+        function chipEl(word, nth){
+          var els = $$(".att-word", attWordsBox).filter(function(e){ return e.dataset.word === word; });
+          return els[nth || 0];
+        }
+        var s5Running = false;
+        async function playS5(btn){
+          if (s5Running) return; s5Running = true; btn.disabled = true;
+          var wrap = $("#attWrap");
+          $$(".att-word", attWordsBox).forEach(function(e){ e.classList.remove("hot", "warm"); });
+          attSvg.innerHTML = "";
+          await wait(250);
+          var wrapRect = wrap.getBoundingClientRect();
+          attSvg.setAttribute("viewBox", "0 0 " + wrapRect.width + " " + wrapRect.height);
+          function arcTo(targetEl, color, width, peak){
+            var itR = chipEl("it").getBoundingClientRect(), tR = targetEl.getBoundingClientRect();
+            var x1 = itR.left + itR.width / 2 - wrapRect.left, y1 = itR.top - wrapRect.top;
+            var x2 = tR.left + tR.width / 2 - wrapRect.left, y2 = tR.top - wrapRect.top;
+            var topY = Math.min(y1, y2) - peak;
+            var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", "M " + x1 + " " + y1 + " Q " + ((x1 + x2) / 2) + " " + topY + " " + x2 + " " + y2);
+            path.setAttribute("stroke", color); path.setAttribute("stroke-width", width); path.setAttribute("opacity", "0");
+            attSvg.appendChild(path);
+            var len = path.getTotalLength();
+            path.style.strokeDasharray = len; path.style.strokeDashoffset = len; path.setAttribute("opacity", "1");
+            path.style.transition = "stroke-dashoffset 1s ease";
+            requestAnimationFrame(function(){ requestAnimationFrame(function(){ path.style.strokeDashoffset = "0"; }); });
+          }
+          chipEl("it").classList.add("hot");
+          await wait(400);
+          arcTo(chipEl("animal"), "#d6336c", 6, 58);
+          chipEl("animal").classList.add("hot");
+          await wait(950);
+          arcTo(chipEl("street"), "#c3cadb", 2, 40);
+          await wait(700);
+          arcTo(chipEl("tired"), "#ef5b8f", 3, 30);
+          chipEl("tired").classList.add("warm");
+          btn.disabled = false; btn.textContent = "↻ Replay"; s5Running = false;
+        }
+
+        /* ============ Scene 6 : training vs inference ============ */
+        var s6Running = false;
+        async function playS6(btn){
+          if (s6Running) return; s6Running = true; btn.disabled = true;
+          var trainChips = $$("#trainLane .flow-chip, #trainLane .flow-arrow");
+          var infChips = $$("#infLane .flow-chip, #infLane .flow-arrow");
+          trainChips.concat(infChips).forEach(function(c){ c.classList.remove("on"); });
+          $("#infAnswer").classList.remove("on");
+          $("#weightsFill").style.width = "0";
+          $("#trainModel").classList.remove("pulse"); $("#infModel").classList.remove("pulse");
+          await wait(350);
+          for (var i = 0; i < trainChips.length; i++){ trainChips[i].classList.add("on"); await wait(300); }
+          $("#trainModel").classList.add("pulse");
+          $("#weightsFill").style.width = "100%";
+          await wait(REDUCED ? 150 : 1400);
+          for (var j = 0; j < infChips.length; j++){ infChips[j].classList.add("on"); await wait(300); }
+          $("#infModel").classList.add("pulse");
+          await wait(450);
+          $("#infAnswer").classList.add("on");
+          btn.disabled = false; btn.textContent = "↻ Replay"; s6Running = false;
+        }
+
+        /* ============ Scene 7 : temperature (interactive) ============ */
+        var TEMP_WORDS = [ ["mat", 2.6], ["floor", 1.2], ["rug", 0.4], ["moon", -0.8] ];
+        var tempBars = $("#tempBars");
+        TEMP_WORDS.forEach(function(tw){
+          var row = document.createElement("div"); row.className = "bar-row";
+          row.innerHTML = '<span class="w"></span><div class="bar-track"><div class="bar-fill"></div></div><span class="pct"></span>';
+          row.querySelector(".w").textContent = tw[0];
+          tempBars.appendChild(row);
+        });
+        function renderTemp(){
+          var t = parseInt($("#tempSlider").value, 10) / 100;
+          if (t < 0.05) t = 0.05;
+          var tv = Math.round(t * 100) / 100;
+          $("#tempVal").textContent = tv === 1 ? "1.0" : String(tv);
+          var exps = TEMP_WORDS.map(function(tw){ return Math.exp(tw[1] / t); });
+          var sum = exps.reduce(function(a, b){ return a + b; }, 0);
+          var rows = $$(".bar-row", tempBars);
+          var best = 0;
+          exps.forEach(function(e, i){ if (e > exps[best]) best = i; });
+          exps.forEach(function(e, i){
+            var p = e / sum * 100;
+            rows[i].querySelector(".bar-fill").style.width = Math.max(p, 1.5) + "%";
+            rows[i].querySelector(".pct").textContent = (p < 1 ? p.toFixed(1) : Math.round(p)) + "%";
+            rows[i].classList.toggle("winner", i === best);
+          });
+          var mood, out, tag;
+          if (t <= 0.3){
+            mood = "Frozen — safe, repetitive"; out = "“The cat sat on the mat.”";
+            tag = "The top bar wins almost every time. Ask 10 times, get this 10 times.";
+          } else if (t <= 0.7){
+            mood = "Balanced — mostly safe, a little variety"; out = "“The cat sat on the mat and purred.”";
+            tag = "Usually the sensible pick — occasionally “floor” or “rug” gets a turn.";
+          } else {
+            mood = "Wild — creative, risky"; out = "“The cat sat on the moon and judged the Earth.”";
+            tag = "Even the tiny bars get picked now. Fun for stories, dangerous for facts.";
+          }
+          $("#tempMood").textContent = mood;
+          $("#tempOutText").textContent = out;
+          $("#tempOutTag").textContent = tag;
+        }
+        $("#tempSlider").addEventListener("input", renderTemp);
+        renderTemp();
+
+        /* ============ Scene 8 : hallucination ============ */
+        var halAnswer = "“The Silent Tester” was written by Margaret Ellison and published in 1987. It won the National Book Award for its moving story of a tester who found a bug that saved a company. It is still taught in software courses today.";
+        var s8Running = false;
+        async function playS8(btn){
+          if (s8Running) return; s8Running = true; btn.disabled = true;
+          var a = $("#halAnswer"), dots = $("#halDots"), stamp = $("#halStamp");
+          a.textContent = ""; stamp.classList.remove("on");
+          dots.classList.add("show");
+          await wait(800);
+          dots.classList.remove("show");
+          var words = halAnswer.split(" ");
+          for (var i = 0; i < words.length; i++){
+            a.textContent += (i ? " " : "") + words[i];
+            await wait(55);
+          }
+          await wait(450);
+          stamp.classList.add("on");
+          btn.disabled = false; btn.textContent = "↻ Replay"; s8Running = false;
+        }
+
+        /* ============ Scene 9 : RAG pipeline ============ */
+        var RAG_LABELS = ["your question", "searching…", "best chunks found", "question + chunks", "answer ✓"];
+        var s9Running = false;
+        async function playS9(btn){
+          if (s9Running) return; s9Running = true; btn.disabled = true;
+          var pipe = $("#ragPipe"), trav = $("#ragTraveller"), stations = $$(".rag-station", pipe);
+          stations.forEach(function(s){ s.classList.remove("lit"); });
+          $("#ragAnswer").classList.remove("on");
+          trav.style.opacity = "0";
+          await wait(350);
+          for (var i = 0; i < stations.length; i++){
+            stations[i].classList.add("lit");
+            var r = stations[i].getBoundingClientRect(), pr = pipe.getBoundingClientRect();
+            trav.textContent = RAG_LABELS[i];
+            trav.style.left = (r.left - pr.left + r.width / 2 - 52) + "px";
+            trav.style.top = (r.top - pr.top - 30) + "px";
+            trav.style.opacity = "1";
+            await wait(1150);
+          }
+          trav.style.opacity = "0";
+          $("#ragAnswer").classList.add("on");
+          btn.disabled = false; btn.textContent = "↻ Replay"; s9Running = false;
+        }
+
+        /* ============ Scene 10 : mini scenes ============ */
+        var miniRunning = {};
+        async function playMini(btn){
+          var key = btn.getAttribute("data-miniplay");
+          if (miniRunning[key]) return; miniRunning[key] = true; btn.disabled = true;
+          var items = $$('.step-list[data-steps="' + key + '"] .step-item');
+          items.forEach(function(it){ it.classList.remove("on", "done"); });
+          await wait(300);
+          for (var i = 0; i < items.length; i++){
+            if (i > 0) items[i - 1].classList.replace("on", "done");
+            items[i].classList.add("on");
+            await wait(750);
+          }
+          items[items.length - 1].classList.replace("on", "done");
+          btn.disabled = false; btn.textContent = "↻ Replay"; miniRunning[key] = false;
+        }
+
+        /* ============ wiring ============ */
+        var players = { s1: playS1, s2: playS2, s3: playS3, s4: playS4, s5: playS5, s6: playS6, s8: playS8, s9: playS9 };
+        $$("[data-play]").forEach(function(btn){
+          btn.addEventListener("click", function(){ players[btn.getAttribute("data-play")](btn); });
+        });
+        $$("[data-miniplay]").forEach(function(btn){
+          btn.addEventListener("click", function(){ playMini(btn); });
+        });
+      })();
+    </script>
+  </body>
+</html>
