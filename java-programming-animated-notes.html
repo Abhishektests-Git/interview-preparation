@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>Java Programming Animated Notes</title>
+<style>
+:root{
+  --bg:#f7f5f2; --card:#ffffff; --ink:#1c1a17; --muted:#5c564e; --line:#e3ddd3;
+  --code-bg:#1e1e1e;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#16130f; --card:#211d18; --ink:#f2ede6; --muted:#b8b0a2; --line:#3a342c; }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{animation:none!important;transition:none!important} }
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,'Times New Roman',serif;line-height:1.6}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 48px}
+h1,h2,h3,.sans{font-family:Verdana,Geneva,sans-serif}
+.hero{padding:28px 4px 8px}
+.hero .tag{display:inline-block;font-family:Verdana,sans-serif;font-size:.78rem;letter-spacing:.06em;padding:6px 12px;border:1.5px solid var(--ink);border-radius:999px}
+.hero h1{font-size:2.1rem;line-height:1.15;margin:16px 0 10px}
+.hero p{font-size:1.08rem;color:var(--muted);max-width:640px}
+.hero .meta{font-family:Verdana,sans-serif;font-size:.85rem;color:var(--muted)}
+nav.chips{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 8px}
+nav.chips a{font-family:Verdana,sans-serif;font-size:.82rem;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 13px;min-height:36px;display:inline-flex;align-items:center}
+nav.chips a:hover{border-color:var(--ink)}
+section.topic{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--acc);border-radius:14px;padding:22px 20px;margin:22px 0}
+section.topic h2{margin:0 0 4px;font-size:1.45rem;line-height:1.25}
+.num{font-family:Verdana,sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.08em;color:var(--acc);text-transform:uppercase}
+section.topic p{margin:10px 0}
+ul{margin:8px 0 8px 20px;padding:0} li{margin:5px 0}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{font-family:Verdana,sans-serif;font-size:.82rem;background:var(--bg)}
+pre{background:var(--code-bg);color:#d4d4d4;border-radius:10px;padding:16px;overflow-x:auto;font-size:.88rem;line-height:1.55;margin:14px 0}
+code{font-family:'Courier New',monospace}
+.kw{color:#569cd6}.str{color:#ce9178}.num2{color:#b5cea8}.cm{color:#6a9955}.fn{color:#dcdcaa}.tp{color:#4ec9b0}.an{color:#d7ba7d}
+.scene{border:1.5px dashed var(--acc);border-radius:12px;padding:16px;margin:16px 0;background:var(--bg)}
+.scene h3{margin:0 0 10px;font-size:1rem}
+.steps{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch;min-height:64px}
+.step{flex:1 1 120px;border:2px solid var(--line);border-radius:10px;padding:10px 12px;font-family:Verdana,sans-serif;font-size:.85rem;background:var(--card);opacity:1;transition:border-color .6s ease,box-shadow .6s ease;transform:none}
+.step.on{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.step b{display:block;margin-bottom:2px}
+.step.on b{color:var(--acc)}
+.ctl{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+button{font-family:Verdana,sans-serif;font-size:.88rem;font-weight:700;border-radius:8px;border:2px solid var(--acc);background:var(--acc);color:#fff;padding:10px 18px;min-height:44px;cursor:pointer}
+button.ghost{background:transparent;color:var(--ink)}
+.remember{border-left:4px solid var(--acc);background:var(--bg);padding:10px 14px;border-radius:0 10px 10px 0;margin:16px 0 2px;font-size:1rem}
+.remember b{font-family:Verdana,sans-serif;font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;color:var(--acc);display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:14px 0}
+.cell{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--card)}
+.cell b{font-family:Verdana,sans-serif;font-size:.9rem;display:block;margin-bottom:3px}
+.cell span{font-size:.88rem;color:var(--muted)}
+.qa{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0;background:var(--card)}
+.qa h3{margin:0 0 6px;font-size:1.05rem}
+footer{text-align:center;padding:28px 0 8px;font-family:Verdana,sans-serif;font-size:.9rem;color:var(--muted)}
+.big{font-size:1.05rem}
+@media(max-width:560px){.hero h1{font-size:1.7rem} section.topic{padding:18px 14px} pre{font-size:.78rem;white-space:pre-wrap;overflow-wrap:anywhere}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+<span class="tag">Ez Tech Explains · Carousel notes, animated</span>
+<h1>Java Programming — Beginner to Advanced</h1>
+<p>Complete study notes from the 20-slide carousel, rebuilt as calm animated scenes you can play, replay and revise from. Fundamentals first, then OOP the way it is actually used in test automation frameworks.</p>
+<p class="meta">Java 17 compatible examples · For exam &amp; SDET interview prep · Press Play on any scene — everything stays fully readable at rest.</p>
+<nav class="chips">
+<a href="#s1">1 · Intro</a><a href="#s2">2 · JDK / JRE / JVM</a><a href="#s3">3 · Program structure</a><a href="#s4">4 · Variables</a><a href="#s5">5 · Input &amp; output</a><a href="#s6">6 · Operators</a><a href="#s7">7 · Conditionals</a><a href="#s8">8 · Loops</a><a href="#s9">9 · Arrays</a><a href="#s10">10 · Strings</a><a href="#s11">11 · Methods</a><a href="#s12">12 · Classes &amp; objects</a><a href="#s13">13 · OOP principles</a><a href="#s14">14 · Inheritance</a><a href="#s15">15 · Polymorphism</a><a href="#s16">16 · Abstraction</a><a href="#s17">17 · Packages</a><a href="#revision">Quick revision</a><a href="#interview">Interview answers</a>
+</nav>
+</header>
+
+<section class="topic" id="s1" style="--acc:#c2410c">
+<span class="num">Section 1</span><h2>Introduction to Java</h2>
+<p>Java was created by <b>James Gosling</b> and team at Sun Microsystems (released 1995, now owned by Oracle). Its promise: <b>Write Once, Run Anywhere</b> — the same compiled program runs on Windows, Linux or Mac because the <b>JVM (Java Virtual Machine)</b> sits between your code and the operating system.</p>
+<table>
+<tr><th></th><th>C / C++</th><th>Python</th><th>Java</th></tr>
+<tr><td><b>Execution</b></td><td>Compiled to machine code per OS</td><td>Interpreted, line by line</td><td>Compiled to bytecode, run by JVM</td></tr>
+<tr><td><b>Speed</b></td><td>Fastest</td><td>Slower</td><td>Fast (JIT compiler)</td></tr>
+<tr><td><b>Typing</b></td><td>Static</td><td>Dynamic</td><td>Static — errors caught early</td></tr>
+<tr><td><b>Pointers</b></td><td>Yes</td><td>No</td><td>No — safer memory handling</td></tr>
+</table>
+<p>Java is <b>object-oriented, platform-independent, robust</b> (automatic garbage collection, no pointers) and <b>multithreaded</b>. That is why it powers enterprise systems — and most Selenium test frameworks.</p>
+<div class="scene"><h3>▶ Watch: how “Write Once, Run Anywhere” works</h3>
+<div class="steps">
+<div class="step"><b>1 · Write</b>You write Hello.java once.</div>
+<div class="step"><b>2 · Compile</b>javac turns it into Hello.class — bytecode, not machine code.</div>
+<div class="step"><b>3 · Run anywhere</b>Each OS has its own JVM that reads the same bytecode.</div>
+<div class="step"><b>4 · Output</b>Same result on Windows, Linux and Mac.</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>Java code compiles to bytecode, and the JVM — not the OS — runs it. That one layer is the whole secret of platform independence.</div>
+</section>
+
+<section class="topic" id="s2" style="--acc:#0e7490">
+<span class="num">Section 2</span><h2>JDK, JRE and JVM</h2>
+<ul>
+<li><b>JVM</b> — the engine that executes bytecode. Abstract machine, no physical form.</li>
+<li><b>JRE</b> — JVM + core libraries. Enough to <i>run</i> a Java program.</li>
+<li><b>JDK</b> — JRE + development tools (<code>javac</code>, <code>java</code>, <code>javadoc</code>, debugger). Needed to <i>write and compile</i> programs.</li>
+</ul>
+<p>So: <b>JDK ⊃ JRE ⊃ JVM</b> — each one contains the next.</p>
+<div class="scene"><h3>▶ Watch: the compile-and-run workflow</h3>
+<div class="steps">
+<div class="step"><b>Hello.java</b>Source code you write.</div>
+<div class="step"><b>javac</b>The compiler (from the JDK) checks and compiles it.</div>
+<div class="step"><b>Hello.class</b>Bytecode — platform-neutral.</div>
+<div class="step"><b>JVM + JIT</b>Interprets bytecode and hot-spots it to fast native code.</div>
+<div class="step"><b>Output</b>Program runs on the OS.</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>Developers install the JDK; end users only need the JRE; the JVM inside does the actual running.</div>
+</section>
+
+<section class="topic" id="s3" style="--acc:#15803d">
+<span class="num">Section 3</span><h2>Structure of a Java Program</h2>
+<p>Every standalone Java program starts at one exact doorway: the <code>main</code> method. The file name must match the public class name.</p>
+<pre><code><span class="kw">public class</span> <span class="tp">Hello</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="tp">String</span>[] args) {
+        <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"Hello, Java!"</span>);
+    }
+}</code></pre>
+<ul>
+<li><code>public</code> — JVM must be able to call it from outside.</li>
+<li><code>static</code> — JVM calls it without creating an object first.</li>
+<li><code>void</code> — it returns nothing.</li>
+<li><code>String[] args</code> — command-line arguments land here.</li>
+</ul>
+<div class="scene"><h3>▶ Watch: the JVM find its starting point</h3>
+<div class="steps">
+<div class="step"><b>1 · Load</b>JVM loads the Hello class.</div>
+<div class="step"><b>2 · Look</b>It searches for public static void main(String[] args) — exactly that signature.</div>
+<div class="step"><b>3 · Enter</b>Found — execution begins at main, no object needed.</div>
+<div class="step"><b>4 · Print</b>System.out.println writes “Hello, Java!”.</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>If <code>main</code> is not <code>public static void main(String[] args)</code>, the JVM simply cannot find the starting point.</div>
+</section>
+
+<section class="topic" id="s4" style="--acc:#b45309">
+<span class="num">Section 4</span><h2>Variables and Data Types</h2>
+<p>Java has <b>8 primitive types</b>. Everything else is a reference type (objects, arrays, Strings).</p>
+<table>
+<tr><th>Type</th><th>Size</th><th>Example</th><th>Type</th><th>Size</th><th>Example</th></tr>
+<tr><td>byte</td><td>1 byte</td><td>100</td><td>float</td><td>4 bytes</td><td>3.5f</td></tr>
+<tr><td>short</td><td>2 bytes</td><td>3000</td><td>double</td><td>8 bytes</td><td>3.14159</td></tr>
+<tr><td>int</td><td>4 bytes</td><td>100000</td><td>char</td><td>2 bytes</td><td>'A'</td></tr>
+<tr><td>long</td><td>8 bytes</td><td>9876543210L</td><td>boolean</td><td>—</td><td>true / false</td></tr>
+</table>
+<pre><code><span class="kw">int</span> premium = <span class="num2">12000</span>;
+<span class="kw">double</span> rate = <span class="num2">0.18</span>;
+<span class="kw">int</span> total = premium / <span class="num2">5</span>;      <span class="cm">// 2400 — fine</span>
+<span class="kw">int</span> odd = <span class="num2">7</span> / <span class="num2">2</span>;              <span class="cm">// 3, NOT 3.5 — integer division drops the fraction</span>
+<span class="kw">double</span> exact = <span class="num2">7.0</span> / <span class="num2">2</span>;        <span class="cm">// 3.5 — one double makes the whole division double</span>
+<span class="kw">double</span> widened = premium;     <span class="cm">// widening: int → double, automatic &amp; safe</span>
+<span class="kw">int</span> narrowed = (<span class="kw">int</span>) rate;      <span class="cm">// narrowing: needs an explicit cast, fraction is lost</span></code></pre>
+<div class="scene"><h3>▶ Watch: integer division lose its fraction</h3>
+<div class="steps">
+<div class="step"><b>7 / 2, both int</b>True answer would be 3.5…</div>
+<div class="step"><b>int result</b>An int cannot hold .5, so it is dropped → 3.</div>
+<div class="step"><b>7.0 / 2</b>One side is now double…</div>
+<div class="step"><b>double result</b>3.5 — the fraction survives ✓</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b><code>7 / 2</code> is <code>3</code> in Java — when both sides are <code>int</code>, the decimal part is thrown away. Make one side a <code>double</code> to keep it.</div>
+</section>
+
+<section class="topic" id="s5" style="--acc:#7c3aed">
+<span class="num">Section 5</span><h2>Input and Output</h2>
+<p>Three common ways to read input: <b>Scanner</b> (easiest, parses numbers for you), <b>BufferedReader</b> (faster, reads lines as text), and formatted output with <code>printf</code>.</p>
+<pre><code><span class="kw">import</span> java.util.Scanner;
+
+<span class="tp">Scanner</span> sc = <span class="kw">new</span> <span class="tp">Scanner</span>(<span class="tp">System</span>.in);
+<span class="tp">System</span>.out.<span class="fn">print</span>(<span class="str">"Name: "</span>);
+<span class="tp">String</span> name = sc.<span class="fn">nextLine</span>();
+<span class="tp">System</span>.out.<span class="fn">print</span>(<span class="str">"Age: "</span>);
+<span class="kw">int</span> age = sc.<span class="fn">nextInt</span>();
+<span class="tp">System</span>.out.<span class="fn">printf</span>(<span class="str">"Name: %s, Age: %d%n"</span>, name, age);  <span class="cm">// %s=String, %d=int, %n=new line</span></code></pre>
+<p class="big">Output: <code>Name: Aarav, Age: 27</code> — the Name/Age demo from the carousel.</p>
+<div class="scene"><h3>▶ Watch: the Name/Age demo run</h3>
+<div class="steps">
+<div class="step"><b>Prompt</b>Program prints “Name: ” and waits.</div>
+<div class="step"><b>nextLine()</b>User types Aarav — stored as a String.</div>
+<div class="step"><b>nextInt()</b>User types 27 — Scanner converts it to an int.</div>
+<div class="step"><b>printf</b>%s and %d slots fill in → “Name: Aarav, Age: 27”.</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>Scanner parses types for you (<code>nextInt</code>, <code>nextDouble</code>); BufferedReader only gives you Strings, which you convert yourself.</div>
+</section>
+
+<section class="topic" id="s6" style="--acc:#be185d">
+<span class="num">Section 6</span><h2>Operators and Expressions</h2>
+<table>
+<tr><th>Family</th><th>Operators</th><th>Watch out for</th></tr>
+<tr><td>Arithmetic</td><td>+ − * / %</td><td>% is remainder: 10 % 3 = 1</td></tr>
+<tr><td>Relational</td><td>== != &gt; &lt; &gt;= &lt;=</td><td>== compares, = assigns</td></tr>
+<tr><td>Logical</td><td>&amp;&amp; || !</td><td>&amp;&amp; and || short-circuit — second side may never run</td></tr>
+<tr><td>Bitwise</td><td>&amp; | ^ ~ &lt;&lt; &gt;&gt;</td><td>Works on bits: 5 &amp; 3 = 1 (101 &amp; 011)</td></tr>
+<tr><td>Increment</td><td>++ −−</td><td>++x adds before use; x++ adds after use</td></tr>
+</table>
+<p><b>Precedence:</b> brackets first, then <code>* / %</code>, then <code>+ −</code>, then comparisons, then <code>&amp;&amp;</code>, then <code>||</code>. So <code>2 + 3 * 4</code> is <code>14</code>, not 20.</p>
+<div class="scene"><h3>▶ Watch: precedence solve 2 + 3 * 4</h3>
+<div class="steps">
+<div class="step"><b>Scan</b>Operators present: + and *.</div>
+<div class="step"><b>* goes first</b>3 * 4 = 12.</div>
+<div class="step"><b>Then +</b>2 + 12 = 14.</div>
+<div class="step"><b>Not 20</b>Left-to-right guessing would give (2+3)*4 — wrong without brackets.</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>When precedence is even slightly in doubt, add brackets — they cost nothing and remove the argument entirely.</div>
+</section>
+
+<section class="topic" id="s7" style="--acc:#0369a1">
+<span class="num">Section 7</span><h2>Conditional Statements</h2>
+<pre><code><span class="kw">int</span> marks = <span class="num2">82</span>;
+<span class="tp">String</span> grade;
+<span class="kw">if</span> (marks &gt;= <span class="num2">90</span>)      grade = <span class="str">"A"</span>;
+<span class="kw">else if</span> (marks &gt;= <span class="num2">75</span>) grade = <span class="str">"B"</span>;   <span class="cm">// 82 lands here</span>
+<span class="kw">else</span>                 grade = <span class="str">"C"</span>;
+
+<span class="cm">// Same decision, one line — the ternary operator:</span>
+<span class="tp">String</span> result = (marks &gt;= <span class="num2">40</span>) ? <span class="str">"Pass"</span> : <span class="str">"Fail"</span>;
+
+<span class="cm">// switch — best when testing one value against many fixed options:</span>
+<span class="kw">switch</span> (grade) {
+    <span class="kw">case</span> <span class="str">"A"</span> -&gt; <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"Excellent"</span>);
+    <span class="kw">case</span> <span class="str">"B"</span> -&gt; <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"Good"</span>);
+    <span class="kw">default</span>  -&gt; <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"Keep going"</span>);
+}</code></pre>
+<div class="scene"><h3>▶ Watch: the grade example decide</h3>
+<div class="steps">
+<div class="step"><b>marks = 82</b>Start with the value.</div>
+<div class="step"><b>82 &gt;= 90?</b>No — move to the next branch.</div>
+<div class="step"><b>82 &gt;= 75?</b>Yes — grade = "B", chain stops.</div>
+<div class="step"><b>Ternary check</b>82 &gt;= 40 → result = "Pass".</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>An if-else chain stops at the first true branch — order your conditions from most specific to most general.</div>
+</section>
+
+<section class="topic" id="s8" style="--acc:#0f766e">
+<span class="num">Section 8</span><h2>Loops and Repetition</h2>
+<ul>
+<li><b>for</b> — when you know how many times: counting, arrays.</li>
+<li><b>while</b> — when you stop on a condition: reading until end of data.</li>
+<li><b>do-while</b> — runs at least once, then checks: menus, retry prompts.</li>
+<li><b>break</b> exits the loop; <b>continue</b> skips to the next round.</li>
+</ul>
+<pre><code><span class="kw">int</span> sum = <span class="num2">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num2">1</span>; i &lt;= <span class="num2">5</span>; i++) {
+    sum += i;               <span class="cm">// 1, 3, 6, 10, 15</span>
+}
+<span class="tp">System</span>.out.<span class="fn">println</span>(sum);    <span class="cm">// 15</span></code></pre>
+<div class="scene"><h3>▶ Watch: the sum build up, round by round</h3>
+<div class="steps">
+<div class="step"><b>i = 1</b>sum = 0 + 1 = 1</div>
+<div class="step"><b>i = 2</b>sum = 1 + 2 = 3</div>
+<div class="step"><b>i = 3</b>sum = 3 + 3 = 6</div>
+<div class="step"><b>i = 4</b>sum = 6 + 4 = 10</div>
+<div class="step"><b>i = 5</b>sum = 10 + 5 = 15 ✓</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>for = known count, while = unknown count, do-while = at least once. Pick by the question, not by habit.</div>
+</section>
+
+<section class="topic" id="s9" style="--acc:#a21caf">
+<span class="num">Section 9</span><h2>Arrays — and Two-Dimensional Arrays</h2>
+<p>An array holds many values of one type under one name, addressed by index — and <b>indexing starts at 0</b>.</p>
+<pre><code><span class="kw">int</span>[] marks = {<span class="num2">78</span>, <span class="num2">85</span>, <span class="num2">92</span>, <span class="num2">66</span>, <span class="num2">74</span>};
+<span class="kw">int</span> total = <span class="num2">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> m : marks) total += m;          <span class="cm">// enhanced for — no index needed</span>
+<span class="kw">double</span> avg = (<span class="kw">double</span>) total / marks.length; <span class="cm">// 79.0</span>
+
+<span class="kw">int</span>[][] jagged = { {<span class="num2">1</span>, <span class="num2">2</span>}, {<span class="num2">3</span>, <span class="num2">4</span>, <span class="num2">5</span>} };  <span class="cm">// rows can have different lengths</span>
+<span class="tp">Arrays</span>.<span class="fn">sort</span>(marks);                     <span class="cm">// java.util.Arrays: sort, toString, binarySearch…</span></code></pre>
+<p>A <b>2D array</b> is an array of arrays — think rows and columns, like a marks sheet or a test-data table. You walk it with <b>nested loops</b>: outer loop for rows, inner loop for columns.</p>
+<pre><code><span class="kw">int</span>[][] sheet = { {<span class="num2">80</span>, <span class="num2">90</span>}, {<span class="num2">70</span>, <span class="num2">60</span>} };
+<span class="kw">for</span> (<span class="kw">int</span> r = <span class="num2">0</span>; r &lt; sheet.length; r++)
+    <span class="kw">for</span> (<span class="kw">int</span> c = <span class="num2">0</span>; c &lt; sheet[r].length; c++)
+        <span class="tp">System</span>.out.<span class="fn">print</span>(sheet[r][c] + <span class="str">" "</span>);</code></pre>
+<div class="scene"><h3>▶ Watch: reading a 2D array, cell by cell</h3>
+<div class="steps">
+<div class="step"><b>[0][0] = 80</b>Row 0, column 0.</div>
+<div class="step"><b>[0][1] = 90</b>Inner loop finishes row 0.</div>
+<div class="step"><b>[1][0] = 70</b>Outer loop moves to row 1.</div>
+<div class="step"><b>[1][1] = 60</b>Done — row by row, left to right.</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b><code>marks.length</code> is a field (no brackets) for arrays — but <code>name.length()</code> is a method for Strings. Mixing them up is a classic exam trap.</div>
+</section>
+
+<section class="topic" id="s10" style="--acc:#dc2626">
+<span class="num">Section 10</span><h2>Strings — and a Palindrome Practice</h2>
+<p>Strings in Java are <b>immutable</b>: once created, the text never changes. Every “modification” quietly creates a new String. That is why repeated joining in a loop should use <b>StringBuilder</b> — one mutable object, no pile of copies.</p>
+<pre><code><span class="tp">String</span> a = <span class="str">"Policy"</span>;
+<span class="tp">String</span> b = <span class="str">"Policy"</span>;
+a == b;              <span class="cm">// true here (same pool object) — but never rely on it</span>
+a.<span class="fn">equals</span>(b);        <span class="cm">// true — THIS is how you compare text</span>
+<span class="kw">new</span> <span class="tp">String</span>(<span class="str">"Policy"</span>) == a;  <span class="cm">// false! Different object, same text. equals() still true.</span>
+
+<span class="tp">StringBuilder</span> sb = <span class="kw">new</span> <span class="tp">StringBuilder</span>(<span class="str">"madam"</span>);
+<span class="tp">String</span> rev = sb.<span class="fn">reverse</span>().<span class="fn">toString</span>();      <span class="cm">// "madam"</span>
+<span class="kw">boolean</span> palindrome = <span class="str">"madam"</span>.<span class="fn">equals</span>(rev);  <span class="cm">// true</span></code></pre>
+<div class="scene"><h3>▶ Watch: palindrome check with StringBuilder.reverse()</h3>
+<div class="steps">
+<div class="step"><b>Original</b>"madam"</div>
+<div class="step"><b>Reverse</b>StringBuilder flips it → "madam"</div>
+<div class="step"><b>Compare with equals()</b>Both texts match…</div>
+<div class="step"><b>Result</b>Palindrome ✓ (try "level" ✓, "policy" ✗)</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b><code>==</code> asks “same object?”; <code>equals()</code> asks “same text?”. For Strings, you almost always mean equals().</div>
+</section>
+
+<section class="topic" id="s11" style="--acc:#4d7c0f">
+<span class="num">Section 11</span><h2>Methods and Parameter Passing</h2>
+<p>Java is always <b>pass-by-value</b>: a method receives a <i>copy</i>. For primitives the copy is the number itself; for objects the copy is the reference — so the method can change the object's fields, but cannot swap your variable to a different object.</p>
+<pre><code><span class="kw">static int</span> <span class="fn">premium</span>(<span class="kw">int</span> cover) { <span class="kw">return</span> cover / <span class="num2">100</span>; }
+<span class="kw">static int</span> <span class="fn">premium</span>(<span class="kw">int</span> cover, <span class="kw">int</span> riders) { <span class="kw">return</span> cover / <span class="num2">100</span> + riders * <span class="num2">500</span>; } <span class="cm">// overloading: same name, different parameters</span>
+
+<span class="kw">static int</span> <span class="fn">total</span>(<span class="kw">int</span>... amounts) {          <span class="cm">// varargs: any number of ints, arrives as an array</span>
+    <span class="kw">int</span> s = <span class="num2">0</span>; <span class="kw">for</span> (<span class="kw">int</span> a : amounts) s += a; <span class="kw">return</span> s;
+}
+<span class="fn">total</span>(<span class="num2">100</span>, <span class="num2">200</span>, <span class="num2">300</span>);  <span class="cm">// 600</span>
+
+<span class="kw">static int</span> <span class="fn">fact</span>(<span class="kw">int</span> n) {              <span class="cm">// recursion: a method that calls itself</span>
+    <span class="kw">return</span> (n &lt;= <span class="num2">1</span>) ? <span class="num2">1</span> : n * <span class="fn">fact</span>(n - <span class="num2">1</span>);   <span class="cm">// fact(5) = 120 — base case stops the chain</span>
+}</code></pre>
+<div class="scene"><h3>▶ Watch: recursion unwind fact(5)</h3>
+<div class="steps">
+<div class="step"><b>Call down</b>fact(5) → 5 × fact(4) → 4 × fact(3) → 3 × fact(2)…</div>
+<div class="step"><b>Base case</b>fact(1) = 1 — the chain stops here.</div>
+<div class="step"><b>Multiply back up</b>2 × 1 = 2, 3 × 2 = 6, 4 × 6 = 24…</div>
+<div class="step"><b>Answer</b>5 × 24 = 120 ✓</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>Overloading = same name, different parameter list, decided at compile time. Every recursive method needs a base case, or it recurses until StackOverflowError.</div>
+</section>
+
+<section class="topic" id="s12" style="--acc:#9333ea">
+<span class="num">Section 12</span><h2>Classes and Objects</h2>
+<p>A <b>class</b> is the blueprint; an <b>object</b> is a house built from it. Fields hold state, methods hold behaviour, and a <b>constructor</b> sets the starting state — it has the class's name and no return type.</p>
+<pre><code><span class="kw">public class</span> <span class="tp">Student</span> {
+    <span class="kw">private</span> <span class="tp">String</span> name;          <span class="cm">// private = encapsulated, no direct outside access</span>
+    <span class="kw">private int</span> marks;
+
+    <span class="kw">public</span> <span class="fn">Student</span>(<span class="tp">String</span> name, <span class="kw">int</span> marks) {   <span class="cm">// constructor</span>
+        <span class="kw">this</span>.name = name;  <span class="kw">this</span>.marks = marks;
+    }
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">getName</span>() { <span class="kw">return</span> name; }        <span class="cm">// getter</span>
+    <span class="kw">public void</span> <span class="fn">setMarks</span>(<span class="kw">int</span> m) { <span class="kw">if</span> (m &gt;= <span class="num2">0</span> &amp;&amp; m &lt;= <span class="num2">100</span>) marks = m; } <span class="cm">// setter validates</span>
+}
+<span class="tp">Student</span> s = <span class="kw">new</span> <span class="tp">Student</span>(<span class="str">"Aarav"</span>, <span class="num2">82</span>);</code></pre>
+<table>
+<tr><th>Modifier</th><th>Same class</th><th>Same package</th><th>Subclass</th><th>Everywhere</th></tr>
+<tr><td>private</td><td>✓</td><td>✗</td><td>✗</td><td>✗</td></tr>
+<tr><td>default (none)</td><td>✓</td><td>✓</td><td>✗</td><td>✗</td></tr>
+<tr><td>protected</td><td>✓</td><td>✓</td><td>✓</td><td>✗</td></tr>
+<tr><td>public</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+</table>
+<div class="scene"><h3>▶ Watch: an object being born</h3>
+<div class="steps">
+<div class="step"><b>new Student(...)</b>Memory is allocated for one object.</div>
+<div class="step"><b>Constructor runs</b>name = "Aarav", marks = 82 are set via this.</div>
+<div class="step"><b>setMarks(140)?</b>Setter rejects it — outside 0–100, old value stays.</div>
+<div class="step"><b>getName()</b>Outside code reads safely, never touches the field directly.</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>Keep fields private and open the door only through getters/setters — the setter is where bad data gets stopped.</div>
+</section>
+
+<section class="topic" id="s13" style="--acc:#0891b2">
+<span class="num">Section 13</span><h2>The Four Principles of OOP</h2>
+<div class="grid">
+<div class="cell"><b>Encapsulation</b><span>Hide the data, expose controlled methods. Private fields + getters/setters.</span></div>
+<div class="cell"><b>Inheritance</b><span>Child class reuses and extends a parent. <code>extends</code>, IS-A relationship.</span></div>
+<div class="cell"><b>Polymorphism</b><span>One name, many forms — overloading and overriding.</span></div>
+<div class="cell"><b>Abstraction</b><span>Show what it does, hide how. Abstract classes and interfaces.</span></div>
+</div>
+<p class="big">A Page Object class is all four at once: locators stay <b>private</b> (encapsulation), pages <b>extend</b> a BasePage (inheritance), the same <code>click()</code> helper behaves per page (polymorphism), and test code calls <code>loginPage.login(user, pass)</code> without knowing the steps inside (abstraction).</p>
+<div class="scene"><h3>▶ Watch: one login, four principles</h3>
+<div class="steps">
+<div class="step"><b>Encapsulation</b>Locators stay private inside LoginPage.</div>
+<div class="step"><b>Inheritance</b>LoginPage extends BasePage and reuses its waits.</div>
+<div class="step"><b>Abstraction</b>Test calls login(user, pass) — steps stay hidden.</div>
+<div class="step"><b>Polymorphism</b>The same helper calls behave correctly on every page.</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>Encapsulation hides data, Abstraction hides complexity — same family, different hiding.</div>
+</section>
+
+<section class="topic" id="s14" style="--acc:#65a30d">
+<span class="num">Section 14</span><h2>Inheritance and Composition</h2>
+<pre><code><span class="kw">class</span> <span class="tp">Policy</span> {
+    <span class="kw">protected int</span> sumAssured;
+    <span class="kw">void</span> <span class="fn">showStatus</span>() { <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"Inforce"</span>); }
+}
+<span class="kw">class</span> <span class="tp">TermPolicy</span> <span class="kw">extends</span> <span class="tp">Policy</span> {        <span class="cm">// IS-A: a TermPolicy IS-A Policy</span>
+    <span class="tp">TermPolicy</span>(<span class="kw">int</span> cover) { <span class="kw">super</span>(); <span class="kw">this</span>.sumAssured = cover; }  <span class="cm">// super() calls the parent constructor, must be first line</span>
+}</code></pre>
+<p><b>Composition</b> is the HAS-A alternative: a class holds an object of another class as a field — a <code>Car</code> <i>has an</i> <code>Engine</code>, a <code>Policy</code> <i>has a</i> <code>Nominee</code>. Prefer composition when there is no true IS-A link: it is looser, easier to change, and avoids deep inheritance chains.</p>
+<div class="scene"><h3>▶ Watch: creating a TermPolicy</h3>
+<div class="steps">
+<div class="step"><b>new TermPolicy(500000)</b>Child constructor starts.</div>
+<div class="step"><b>super() first</b>The Policy part is built before anything else.</div>
+<div class="step"><b>Then the child</b>sumAssured is set to the cover passed in.</div>
+<div class="step"><b>Inherited free</b>showStatus() from Policy already works on it.</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>Ask “IS-A or HAS-A?” first. Inheritance for IS-A, composition for HAS-A — and Java allows only one <code>extends</code>, but unlimited composition.</div>
+</section>
+
+<section class="topic" id="s15" style="--acc:#d97706">
+<span class="num">Section 15</span><h2>Polymorphism and Dispatch</h2>
+<table>
+<tr><th></th><th>Compile-time (overloading)</th><th>Runtime (overriding)</th></tr>
+<tr><td><b>Where</b></td><td>Same class, different parameters</td><td>Child class redefines a parent method</td></tr>
+<tr><td><b>Decided</b></td><td>By the compiler, from the arguments</td><td>By the JVM, from the actual object</td></tr>
+<tr><td><b>Example</b></td><td><code>print(int)</code> vs <code>print(String)</code></td><td><code>driver.get(url)</code> behaving per browser</td></tr>
+</table>
+<pre><code><span class="tp">WebDriver</span> driver = <span class="kw">new</span> <span class="tp">ChromeDriver</span>();  <span class="cm">// upcasting: child object in a parent (interface) reference</span>
+driver.<span class="fn">get</span>(<span class="str">"https://example.com"</span>);          <span class="cm">// ChromeDriver's own get() runs — runtime dispatch</span>
+<span class="tp">ChromeDriver</span> cd = (<span class="tp">ChromeDriver</span>) driver;    <span class="cm">// downcasting: explicit cast back; wrong cast = ClassCastException</span></code></pre>
+<div class="scene"><h3>▶ Watch: runtime dispatch pick the right method</h3>
+<div class="steps">
+<div class="step"><b>Reference type</b>WebDriver — the promise.</div>
+<div class="step"><b>Actual object</b>ChromeDriver — the reality.</div>
+<div class="step"><b>Call: driver.get()</b>JVM looks at the object, not the reference…</div>
+<div class="step"><b>Runs</b>ChromeDriver.get() ✓ — swap in FirefoxDriver and the same line just works.</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>Overriding is decided by the object at runtime — that is exactly why <code>WebDriver driver = new ChromeDriver()</code> is the most-used line in Selenium.</div>
+</section>
+
+<section class="topic" id="s16" style="--acc:#2563eb">
+<span class="num">Section 16</span><h2>Abstraction and Interfaces</h2>
+<table>
+<tr><th></th><th>Abstract class</th><th>Interface</th></tr>
+<tr><td><b>Methods</b></td><td>Abstract + concrete (shared code allowed)</td><td>Abstract by default; default/static methods since Java 8</td></tr>
+<tr><td><b>Fields</b></td><td>Any kind, incl. instance state</td><td>Only public static final constants</td></tr>
+<tr><td><b>How many?</b></td><td>Extend only one</td><td>Implement many</td></tr>
+<tr><td><b>Use when</b></td><td>Classes share state + behaviour</td><td>Classes share only a capability/contract</td></tr>
+</table>
+<pre><code><span class="kw">interface</span> <span class="tp">Payable</span> { <span class="kw">double</span> <span class="fn">amountPayable</span>(); }   <span class="cm">// the contract from the carousel</span>
+
+<span class="kw">class</span> <span class="tp">Invoice</span> <span class="kw">implements</span> <span class="tp">Payable</span> {
+    <span class="kw">public double</span> <span class="fn">amountPayable</span>() { <span class="kw">return</span> <span class="num2">12500.0</span>; }
+}
+<span class="kw">class</span> <span class="tp">PremiumNotice</span> <span class="kw">implements</span> <span class="tp">Payable</span> {
+    <span class="kw">public double</span> <span class="fn">amountPayable</span>() { <span class="kw">return</span> <span class="num2">12000.0</span>; }  <span class="cm">// same contract, own calculation</span>
+}</code></pre>
+<div class="scene"><h3>▶ Watch: one contract, two implementations</h3>
+<div class="steps">
+<div class="step"><b>Contract</b>Payable promises amountPayable().</div>
+<div class="step"><b>Invoice signs it</b>Its version returns 12,500.</div>
+<div class="step"><b>PremiumNotice signs it</b>Its version returns 12,000.</div>
+<div class="step"><b>Caller stays simple</b>Code asks any Payable for its amount — no type checks.</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>An abstract class says “we are the same kind of thing”; an interface says “we can all do this one thing” — a class can promise many interfaces.</div>
+</section>
+
+<section class="topic" id="s17" style="--acc:#57534e">
+<span class="num">Section 17</span><h2>Packages and Access Modifiers</h2>
+<p>A <b>package</b> is a folder for related classes — it prevents name clashes and controls access. The <code>package</code> line is the first line of the file, and the folder structure must match it.</p>
+<pre><code><span class="kw">package</span> com.aevi.tests;                 <span class="cm">// this file lives in com/aevi/tests/</span>
+
+<span class="kw">import</span> org.testng.annotations.Test;     <span class="cm">// borrow one class…</span>
+<span class="kw">import</span> java.util.*;                     <span class="cm">// …or a whole package</span>
+
+<span class="kw">public class</span> <span class="tp">PolicyTest</span> {
+    <span class="an">@Test</span> <span class="kw">public void</span> <span class="fn">verifyPremium</span>() { <span class="cm">/* … */</span> }
+}</code></pre>
+<p><b>Protected, once more, carefully:</b> a <code>protected</code> member is visible inside its own package to everyone, and outside the package <i>only to subclasses</i> — which is why framework base classes (driver setup, waits) declare shared members <code>protected</code>: every test class that extends the base can use them, nothing else can.</p>
+<div class="scene"><h3>▶ Watch: a test class find everything it needs</h3>
+<div class="steps">
+<div class="step"><b>package line</b>PolicyTest declares its address: com.aevi.tests.</div>
+<div class="step"><b>import lines</b>TestNG's @Test is borrowed into the file.</div>
+<div class="step"><b>protected at work</b>It extends the base class, so protected driver setup is visible.</div>
+<div class="step"><b>Run</b>verifyPremium() executes with everything resolved.</div>
+</div>
+<div class="ctl"><button data-play>Play</button><button class="ghost" data-replay>Replay</button></div></div>
+<div class="remember"><b>Remember</b>Package = address, import = directions, access modifier = who is allowed through the door.</div>
+</section>
+
+<section class="topic" id="revision" style="--acc:#111111">
+<span class="num">Final section</span><h2>Quick-Revision Grid</h2>
+<div class="grid">
+<div class="cell"><b>Bytecode</b><span>Compiled .class output; what the JVM runs.</span></div>
+<div class="cell"><b>JVM / JRE / JDK</b><span>Runs it / runs + libraries / develops — JDK ⊃ JRE ⊃ JVM.</span></div>
+<div class="cell"><b>8 primitives</b><span>byte, short, int, long, float, double, char, boolean.</span></div>
+<div class="cell"><b>Integer division</b><span>7 / 2 = 3 — fraction dropped for int ÷ int.</span></div>
+<div class="cell"><b>Widening vs narrowing</b><span>int→double automatic; double→int needs a cast.</span></div>
+<div class="cell"><b>Short-circuit</b><span>&amp;&amp; and || may skip the right-hand side.</span></div>
+<div class="cell"><b>Ternary</b><span>condition ? valueIfTrue : valueIfFalse.</span></div>
+<div class="cell"><b>do-while</b><span>Only loop guaranteed to run at least once.</span></div>
+<div class="cell"><b>break / continue</b><span>Exit the loop / skip to the next round.</span></div>
+<div class="cell"><b>length vs length()</b><span>Array field, no brackets / String method, with brackets.</span></div>
+<div class="cell"><b>Jagged array</b><span>2D array whose rows have different lengths.</span></div>
+<div class="cell"><b>Immutable String</b><span>Never changes; edits create new objects.</span></div>
+<div class="cell"><b>equals() vs ==</b><span>Same text vs same object.</span></div>
+<div class="cell"><b>StringBuilder</b><span>Mutable text; append, reverse — use in loops.</span></div>
+<div class="cell"><b>Pass-by-value</b><span>Always. Methods get copies, never the original variable.</span></div>
+<div class="cell"><b>Varargs</b><span>int... — any count of arguments, arrives as an array.</span></div>
+<div class="cell"><b>Constructor</b><span>Class name, no return type, runs on new.</span></div>
+<div class="cell"><b>this / super</b><span>Current object / parent class members &amp; constructor.</span></div>
+<div class="cell"><b>Encapsulation</b><span>Private fields + public getters/setters.</span></div>
+<div class="cell"><b>IS-A vs HAS-A</b><span>Inheritance vs composition.</span></div>
+<div class="cell"><b>Overload / Override</b><span>Compile-time, same class / runtime, child class.</span></div>
+<div class="cell"><b>Upcasting</b><span>Child object in a parent reference — safe, automatic.</span></div>
+<div class="cell"><b>Abstract class</b><span>Shared state + code; extend one only.</span></div>
+<div class="cell"><b>Interface</b><span>Pure contract; implement many.</span></div>
+<div class="cell"><b>protected</b><span>Own package + subclasses anywhere.</span></div>
+<div class="cell"><b>package / import</b><span>Declares the folder / borrows classes into the file.</span></div>
+</div>
+<div class="remember"><b>Remember</b>Revise this grid the morning of an interview — every cell is a one-line answer to a real question.</div>
+</section>
+
+<section class="topic" id="interview" style="--acc:#991b1b">
+<span class="num">Final section</span><h2>Interview Answers — In Your Own Words</h2>
+<p>Short model answers framed the way an SDET actually uses Java. Practise saying them out loud.</p>
+
+<div class="qa"><h3>1. Why is Java platform-independent?</h3>
+<p>“Java source compiles to bytecode, not machine code. Any operating system with a JVM can run that same bytecode, so I write and compile once and the program — or my test suite — runs on Windows, Linux or a CI machine unchanged.”</p></div>
+
+<div class="qa"><h3>2. == vs equals() — when does it matter in testing?</h3>
+<p>“== compares object references; equals() compares content. When I read text from a web page with getText() and compare it with expected data, I always use equals() — == can fail even when the visible text is identical, because the two Strings are different objects.”</p></div>
+
+<div class="qa"><h3>3. Where do you use OOP in your Selenium framework?</h3>
+<p>“All four principles, daily. Encapsulation: Page Object classes keep locators private and expose only actions like login(). Inheritance: all test classes extend a BaseTest that holds driver setup and teardown. Polymorphism: WebDriver driver = new ChromeDriver() — the interface reference lets me switch browsers without changing test code. Abstraction: tests call business-level methods and never see the click-and-type steps inside.”</p></div>
+
+<div class="qa"><h3>4. Overloading vs overriding — one example each.</h3>
+<p>“Overloading is compile-time: my utility class has enterText(field, String) and enterText(field, int) — the compiler picks by argument type. Overriding is runtime: a subclass redefines a parent method, like a page class overriding a common wait behaviour. Overriding is also what makes the WebDriver interface work across browsers.”</p></div>
+
+<div class="qa"><h3>5. How do you handle lots of test data in Java?</h3>
+<p>“Small fixed sets go in arrays or a TestNG DataProvider as Object[][]. For readable, key-based data I use collections — List for ordered rows, Map for field-name-to-value pairs from a policy record, Set when duplicates must be rejected. Strings from the application are compared with equals(), and anything I build repeatedly in a loop uses StringBuilder.”</p></div>
+
+<div class="qa"><h3>6. Abstract class or interface — how do you choose?</h3>
+<p>“If classes share state and common code, an abstract class — my BasePage holds the driver and shared waits. If unrelated classes only share a capability, an interface — WebDriver itself is an interface, which is why ChromeDriver, FirefoxDriver and EdgeDriver can all be used through one reference type. A class extends one class but can implement many interfaces.”</p></div>
+
+<div class="remember"><b>Remember</b>Interviewers for SDET roles don't want textbook Java — they want Java with a framework attached. Always land the answer on a line of code you have actually written.</div>
+</section>
+
+<footer>Based on “Java Programming: Complete Beginner to Advanced Study Notes” by Ez Tech Explains · Created with ♡ by Aevi</footer>
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function runScene(scene){
+    var steps = scene.querySelectorAll('.step');
+    steps.forEach(function(s){ s.classList.remove('on'); });
+    if (reduce){ steps.forEach(function(s){ s.classList.add('on'); }); return; }
+    var i = 0;
+    function next(){
+      if (i >= steps.length) return;
+      steps[i].classList.add('on'); i++;
+      setTimeout(next, 850);
+    }
+    setTimeout(next, 150);
+  }
+  document.querySelectorAll('.scene').forEach(function(scene){
+    var play = scene.querySelector('[data-play]');
+    var replay = scene.querySelector('[data-replay]');
+    if (play) play.addEventListener('click', function(){ runScene(scene); });
+    if (replay) replay.addEventListener('click', function(){ runScene(scene); });
+  });
+})();
+</script>
+</body>
+</html>
