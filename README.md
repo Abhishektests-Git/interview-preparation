@@ -67,6 +67,16 @@ Abhishek's SDET interview preparation — interactive explainers and study guide
   testers — 25 animated sections with a 29-term revision grid and
   six model interview answers. Self-contained: learn the whole
   topic from this one page.
+- **`sql-fundamentals-animated-notes.html`** — SQL Fundamentals
+  Animated Notes: study notes from the "SQL 500 Interview Questions,
+  Part 1" carousel (Q1–39) — why not SELECT *, the data-type
+  families, the INT family, CHAR vs VARCHAR, DECIMAL vs FLOAT
+  (money is always DECIMAL), date/time types and the timezone trap,
+  a full NULL section (NULL = UNKNOWN, three-valued logic, why
+  WHERE <> silently drops NULL rows), COALESCE and NULLIF, casting,
+  collation and Unicode, LIKE patterns, and ORDER BY with NULLs —
+  all with animated scenes, examples on a POLICIES table, a
+  21-card revision grid and five model interview answers.
 
 ## Live
 
@@ -81,6 +91,7 @@ GitHub Pages: https://abhishektests-git.github.io/interview-preparation/
 - Docker notes (PDF): https://abhishektests-git.github.io/interview-preparation/Docker_Notes.pdf
 - Gen AI & LLMs animated explainer: https://abhishektests-git.github.io/interview-preparation/genai-llm-animated-explainer.html
 - Gen AI & LLM complete study notes: https://abhishektests-git.github.io/interview-preparation/genai-llm-complete-notes.html
+- SQL fundamentals animated notes: https://abhishektests-git.github.io/interview-preparation/sql-fundamentals-animated-notes.html
 
 ## About
 
