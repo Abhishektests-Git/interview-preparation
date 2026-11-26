@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>SQL Fundamentals Animated Notes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2rem; }
+      * { box-sizing: border-box; }
+      :root {
+        --bg: #f2f4fa;
+        --card: #ffffff;
+        --card2: #eef1f9;
+        --ink: #141d33;
+        --muted: #46536e;
+        --line: #d7ddef;
+        --code-bg: #1e1e1e;
+        --shadow: 0 10px 30px rgba(20, 29, 51, .08);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0c101d;
+          --card: #161d31;
+          --card2: #1c2440;
+          --ink: #eef1fb;
+          --muted: #a9b4d0;
+          --line: #2b3554;
+          --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+        }
+      }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", sans-serif;
+        font-size: 16px;
+        line-height: 1.55;
+      }
+      h1, h2, h3 { font-family: "Sora", "Segoe UI", system-ui, sans-serif; line-height: 1.2; margin: 0; }
+      .wrap { max-width: 880px; margin: 0 auto; padding: 0 18px 40px; }
+
+      /* ---------- Hero ---------- */
+      .hero { padding: 34px 0 8px; }
+      .hero .tag {
+        display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 13px; font-weight: 700;
+        letter-spacing: .06em; padding: 6px 12px; border-radius: 999px;
+        background: #ffe9d6; color: #8a4a00; border: 1px solid #f5c48a;
+      }
+      @media (prefers-color-scheme: dark) { .hero .tag { background: #3a2a12; color: #ffc98a; border-color: #6b4d1e; } }
+      .hero h1 { font-size: clamp(30px, 6vw, 44px); font-weight: 800; margin: 14px 0 10px; }
+      .hero h1 .hl { color: #e8590c; }
+      .hero p { font-size: 17px; color: var(--muted); max-width: 640px; margin: 0 0 18px; }
+      .hero p strong { color: var(--ink); }
+
+      /* ---------- Code chips (VS Code Dark+ style) ---------- */
+      .code {
+        background: var(--code-bg); color: #d4d4d4; border-radius: 12px;
+        font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 14.5px; line-height: 1.65;
+        padding: 14px 16px; overflow-x: auto; white-space: nowrap; margin: 14px 0;
+        box-shadow: var(--shadow); max-width: 100%;
+      }
+      .code .kw { color: #569cd6; } .code .kw2 { color: #c586c0; }
+      .code .str { color: #ce9178; } .code .num { color: #b5cea8; }
+      .code .fn { color: #dcdcaa; } .code .cm { color: #6a9955; }
+      .code .tp { color: #4ec9b0; } .code .bad { color: #f48771; font-weight: 700; }
+      .code .good { color: #89d185; font-weight: 700; }
+
+      /* ---------- Contents ---------- */
+      .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 6px; }
+      .toc a {
+        display: inline-flex; align-items: center; min-height: 34px; padding: 6px 13px;
+        border-radius: 999px; background: var(--card); border: 1px solid var(--line);
+        color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 600;
+      }
+      .toc a:hover { border-color: var(--ink); }
+
+      /* ---------- Sections ---------- */
+      .sec {
+        background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+        padding: 26px 22px 22px; margin: 26px 0; box-shadow: var(--shadow);
+      }
+      .sec-head { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+      .sec-num {
+        flex: 0 0 auto; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+        font-family: "Sora", sans-serif; font-weight: 800; font-size: 18px; color: #fff;
+        background: var(--acc);
+      }
+      .sec h2 { font-size: clamp(21px, 4.4vw, 27px); font-weight: 700; }
+      .sec h3 { font-size: 18px; font-weight: 700; margin: 20px 0 8px; }
+      .lede { color: var(--muted); font-size: 16.5px; margin: 4px 0 6px; max-width: 680px; }
+      .lede strong, .sec p strong { color: var(--ink); }
+
+      /* ---------- Scenes ---------- */
+      .scene {
+        border: 1.5px dashed var(--line); border-radius: 16px; padding: 16px; margin: 16px 0 6px;
+        background: color-mix(in srgb, var(--acc) 5%, var(--card));
+      }
+      .scene-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+      .play-btn {
+        font-family: "Sora", sans-serif; font-weight: 700; font-size: 15px; cursor: pointer;
+        border: none; border-radius: 999px; padding: 9px 20px; min-height: 40px;
+        background: var(--acc); color: #fff;
+      }
+      .play-btn:active { transform: scale(.97); }
+      .scene-caption { font-size: 15.5px; font-weight: 600; color: var(--ink); margin: 0; flex: 1 1 240px; }
+      .scene [data-step] { transition: opacity .45s ease, box-shadow .45s ease, transform .45s ease; border-radius: 12px; }
+      .scene.playing [data-step] { opacity: .45; }
+      .scene.playing [data-step].active {
+        opacity: 1; transform: translateY(-2px);
+        box-shadow: 0 0 0 3px var(--acc), 0 12px 24px rgba(0,0,0,.14);
+      }
+
+      /* ---------- Generic chips & cards ---------- */
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+      .chip {
+        font-family: "JetBrains Mono", monospace; font-size: 13.5px; font-weight: 600;
+        padding: 7px 12px; border-radius: 9px; background: var(--card2); border: 1px solid var(--line); color: var(--ink);
+      }
+      .chip.heavy { background: #ffe3e3; border-color: #f3a8a8; color: #8f1d1d; }
+      @media (prefers-color-scheme: dark) { .chip.heavy { background: #402022; border-color: #7c3436; color: #ffb3b3; } }
+      .chip.need { background: #d9f6e3; border-color: #8fd3a6; color: #14532d; }
+      @media (prefers-color-scheme: dark) { .chip.need { background: #173626; border-color: #2f6b45; color: #a7e8bd; } }
+      .chip.nullchip { background: #3a3f4d; border-color: #23262f; color: #ffd166; font-weight: 700; }
+      .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      .vs-grid > *, .fam-grid > *, .clocks > *, .logic-chips > * { min-width: 0; }
+      @media (max-width: 640px) { .vs-grid { grid-template-columns: 1fr; } }
+      .vs-card { border: 1.5px solid var(--line); border-radius: 14px; padding: 14px; background: var(--card); }
+      .vs-card h4 { margin: 0 0 4px; font-family: "Sora", sans-serif; font-size: 16px; }
+      .vs-card .sub { font-size: 14px; color: var(--muted); margin: 0 0 10px; }
+      .vs-card.bad { border-color: #f3a8a8; } .vs-card.good { border-color: #8fd3a6; }
+      .points { margin: 12px 0 0; padding-left: 20px; color: var(--muted); font-size: 15.5px; }
+      .points li { margin: 5px 0; } .points strong { color: var(--ink); }
+      .remember {
+        margin-top: 18px; border-radius: 12px; padding: 13px 16px; font-size: 16px;
+        background: color-mix(in srgb, var(--acc) 13%, var(--card));
+        border: 1.5px solid color-mix(in srgb, var(--acc) 45%, var(--card));
+      }
+      .remember strong { font-family: "Sora", sans-serif; }
+      .note-chip {
+        margin-top: 12px; border-radius: 12px; padding: 12px 15px; font-size: 15.5px;
+        background: var(--card2); border: 1px solid var(--line);
+      }
+
+      /* ---------- Family map ---------- */
+      .fam-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+      .fam { border-radius: 14px; padding: 14px; border: 1.5px solid; background: var(--card); }
+      .fam h4 { margin: 0 0 5px; font-family: "Sora", sans-serif; font-size: 16.5px; }
+      .fam p { margin: 0 0 10px; font-size: 14.5px; color: var(--muted); }
+      .fam.f1 { border-color: #f08c00; background: #fff6ea; } .fam.f2 { border-color: #1971c2; background: #ecf5ff; }
+      .fam.f3 { border-color: #2f9e44; background: #ebfbee; } .fam.f4 { border-color: #e64980; background: #fff0f6; }
+      .fam.f5 { border-color: #7048e8; background: #f3f0ff; }
+      @media (prefers-color-scheme: dark) {
+        .fam.f1 { background: #33270f; } .fam.f2 { background: #12283f; } .fam.f3 { background: #12301c; }
+        .fam.f4 { background: #381525; } .fam.f5 { background: #241a47; }
+        .fam p { color: var(--muted); }
+      }
+
+      /* ---------- INT bars ---------- */
+      .bar-row { display: grid; grid-template-columns: 108px 1fr; gap: 12px; align-items: center; margin: 12px 0; padding: 8px; }
+      .bar-row .bname { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 15px; }
+      .bar-row .bmax { display: block; font-size: 12.5px; font-weight: 600; color: var(--muted); margin-top: 2px; }
+      .bar-track { background: var(--card2); border-radius: 8px; height: 40px; position: relative; overflow: hidden; border: 1px solid var(--line); }
+      .bar-fill { height: 100%; border-radius: 8px 0 0 8px; background: var(--acc); display: flex; align-items: center; padding-left: 12px; color: #fff; font-weight: 700; font-size: 14.5px; white-space: nowrap; }
+      @media (max-width: 520px) { .bar-row { grid-template-columns: 88px 1fr; } .bar-fill { font-size: 12.5px; padding-left: 8px; } }
+
+      /* ---------- CHAR boxes ---------- */
+      .boxes { display: flex; gap: 4px; flex-wrap: wrap; margin: 10px 0 6px; }
+      .box {
+        width: 34px; height: 40px; border-radius: 7px; display: grid; place-items: center;
+        font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 16px;
+        background: #d9f6e3; border: 1.5px solid #8fd3a6; color: #14532d;
+      }
+      .box.pad { background: repeating-linear-gradient(45deg, #f1f3f9 0 6px, #e2e7f2 6px 12px); border-style: dashed; border-color: #b9c2d9; color: #8a94ad; }
+      @media (prefers-color-scheme: dark) {
+        .box { background: #173626; border-color: #2f6b45; color: #a7e8bd; }
+        .box.pad { background: repeating-linear-gradient(45deg, #1a2138 0 6px, #232c49 6px 12px); border-color: #3c4a75; color: #77819e; }
+      }
+      .box-label { font-size: 14px; color: var(--muted); margin: 0; }
+
+      /* ---------- Table visual ---------- */
+      .tbl { border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; margin: 12px 0; }
+      .trow { display: grid; grid-template-columns: repeat(4, 1fr); }
+      .trow > div { padding: 9px 12px; font-size: 14.5px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+      .trow.head { background: var(--card2); font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 13.5px; }
+      .trow:last-child > div { border-bottom: none; }
+      @media (max-width: 560px) { .trow { grid-template-columns: repeat(2, 1fr); } .trow > div { border-bottom: 1px solid var(--line); } }
+
+      /* ---------- Equation / logic chips ---------- */
+      .eq { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 17px; margin: 10px 0; }
+      .eq .res { padding: 8px 14px; border-radius: 10px; }
+      .res.unknown { background: #fff3bf; color: #7a5b00; border: 1.5px solid #e8c93c; }
+      .res.true { background: #d9f6e3; color: #14532d; border: 1.5px solid #8fd3a6; }
+      .res.false { background: #ffe3e3; color: #8f1d1d; border: 1.5px solid #f3a8a8; }
+      .res.drift { background: #ffe3e3; color: #8f1d1d; border: 1.5px solid #f3a8a8; font-size: 15px; }
+      .res.exact { background: #d9f6e3; color: #14532d; border: 1.5px solid #8fd3a6; }
+      @media (prefers-color-scheme: dark) {
+        .res.unknown { background: #3d3410; color: #ffd94d; } .res.true, .res.exact { background: #173626; color: #a7e8bd; }
+        .res.false, .res.drift { background: #402022; color: #ffb3b3; }
+      }
+      .logic-chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0; }
+      @media (max-width: 560px) { .logic-chips { grid-template-columns: 1fr; } }
+      .logic { border-radius: 14px; padding: 14px; text-align: center; border: 1.5px solid; }
+      .logic .big { font-family: "Sora", sans-serif; font-weight: 800; font-size: 20px; display: block; }
+      .logic p { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
+      .logic.t { background: #ebfbee; border-color: #2f9e44; } .logic.f { background: #fff5f5; border-color: #e03131; }
+      .logic.u { background: #fff9db; border-color: #e8c93c; }
+      @media (prefers-color-scheme: dark) { .logic.t { background: #12301c; } .logic.f { background: #38181a; } .logic.u { background: #38300e; } }
+
+      /* ---------- Clock scene ---------- */
+      .clocks { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      @media (max-width: 560px) { .clocks { grid-template-columns: 1fr; } }
+      .clock-card { text-align: center; border: 1.5px solid var(--line); border-radius: 14px; padding: 16px 12px; background: var(--card); }
+      .clock-face { font-size: 44px; line-height: 1; }
+      .clock-card .city { font-family: "Sora", sans-serif; font-weight: 700; font-size: 17px; margin-top: 6px; }
+      .clock-card .time { font-family: "JetBrains Mono", monospace; font-size: 19px; font-weight: 700; }
+
+      /* ---------- Toggle ---------- */
+      .toggle-wrap { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+      .toggle { width: 84px; height: 44px; border-radius: 999px; background: #2f9e44; position: relative; flex: 0 0 auto; }
+      .toggle::after { content: ""; position: absolute; top: 5px; right: 5px; width: 34px; height: 34px; border-radius: 50%; background: #fff; }
+      .toggle.off { background: #adb5bd; } .toggle.off::after { right: auto; left: 5px; }
+
+      /* ---------- Names for LIKE ---------- */
+      .name-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+      .name-chip { padding: 9px 14px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--card); font-weight: 600; font-size: 15.5px; }
+      .name-chip.match { border-color: #2f9e44; background: #ebfbee; }
+      .name-chip.nomatch { border-color: #e03131; background: #fff5f5; color: var(--muted); }
+      @media (prefers-color-scheme: dark) { .name-chip.match { background: #12301c; } .name-chip.nomatch { background: #38181a; } }
+
+      /* ---------- Revision & interview ---------- */
+      .rev-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-top: 14px; }
+      .rev { border: 1px solid var(--line); border-left: 6px solid var(--acc); border-radius: 12px; padding: 12px 14px; background: var(--card); }
+      .rev h4 { margin: 0 0 3px; font-family: "JetBrains Mono", monospace; font-size: 15px; }
+      .rev p { margin: 0; font-size: 14.5px; color: var(--muted); }
+      .qa { border: 1.5px solid var(--line); border-radius: 14px; padding: 16px; margin: 12px 0; background: var(--card); }
+      .qa h4 { margin: 0 0 6px; font-family: "Sora", sans-serif; font-size: 16.5px; }
+      .qa h4 .q { color: var(--acc); }
+      .qa p { margin: 0; font-size: 15.5px; color: var(--muted); }
+      .qa p strong { color: var(--ink); }
+
+      footer { text-align: center; padding: 26px 0 10px; color: var(--muted); font-size: 15px; }
+      footer .credit { font-family: "Sora", sans-serif; font-weight: 600; color: var(--ink); }
+      .src { font-size: 13.5px; margin-top: 6px; }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        * { transition: none !important; animation: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <header class="hero">
+        <span class="tag">SQL FUNDAMENTALS · PART 1</span>
+        <h1>SQL, from the <span class="hl">ground up</span> — the fun way</h1>
+        <p>Thirty-nine interview questions, turned into fourteen small animated scenes, a one-line revision grid and ready-made interview answers. Every example lives in one table you already know from work: <strong>POLICIES</strong> — policy_no, holder_name, premium, sum_assured, status, maturity_date. Press <strong>Play</strong> on any scene and watch the idea move.</p>
+        <div class="code"><span class="kw">CREATE TABLE</span> policies (
+  policy_no    <span class="tp">INT</span>,
+  holder_name  <span class="tp">VARCHAR</span>(<span class="num">50</span>),
+  premium      <span class="tp">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>),
+  sum_assured  <span class="tp">DECIMAL</span>(<span class="num">12</span>,<span class="num">2</span>),
+  status       <span class="tp">VARCHAR</span>(<span class="num">20</span>),
+  maturity_date <span class="tp">DATE</span>
+);</div>
+        <nav class="toc">
+          <a href="#s1">SELECT *</a><a href="#s2">Type families</a><a href="#s3">INT family</a>
+          <a href="#s4">CHAR vs VARCHAR</a><a href="#s5">DECIMAL vs FLOAT</a><a href="#s6">Dates &amp; time</a>
+          <a href="#s7">BOOLEAN</a><a href="#s8">NULL</a><a href="#s9">COALESCE · NULLIF</a>
+          <a href="#s10">Casting</a><a href="#s11">Collation · Unicode</a><a href="#s12">LIKE</a>
+          <a href="#s13">ORDER BY NULLs</a><a href="#s14">Revision grid</a><a href="#s15">Interview answers</a>
+        </nav>
+      </header>
+
+      <!-- 1 · SELECT * -->
+      <section class="sec" id="s1" style="--acc:#e8590c">
+        <div class="sec-head"><span class="sec-num">01</span><h2>SELECT * vs naming your columns</h2></div>
+        <p class="lede"><strong>SELECT *</strong> means "give me every column in the table" — including the ones you don't need. Naming columns means asking for <strong>exactly</strong> what your code uses, nothing more.</p>
+        <div class="scene" id="scene1">
+          <div class="vs-grid">
+            <div class="vs-card bad" data-step data-cap="SELECT * drags ALL eight columns across — even the heavy remarks text and the document blob you never asked for.">
+              <h4>SELECT * 😮‍💨</h4>
+              <p class="sub">Everything comes over the wire:</p>
+              <div class="chips">
+                <span class="chip">policy_no</span><span class="chip">holder_name</span><span class="chip">premium</span>
+                <span class="chip">sum_assured</span><span class="chip">status</span><span class="chip">maturity_date</span>
+                <span class="chip heavy">remarks (long text)</span><span class="chip heavy">doc_blob (huge file)</span>
+              </div>
+            </div>
+            <div class="vs-card good" data-step data-cap="Naming columns pulls only the three you actually use — faster, lighter, and your intent is obvious to anyone reading the query.">
+              <h4>Name the columns 🎯</h4>
+              <p class="sub">Only what the report needs:</p>
+              <div class="chips">
+                <span class="chip need">policy_no</span><span class="chip need">holder_name</span><span class="chip need">premium</span>
+              </div>
+            </div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="Two ways to ask the same table for data. Press Play to compare them.">Two ways to ask the same table for data. Press Play to compare them.</p>
+          </div>
+        </div>
+        <div class="code"><span class="cm">-- ❌ lazy and risky</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> policies;
+
+<span class="cm">-- ✅ clear and safe</span>
+<span class="kw">SELECT</span> policy_no, holder_name, premium <span class="kw">FROM</span> policies;</div>
+        <ul class="points">
+          <li><strong>Extra weight:</strong> SELECT * pulls columns nobody uses — slow queries, wasted memory.</li>
+          <li><strong>Breaks silently:</strong> someone adds, drops or reorders a column and your code misbehaves or crashes, because it was secretly depending on "all of them, in that order".</li>
+          <li><strong>Hides intent:</strong> a reader can't tell which columns the code actually needs.</li>
+        </ul>
+        <div class="remember"><strong>Remember:</strong> SELECT * is a shortcut that borrows trouble — always name the columns you need.</div>
+      </section>
+
+      <!-- 2 · Type families -->
+      <section class="sec" id="s2" style="--acc:#1971c2">
+        <div class="sec-head"><span class="sec-num">02</span><h2>The data-type family map</h2></div>
+        <p class="lede">Every column has a <strong>data type</strong> — a rule that says what kind of value it may hold. All types belong to five families. Learn the families first; the members are easy after that.</p>
+        <div class="scene" id="scene2">
+          <div class="fam-grid">
+            <div class="fam f1" data-step data-cap="Numeric — numbers you can do maths on: premiums, amounts, counts, ages.">
+              <h4>🔢 Numeric</h4><p>Numbers for counting and calculating.</p>
+              <div class="chips"><span class="chip">INT</span><span class="chip">DECIMAL</span></div>
+            </div>
+            <div class="fam f2" data-step data-cap="Character — text: names, addresses, statuses.">
+              <h4>🔤 Character</h4><p>Text — names, codes, descriptions.</p>
+              <div class="chips"><span class="chip">VARCHAR</span><span class="chip">CHAR</span></div>
+            </div>
+            <div class="fam f3" data-step data-cap="Date/Time — calendar and clock values: start dates, maturity dates.">
+              <h4>📅 Date / Time</h4><p>Dates and times on the calendar.</p>
+              <div class="chips"><span class="chip">DATE</span><span class="chip">TIMESTAMP</span></div>
+            </div>
+            <div class="fam f4" data-step data-cap="Boolean — a single yes/no answer: is this policy active?">
+              <h4>✅ Boolean</h4><p>One yes-or-no answer.</p>
+              <div class="chips"><span class="chip">BOOLEAN</span><span class="chip">BIT</span></div>
+            </div>
+            <div class="fam f5" data-step data-cap="Binary — raw bytes: files, images, scanned documents. The database doesn't read them, it just stores them.">
+              <h4>🧩 Binary</h4><p>Raw bytes — files and images.</p>
+              <div class="chips"><span class="chip">BLOB</span><span class="chip">BINARY</span></div>
+            </div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="Five families cover every column you will ever create. Press Play to tour them.">Five families cover every column you will ever create. Press Play to tour them.</p>
+          </div>
+        </div>
+        <div class="remember"><strong>Remember:</strong> pick the family by the question "what will I <em>do</em> with this value?" — maths → Numeric, reading → Character, calendar → Date/Time.</div>
+      </section>
+
+      <!-- 3 · INT family -->
+      <section class="sec" id="s3" style="--acc:#f08c00">
+        <div class="sec-head"><span class="sec-num">03</span><h2>The INT family — small, medium, large, huge</h2></div>
+        <p class="lede">Whole numbers come in four sizes. A bigger size wastes space on every row; a smaller size <strong>overflows</strong> when the number outgrows it. So you pick the <strong>smallest size that safely fits</strong> the values you'll ever store.</p>
+        <div class="scene" id="scene3">
+          <div class="bar-row" data-step data-cap="TINYINT — up to 255. Perfect for tiny ranges like a count of nominees or family members.">
+            <span class="bname">TINYINT<span class="bmax">max 255</span></span>
+            <div class="bar-track"><div class="bar-fill" style="width:16%"></div></div>
+          </div>
+          <div class="bar-row" data-step data-cap="SMALLINT — up to 32,767. Fits things like branch codes or a person's age with room to spare.">
+            <span class="bname">SMALLINT<span class="bmax">max 32,767</span></span>
+            <div class="bar-track"><div class="bar-fill" style="width:36%"></div></div>
+          </div>
+          <div class="bar-row" data-step data-cap="INT — up to about 2.1 billion. The everyday default: policy_no, customer IDs, claim numbers.">
+            <span class="bname">INT<span class="bmax">max ≈ 2.1 billion</span></span>
+            <div class="bar-track"><div class="bar-fill" style="width:62%"></div></div>
+          </div>
+          <div class="bar-row" data-step data-cap="BIGINT — up to about 9.2 quintillion. For IDs that grow forever, like transaction numbers across a whole company.">
+            <span class="bname">BIGINT<span class="bmax">max ≈ 9.2 quintillion</span></span>
+            <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="Same family, four sizes. Press Play to watch them grow.">Same family, four sizes. Press Play to watch them grow.</p>
+          </div>
+        </div>
+        <div class="code"><span class="cm">-- age will never pass 120 → small is fine</span>
+age        <span class="tp">SMALLINT</span>,
+<span class="cm">-- policy numbers keep growing for decades → room to grow</span>
+policy_no  <span class="tp">INT</span></div>
+        <div class="remember"><strong>Remember:</strong> smallest type that safely fits — an age doesn't need BIGINT, and a forever-growing ID must never sit in SMALLINT.</div>
+      </section>
+
+      <!-- 4 · CHAR vs VARCHAR -->
+      <section class="sec" id="s4" style="--acc:#2f9e44">
+        <div class="sec-head"><span class="sec-num">04</span><h2>CHAR vs VARCHAR — fixed boxes vs flexible boxes</h2></div>
+        <p class="lede">Both store text. The difference is storage: <strong>CHAR(10) always reserves 10 characters</strong> and pads the empty space; <strong>VARCHAR(10) reserves only what the text actually uses</strong> (up to 10).</p>
+        <div class="scene" id="scene4">
+          <div class="vs-grid">
+            <div class="vs-card" data-step data-cap="CHAR(10) storing 'Ram': 3 letters + 7 padded empty boxes. It always pays for 10, used or not.">
+              <h4>CHAR(10) — fixed</h4>
+              <div class="boxes">
+                <span class="box">R</span><span class="box">a</span><span class="box">m</span>
+                <span class="box pad">·</span><span class="box pad">·</span><span class="box pad">·</span><span class="box pad">·</span>
+                <span class="box pad">·</span><span class="box pad">·</span><span class="box pad">·</span>
+              </div>
+              <p class="box-label">"Ram" + 7 spaces of padding = always 10</p>
+            </div>
+            <div class="vs-card" data-step data-cap="VARCHAR(10) storing 'Ram': exactly 3 boxes. 'Ram Kumar Singh' would take more — it stretches only as needed, up to 10.">
+              <h4>VARCHAR(10) — flexible</h4>
+              <div class="boxes">
+                <span class="box">R</span><span class="box">a</span><span class="box">m</span>
+              </div>
+              <p class="box-label">"Ram" = just 3 — grows only when the text does</p>
+            </div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="Same word, two storage styles. Press Play to see the padding.">Same word, two storage styles. Press Play to see the padding.</p>
+          </div>
+        </div>
+        <ul class="points">
+          <li><strong>Use CHAR</strong> when every value is truly the same length — like a 2-letter state code (<span class="chip">BR</span> <span class="chip">DL</span>).</li>
+          <li><strong>Use VARCHAR</strong> for names and most text — lengths vary, so don't pay for empty boxes.</li>
+        </ul>
+        <div class="note-chip">📄 Really long text — policy <strong>remarks</strong>, claim notes, full addresses? Use <strong>TEXT</strong> / <strong>VARCHAR(MAX)</strong>, made for long, free-form writing.</div>
+        <div class="remember"><strong>Remember:</strong> CHAR = fixed rent for the whole flat; VARCHAR = pay only for the rooms you use.</div>
+      </section>
+
+      <!-- 5 · DECIMAL vs FLOAT -->
+      <section class="sec" id="s5" style="--acc:#e64980">
+        <div class="sec-head"><span class="sec-num">05</span><h2>DECIMAL vs FLOAT — why money is never a float</h2></div>
+        <p class="lede"><strong>FLOAT stores numbers approximately</strong> — close, but not exact. <strong>DECIMAL(p, s) stores exact digits</strong>: p = total digits, s = digits after the decimal point. Watch what that tiny difference does to simple addition.</p>
+        <div class="scene" id="scene5">
+          <div class="vs-grid">
+            <div class="vs-card bad" data-step data-cap="FLOAT: 0.1 + 0.2 comes out as 0.30000000000000004. The stored value was never exactly 0.1 or 0.2 to begin with — tiny errors sneak in and add up.">
+              <h4>FLOAT — approximate 😬</h4>
+              <div class="eq"><span>0.1 + 0.2 =</span><span class="res drift">0.30000000000000004</span></div>
+              <p class="sub">Close… but not equal. A paisa here, a paisa there.</p>
+            </div>
+            <div class="vs-card good" data-step data-cap="DECIMAL: a premium of 12,500.50 plus 999.50 is exactly 13,500.00 — every digit stored precisely, nothing drifts.">
+              <h4>DECIMAL — exact ✅</h4>
+              <div class="eq"><span>12500.50 + 999.50 =</span><span class="res exact">13500.00</span></div>
+              <p class="sub">Premium maths lands on the exact rupee and paisa.</p>
+            </div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="One addition, two outcomes. Press Play to see which type drifts.">One addition, two outcomes. Press Play to see which type drifts.</p>
+          </div>
+        </div>
+        <div class="code"><span class="cm">-- money columns: always DECIMAL</span>
+premium      <span class="tp">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>),  <span class="cm">-- 8 digits + 2 paise digits</span>
+sum_assured  <span class="tp">DECIMAL</span>(<span class="num">12</span>,<span class="num">2</span>),
+claim_amount <span class="tp">DECIMAL</span>(<span class="num">12</span>,<span class="num">2</span>)</div>
+        <ul class="points">
+          <li><strong>Money = DECIMAL, always.</strong> Premiums, sum assured, claim amounts — one paisa of drift fails a reconciliation.</li>
+          <li><strong>FLOAT is fine</strong> for scientific measurements — temperature, weights — where a tiny error changes nothing.</li>
+        </ul>
+        <div class="remember"><strong>Remember:</strong> if a human will ever count it or audit it, it's DECIMAL. FLOAT is for measurements, not money.</div>
+      </section>
+
+      <!-- 6 · Date & time -->
+      <section class="sec" id="s6" style="--acc:#0ca678">
+        <div class="sec-head"><span class="sec-num">06</span><h2>Date &amp; time types — and the timezone trap</h2></div>
+        <p class="lede">Four types, four levels of detail. Pick by asking: do I need the <strong>date</strong>, the <strong>time</strong>, <strong>both</strong> — and does the <strong>timezone</strong> matter?</p>
+        <div class="scene" id="scene6">
+          <div class="fam-grid">
+            <div class="fam f3" data-step data-cap="DATE — only the calendar day: 2045-03-15. Perfect for maturity_date, date of birth, policy start date.">
+              <h4>DATE</h4><p>Only the date.</p>
+              <div class="chips"><span class="chip">2045-03-15</span></div>
+            </div>
+            <div class="fam f3" data-step data-cap="TIME — only the clock: 09:30:00. For things like office opening hours or a daily batch run time.">
+              <h4>TIME</h4><p>Only the time of day.</p>
+              <div class="chips"><span class="chip">09:30:00</span></div>
+            </div>
+            <div class="fam f3" data-step data-cap="DATETIME — date and time together, stored exactly as written, with no timezone attached.">
+              <h4>DATETIME</h4><p>Date + time, as written.</p>
+              <div class="chips"><span class="chip">2026-11-26 09:30</span></div>
+            </div>
+            <div class="fam f3" data-step data-cap="TIMESTAMP — date and time that knows its timezone, so the same moment can be shown correctly anywhere in the world.">
+              <h4>TIMESTAMP</h4><p>Date + time, timezone-aware.</p>
+              <div class="chips"><span class="chip">2026-11-26 09:30 IST</span></div>
+            </div>
+          </div>
+          <h3>🕐 The timezone trap — one moment, two clocks</h3>
+          <div class="clocks">
+            <div class="clock-card" data-step data-cap="A claim is submitted at 10:00 AM in Patna…">
+              <div class="clock-face">🕙</div>
+              <div class="city">Patna</div>
+              <div class="time">10:00 AM</div>
+            </div>
+            <div class="clock-card" data-step data-cap="…which is 4:30 AM the same morning in London. Same moment! If you store only '10:00' with no timezone, the London team reads it as their 10:00 — five and a half hours wrong.">
+              <div class="clock-face">🕟</div>
+              <div class="city">London</div>
+              <div class="time">4:30 AM</div>
+            </div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="Tour the four types, then watch one moment land in two cities.">Tour the four types, then watch one moment land in two cities.</p>
+          </div>
+        </div>
+        <div class="note-chip">⚠️ <strong>Tip:</strong> mixing local times from different timezones in one table is a classic off-by-hours bug (daylight-saving changes make it worse). Store moments as TIMESTAMP, or agree on one timezone — usually UTC — and convert only when displaying.</div>
+        <div class="remember"><strong>Remember:</strong> DATE for birthdays and maturity, TIMESTAMP for moments people in different places must agree on.</div>
+      </section>
+
+      <!-- 7 · BOOLEAN -->
+      <section class="sec" id="s7" style="--acc:#9775fa">
+        <div class="sec-head"><span class="sec-num">07</span><h2>BOOLEAN / BIT — the yes-no switch</h2></div>
+        <p class="lede">Some questions have only two answers: is this policy active? Was the premium paid? Databases store that as a <strong>BIT — 1 or 0</strong>, shown to you as TRUE / FALSE.</p>
+        <div class="scene" id="scene7">
+          <div class="toggle-wrap">
+            <div data-step data-cap="policy_active = TRUE, stored as 1. The policy is live, premiums are being collected.">
+              <div class="toggle" aria-hidden="true"></div>
+              <p class="box-label" style="margin-top:8px"><strong>policy_active = TRUE</strong> → stored as <strong>1</strong></p>
+            </div>
+            <div data-step data-cap="policy_active = FALSE, stored as 0. The policy has lapsed or closed — one bit carries the whole answer.">
+              <div class="toggle off" aria-hidden="true"></div>
+              <p class="box-label" style="margin-top:8px"><strong>policy_active = FALSE</strong> → stored as <strong>0</strong></p>
+            </div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="One column, two states. Press Play to flip the switch both ways.">One column, two states. Press Play to flip the switch both ways.</p>
+          </div>
+        </div>
+        <div class="code"><span class="kw">SELECT</span> policy_no, holder_name
+<span class="kw">FROM</span> policies
+<span class="kw">WHERE</span> policy_active = <span class="num">1</span>;   <span class="cm">-- only live policies</span></div>
+        <div class="remember"><strong>Remember:</strong> a yes/no fact deserves a BOOLEAN/BIT — never a text column full of 'Yes', 'yes', 'Y' and surprises.</div>
+      </section>
+
+      <!-- 8 · NULL -->
+      <section class="sec" id="s8" style="--acc:#e03131">
+        <div class="sec-head"><span class="sec-num">08</span><h2>NULL — the value that isn't a value</h2></div>
+        <p class="lede"><strong>NULL means "unknown / not there yet".</strong> It is <strong>not</strong> zero, and it is <strong>not</strong> empty text. A running policy has no maturity payout date yet — so maturity_date is NULL. That one idea explains half of all "my query missed rows" bugs.</p>
+
+        <h3>Scene A — NULL compared to anything gives… UNKNOWN</h3>
+        <div class="scene" id="scene8a">
+          <div class="tbl" data-step data-cap="One row from POLICIES: the policy is Active and still running, so maturity_date is NULL — the date simply doesn't exist yet.">
+            <div class="trow head"><div>policy_no</div><div>holder_name</div><div>status</div><div>maturity_date</div></div>
+            <div class="trow"><div>1024</div><div>Ram Kumar</div><div>Active</div><div><span class="chip nullchip">NULL</span></div></div>
+          </div>
+          <div data-step data-cap="NULL is not equal to anything — not even to another NULL. The comparison can't be TRUE and can't be FALSE, so the answer is UNKNOWN.">
+            <div class="eq"><span>NULL = NULL</span><span>→</span><span class="res unknown">UNKNOWN</span></div>
+            <p class="box-label">Never TRUE. That's why <span class="chip">WHERE maturity_date = NULL</span> matches <strong>zero rows, always</strong>.</p>
+          </div>
+          <div data-step data-cap="The only correct test: IS NULL (find the missing ones) and IS NOT NULL (find the present ones).">
+            <div class="code" style="margin:6px 0 0"><span class="kw">WHERE</span> maturity_date <span class="kw2">IS NULL</span>      <span class="cm">-- ✅ policies still running</span>
+<span class="kw">WHERE</span> maturity_date <span class="kw2">IS NOT NULL</span>  <span class="cm">-- ✅ policies that have matured</span></div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="Meet NULL in a real row, then watch it refuse every comparison.">Meet NULL in a real row, then watch it refuse every comparison.</p>
+          </div>
+        </div>
+
+        <h3>Scene B — Three-valued logic: TRUE, FALSE… and UNKNOWN</h3>
+        <p class="lede">Because NULL exists, every comparison in SQL has <strong>three</strong> possible outcomes, not two. And <strong>WHERE keeps only the TRUE rows</strong> — FALSE and UNKNOWN rows are both thrown away. Silently.</p>
+        <div class="scene" id="scene8b">
+          <div class="logic-chips">
+            <div class="logic t" data-step data-cap="TRUE — the comparison definitely holds. WHERE keeps this row."><span class="big">TRUE ✔</span><p>Row is kept</p></div>
+            <div class="logic f" data-step data-cap="FALSE — the comparison definitely fails. WHERE drops this row, as you'd expect."><span class="big">FALSE ✘</span><p>Row is dropped</p></div>
+            <div class="logic u" data-step data-cap="UNKNOWN — a NULL was involved, so nobody knows. WHERE drops this row too — and this is the one that surprises everyone."><span class="big">UNKNOWN ?</span><p>Row is dropped too!</p></div>
+          </div>
+          <div data-step data-cap="Watch: WHERE status <> 'Closed' means 'give me everything that is not Closed'. The Active row stays. The Closed row goes. And the NULL-status row ALSO goes — 'NULL is not Closed' is UNKNOWN, not TRUE, even though the policy clearly isn't Closed.">
+            <div class="code" style="margin:6px 0"><span class="kw">SELECT</span> policy_no, status <span class="kw">FROM</span> policies
+<span class="kw">WHERE</span> status &lt;&gt; <span class="str">'Closed'</span>;</div>
+            <div class="tbl" style="margin-top:8px">
+              <div class="trow head"><div>policy_no</div><div>status</div><div>kept?</div><div>why</div></div>
+              <div class="trow"><div>101</div><div>Active</div><div>✅ yes</div><div>TRUE</div></div>
+              <div class="trow"><div>102</div><div>Closed</div><div>❌ no</div><div>FALSE</div></div>
+              <div class="trow"><div>103</div><div><span class="chip nullchip">NULL</span></div><div>❌ no — silently!</div><div>UNKNOWN</div></div>
+            </div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="Three outcomes, one trap. Press Play to see the NULL row vanish.">Three outcomes, one trap. Press Play to see the NULL row vanish.</p>
+          </div>
+        </div>
+        <div class="note-chip">🧩 <strong>GROUP BY:</strong> all NULLs are gathered into <strong>one single group</strong> — GROUP BY status gives you one NULL group holding every status-less policy.</div>
+        <div class="note-chip">🧩 <strong>DISTINCT:</strong> all NULLs count as <strong>one value</strong> — SELECT DISTINCT status shows NULL just once, no matter how many rows have it.</div>
+        <div class="remember"><strong>Remember:</strong> NULL means unknown, comparisons with it give UNKNOWN, and WHERE only keeps TRUE — so NULL rows vanish unless you ask for them with IS NULL.</div>
+      </section>
+
+      <!-- 9 · COALESCE & NULLIF -->
+      <section class="sec" id="s9" style="--acc:#1098ad">
+        <div class="sec-head"><span class="sec-num">09</span><h2>COALESCE &amp; NULLIF — the NULL-handling tools</h2></div>
+        <p class="lede">Two small functions fix most NULL pain. <strong>COALESCE</strong> swaps a NULL for a backup value. <strong>NULLIF</strong> does the reverse — it turns a dangerous value <em>into</em> NULL, on purpose.</p>
+        <div class="scene" id="scene9">
+          <div class="vs-grid">
+            <div class="vs-card" data-step data-cap="COALESCE(premium_discount, 0): if the discount is NULL, use 0 instead. Now 5000 + 0 works — without it, 5000 + NULL would give NULL and poison the whole total.">
+              <h4>COALESCE — NULL becomes a backup</h4>
+              <div class="eq"><span class="chip nullchip">NULL</span><span>→</span><span class="res exact">0</span></div>
+              <div class="code" style="margin:6px 0 0"><span class="kw">SELECT</span> premium - <span class="fn">COALESCE</span>(premium_discount, <span class="num">0</span>)
+<span class="kw">FROM</span> policies;</div>
+            </div>
+            <div class="vs-card" data-step data-cap="NULLIF(0, 0) returns NULL. Divide by that and the result is NULL instead of a divide-by-zero crash — the query survives, and you can spot the NULLs afterwards.">
+              <h4>NULLIF — safe division</h4>
+              <div class="eq"><span>100 / 0</span><span class="res drift">💥 error</span></div>
+              <div class="eq"><span>100 / <span class="fn">NULLIF</span>(0,0)</span><span class="res unknown">NULL — no crash</span></div>
+            </div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="One function removes NULLs, the other creates them — both save your query.">One function removes NULLs, the other creates them — both save your query.</p>
+          </div>
+        </div>
+        <div class="code"><span class="cm">-- average premium per policy, safe even when count could be 0</span>
+<span class="kw">SELECT</span> total_premium / <span class="fn">NULLIF</span>(policy_count, <span class="num">0</span>) <span class="kw">AS</span> avg_premium
+<span class="kw">FROM</span> branch_totals;</div>
+        <div class="remember"><strong>Remember:</strong> COALESCE fills NULL holes with a backup; NULLIF turns a 0 denominator into NULL so division fails soft instead of crashing.</div>
+      </section>
+
+      <!-- 10 · Casting -->
+      <section class="sec" id="s10" style="--acc:#f76707">
+        <div class="sec-head"><span class="sec-num">10</span><h2>Casting — changing a value's type</h2></div>
+        <p class="lede">Sometimes a number must become text, or text must become a number. That conversion is called <strong>casting</strong>, and it happens two ways: quietly by the database, or openly by you.</p>
+        <div class="scene" id="scene10">
+          <div class="vs-grid">
+            <div class="vs-card bad" data-step data-cap="Implicit casting: you compare an INT column to the text '1024' and the database secretly converts behind your back. It can pick the wrong conversion, hide bad data — and converting the column side can stop the index being used, slowing the query badly.">
+              <h4>Implicit — the database guesses 😟</h4>
+              <div class="code" style="margin:6px 0 0"><span class="kw">WHERE</span> policy_no = <span class="str">'1024'</span>
+<span class="cm">-- INT vs text: silent conversion happens</span></div>
+              <p class="sub" style="margin-top:10px">Risky: hidden conversions, hidden errors, slow queries.</p>
+            </div>
+            <div class="vs-card good" data-step data-cap="Explicit casting: CAST or CONVERT states the conversion in plain sight. Anyone reading the query sees exactly what changes into what — no surprises.">
+              <h4>Explicit — you say it out loud ✅</h4>
+              <div class="code" style="margin:6px 0 0"><span class="kw">SELECT</span> <span class="fn">CAST</span>(policy_no <span class="kw">AS</span> <span class="tp">VARCHAR</span>(<span class="num">10</span>)),
+       <span class="fn">CAST</span>(<span class="str">'2026-11-26'</span> <span class="kw">AS</span> <span class="tp">DATE</span>)
+<span class="kw">FROM</span> policies;</div>
+              <p class="sub" style="margin-top:10px">Clear: the conversion is visible to every reader.</p>
+            </div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="Same conversion, two styles — one hidden, one honest.">Same conversion, two styles — one hidden, one honest.</p>
+          </div>
+        </div>
+        <div class="remember"><strong>Remember:</strong> convert explicitly with CAST — if a conversion matters, it should be visible in the query, not guessed by the database.</div>
+      </section>
+
+      <!-- 11 · Collation & Unicode -->
+      <section class="sec" id="s11" style="--acc:#74b816">
+        <div class="sec-head"><span class="sec-num">11</span><h2>Collation, case &amp; Unicode</h2></div>
+        <p class="lede">A <strong>collation</strong> is the rulebook a column uses to compare and sort text: is 'A' before 'a'? Is 'Ram' the same as 'RAM'? The rulebook decides — and different databases pick different defaults.</p>
+        <div class="scene" id="scene11">
+          <div class="vs-grid">
+            <div class="vs-card" data-step data-cap="Case-insensitive collation: capitals don't matter. 'Ram' = 'RAM' is TRUE, and a search for 'ram' finds every spelling.">
+              <h4>Case-insensitive rulebook</h4>
+              <div class="eq"><span>'Ram' = 'RAM'</span><span class="res true">TRUE</span></div>
+            </div>
+            <div class="vs-card" data-step data-cap="Case-sensitive collation: capitals matter. 'Ram' = 'RAM' is FALSE — they are different strings, and sorting puts capitals and small letters in separate places.">
+              <h4>Case-sensitive rulebook</h4>
+              <div class="eq"><span>'Ram' = 'RAM'</span><span class="res false">FALSE</span></div>
+            </div>
+          </div>
+          <div data-step data-cap="Unicode: VARCHAR stores plain single-byte text — fine for English, broken for other scripts. NVARCHAR stores Unicode, so a holder name written in Devanagari, or with an emoji, survives exactly as typed.">
+            <div class="note-chip" style="margin-top:14px">🌍 <strong>NVARCHAR</strong> stores names like <strong>राम कुमार</strong> or <strong>Zoë 🎂</strong> exactly as written. <strong>VARCHAR</strong> can garble or reject characters outside plain English.</div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="Same comparison, two rulebooks, two answers — plus the Unicode twist.">Same comparison, two rulebooks, two answers — plus the Unicode twist.</p>
+          </div>
+        </div>
+        <div class="remember"><strong>Remember:</strong> collation is the text rulebook — and if names can arrive in any language, store them as NVARCHAR.</div>
+      </section>
+
+      <!-- 12 · LIKE -->
+      <section class="sec" id="s12" style="--acc:#d6336c">
+        <div class="sec-head"><span class="sec-num">12</span><h2>LIKE — searching text by pattern</h2></div>
+        <p class="lede"><strong>=</strong> needs an exact match. <strong>LIKE</strong> matches a pattern, using two wildcards: <strong>%</strong> = any run of characters (even none), and <strong>_</strong> = exactly one character.</p>
+        <div class="scene" id="scene12">
+          <div data-step data-cap="'Ra%' — starts with Ra, then anything. Ram, Rakesh and Ravi all match; Sunita doesn't start with Ra, so she's out.">
+            <h3 style="margin-top:0">Pattern: <span class="chip">holder_name LIKE 'Ra%'</span></h3>
+            <div class="name-list">
+              <span class="name-chip match">Ram ✔</span><span class="name-chip match">Rakesh ✔</span>
+              <span class="name-chip match">Ravi ✔</span><span class="name-chip nomatch">Sunita ✘</span>
+            </div>
+          </div>
+          <div data-step data-cap="'R_m' — R, then exactly ONE character, then m. 'Ram' fits perfectly. 'Raam' has two characters in the middle, so it fails.">
+            <h3>Pattern: <span class="chip">holder_name LIKE 'R_m'</span></h3>
+            <div class="name-list">
+              <span class="name-chip match">Ram ✔</span><span class="name-chip nomatch">Raam ✘ — one character too many</span>
+            </div>
+          </div>
+          <div data-step data-cap="Two extras: ESCAPE lets you search for a literal % sign instead of using it as a wildcard, and ILIKE (in PostgreSQL and some others) is LIKE that ignores case.">
+            <div class="chips">
+              <span class="chip">LIKE '50\%' ESCAPE '\' → finds a real % sign</span>
+              <span class="chip">ILIKE 'ra%' → case-insensitive LIKE (PostgreSQL)</span>
+              <span class="chip">elsewhere: LOWER(name) LIKE 'ra%'</span>
+            </div>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="Two wildcards, matched live against real holder names.">Two wildcards, matched live against real holder names.</p>
+          </div>
+        </div>
+        <div class="code"><span class="kw">SELECT</span> policy_no, holder_name <span class="kw">FROM</span> policies
+<span class="kw">WHERE</span> holder_name <span class="kw2">LIKE</span> <span class="str">'Ra%'</span>;   <span class="cm">-- every holder whose name starts with Ra</span></div>
+        <div class="remember"><strong>Remember:</strong> % stretches to any length, _ is exactly one character — 'Ra%' finds a crowd, 'R_m' finds a shape.</div>
+      </section>
+
+      <!-- 13 · ORDER BY NULLs -->
+      <section class="sec" id="s13" style="--acc:#5f3dc4">
+        <div class="sec-head"><span class="sec-num">13</span><h2>ORDER BY — where do the NULLs land?</h2></div>
+        <p class="lede">Sorting sounds simple until a NULL shows up. The awkward truth: <strong>databases disagree</strong> on where NULLs belong in a sorted list — so the same query can show different orders on different systems.</p>
+        <div class="scene" id="scene13">
+          <div class="vs-grid">
+            <div class="vs-card" data-step data-cap="Some databases (like Oracle and PostgreSQL by default for ascending) treat NULL as the biggest value — ascending sort puts the NULL row LAST…">
+              <h4>Outcome A — NULLs last</h4>
+              <div class="chips" style="flex-direction:column; align-items:flex-start">
+                <span class="chip">premium 300</span><span class="chip">premium 500</span><span class="chip">premium 1200</span><span class="chip nullchip">premium NULL</span>
+              </div>
+            </div>
+            <div class="vs-card" data-step data-cap="…while others (like SQL Server and MySQL) treat NULL as the smallest — the same ascending sort puts the NULL row FIRST. Same data, same query, different report.">
+              <h4>Outcome B — NULLs first</h4>
+              <div class="chips" style="flex-direction:column; align-items:flex-start">
+                <span class="chip nullchip">premium NULL</span><span class="chip">premium 300</span><span class="chip">premium 500</span><span class="chip">premium 1200</span>
+              </div>
+            </div>
+          </div>
+          <div data-step data-cap="The fix: say it yourself. NULLS FIRST or NULLS LAST (supported in PostgreSQL, Oracle and standard SQL) pins the position down, so the report looks identical everywhere.">
+            <div class="code" style="margin:10px 0 0"><span class="kw">ORDER BY</span> premium <span class="kw">ASC</span> <span class="kw2">NULLS LAST</span>;  <span class="cm">-- standard SQL, PostgreSQL, Oracle</span></div>
+            <p class="box-label" style="margin-top:8px">MySQL and SQL Server don't support NULLS LAST — there, sort by a yes/no first: <span class="chip">ORDER BY (premium IS NULL), premium</span> pushes NULLs to the end the portable way.</p>
+          </div>
+          <div class="scene-bar">
+            <button class="play-btn" type="button">▶ Play</button>
+            <p class="scene-caption" data-default="One sort, two possible outcomes — press Play, then see the fix.">One sort, two possible outcomes — press Play, then see the fix.</p>
+          </div>
+        </div>
+        <div class="remember"><strong>Remember:</strong> never leave NULL position to the database's mood — pin it with NULLS FIRST / NULLS LAST where supported, or the (col IS NULL) trick where it isn't.</div>
+      </section>
+
+      <!-- 14 · Revision grid -->
+      <section class="sec" id="s14" style="--acc:#0b7285">
+        <div class="sec-head"><span class="sec-num">14</span><h2>Quick revision grid</h2></div>
+        <p class="lede">Every term from this part, in one line each. Read this grid the morning of an interview.</p>
+        <div class="rev-grid">
+          <div class="rev"><h4>SELECT *</h4><p>Fetches every column — discouraged; name the columns you need instead.</p></div>
+          <div class="rev"><h4>Data type</h4><p>The rule for what a column may store: numeric, text, date, boolean, binary.</p></div>
+          <div class="rev"><h4>INT family</h4><p>TINYINT 255 · SMALLINT 32,767 · INT ≈2.1 billion · BIGINT ≈9.2 quintillion. Pick the smallest that fits.</p></div>
+          <div class="rev"><h4>CHAR(n)</h4><p>Fixed length — always takes n characters, pads the rest with spaces.</p></div>
+          <div class="rev"><h4>VARCHAR(n)</h4><p>Variable length — takes only what the text uses, up to n. TEXT / VARCHAR(MAX) for long notes.</p></div>
+          <div class="rev"><h4>DECIMAL(p,s)</h4><p>Exact digits — p total, s after the point. The only safe type for money.</p></div>
+          <div class="rev"><h4>FLOAT</h4><p>Approximate number — fast and fine for science, drifts on exact maths (0.1 + 0.2 ≠ 0.3).</p></div>
+          <div class="rev"><h4>DATE / TIME</h4><p>DATE = day only, TIME = clock only.</p></div>
+          <div class="rev"><h4>DATETIME / TIMESTAMP</h4><p>Both date + time; TIMESTAMP also understands timezones.</p></div>
+          <div class="rev"><h4>BOOLEAN / BIT</h4><p>Yes/no stored as 1/0 — for flags like policy_active.</p></div>
+          <div class="rev"><h4>NULL</h4><p>Unknown / missing — not zero, not empty text. A running policy's maturity_date is NULL.</p></div>
+          <div class="rev"><h4>IS NULL</h4><p>The only way to test for NULL. = NULL never matches anything.</p></div>
+          <div class="rev"><h4>Three-valued logic</h4><p>Comparisons give TRUE, FALSE or UNKNOWN; WHERE keeps only TRUE rows.</p></div>
+          <div class="rev"><h4>COALESCE</h4><p>COALESCE(x, backup) — first non-NULL value; turns NULL holes into usable values.</p></div>
+          <div class="rev"><h4>NULLIF</h4><p>NULLIF(a, b) returns NULL if a = b — divide by NULLIF(x, 0) to avoid divide-by-zero.</p></div>
+          <div class="rev"><h4>CAST</h4><p>Explicit type conversion: CAST(x AS type). Prefer it over silent implicit casting.</p></div>
+          <div class="rev"><h4>Collation</h4><p>The rulebook for comparing/sorting text — decides case sensitivity.</p></div>
+          <div class="rev"><h4>NVARCHAR</h4><p>Unicode text — names in any script, emoji included. VARCHAR is single-byte.</p></div>
+          <div class="rev"><h4>LIKE % and _</h4><p>% = any run of characters, _ = exactly one. ESCAPE for a literal %; ILIKE ignores case in PostgreSQL — elsewhere use LOWER().</p></div>
+          <div class="rev"><h4>ORDER BY NULLs</h4><p>NULL position differs per database — pin it with NULLS FIRST / NULLS LAST (standard/PostgreSQL/Oracle) or ORDER BY (col IS NULL) in MySQL.</p></div>
+          <div class="rev"><h4>DISTINCT &amp; NULL</h4><p>DISTINCT counts all NULLs as one value; GROUP BY puts them in one group.</p></div>
+        </div>
+        <div class="remember"><strong>Remember:</strong> if you can say each of these lines out loud without pausing, Part 1 is yours.</div>
+      </section>
+
+      <!-- 15 · Interview answers -->
+      <section class="sec" id="s15" style="--acc:#a61e4d">
+        <div class="sec-head"><span class="sec-num">15</span><h2>Say it in an interview</h2></div>
+        <p class="lede">The five questions from this part that interviewers ask most — with short, confident answers in plain words.</p>
+
+        <div class="qa">
+          <h4><span class="q">Q.</span> Why should we not use SELECT *?</h4>
+          <p>"Three reasons. It <strong>fetches columns nobody needs</strong>, which wastes time and memory. It makes the code <strong>fragile</strong> — if someone adds, drops or reorders a column, the application can break or read the wrong data. And it <strong>hides intent</strong> — naming columns shows exactly what the query depends on."</p>
+        </div>
+        <div class="qa">
+          <h4><span class="q">Q.</span> CHAR vs VARCHAR — what's the difference?</h4>
+          <p>"CHAR is <strong>fixed length</strong> — CHAR(10) always stores 10 characters and pads shorter values with spaces, so it suits fixed-size codes. VARCHAR is <strong>variable length</strong> — it stores only the characters actually used, up to the limit, so it's the right choice for names and most text."</p>
+        </div>
+        <div class="qa">
+          <h4><span class="q">Q.</span> Why DECIMAL for money, not FLOAT?</h4>
+          <p>"FLOAT stores values <strong>approximately</strong> — 0.1 + 0.2 can come out as 0.30000000000000004. In money that drift breaks totals and reconciliations. DECIMAL stores <strong>exact digits</strong>, so premiums and claim amounts always add up to the paisa. FLOAT is fine for scientific measurements where a tiny error doesn't matter."</p>
+        </div>
+        <div class="qa">
+          <h4><span class="q">Q.</span> What is NULL? Why doesn't = NULL work?</h4>
+          <p>"NULL means <strong>unknown or missing</strong> — it's not zero and not an empty string. Because it's unknown, <strong>any comparison with NULL gives UNKNOWN, never TRUE</strong> — even NULL = NULL. WHERE only keeps TRUE rows, so = NULL matches nothing. The correct test is <strong>IS NULL</strong> or IS NOT NULL. It's also why WHERE status &lt;&gt; 'Closed' silently drops rows whose status is NULL."</p>
+        </div>
+        <div class="qa">
+          <h4><span class="q">Q.</span> How do you avoid divide-by-zero in SQL?</h4>
+          <p>"Wrap the denominator in <strong>NULLIF</strong>: total / NULLIF(count, 0). If count is 0, NULLIF returns NULL, and dividing by NULL gives NULL instead of an error — the query completes, and I can handle the NULL afterwards, for example with COALESCE."</p>
+        </div>
+        <div class="remember"><strong>Remember:</strong> answer with the rule, one reason, and one example from your own tables — that shape wins every one of these.</div>
+      </section>
+
+      <footer>
+        <p class="credit">Created with ♡ by Aevi</p>
+        <p class="src">Notes built from "SQL 500 Interview Questions and Answers — Basic to Advanced, Part 1" (Q1–39) by Dipak Nile · @techin60sec, rewritten in plain words with policy-table examples.</p>
+      </footer>
+
+    </div>
+
+    <script>
+      // Scene player: steps through [data-step] elements, highlighting each
+      // and showing its caption. Resting state shows everything, fully readable.
+      (function () {
+        var STEP_MS = 2600;
+        document.querySelectorAll('.scene').forEach(function (scene) {
+          var steps = Array.prototype.slice.call(scene.querySelectorAll('[data-step]'));
+          var cap = scene.querySelector('.scene-caption');
+          var btn = scene.querySelector('.play-btn');
+          if (!steps.length || !cap || !btn) return;
+          var def = cap.getAttribute('data-default') || cap.textContent;
+          var timer = null, idx = 0;
+          function clearActive() { steps.forEach(function (s) { s.classList.remove('active'); }); }
+          function stop() {
+            if (timer) { clearInterval(timer); timer = null; }
+            scene.classList.remove('playing');
+            clearActive();
+            cap.textContent = def;
+            btn.textContent = '↻ Play again';
+          }
+          function tick() {
+            clearActive();
+            if (idx >= steps.length) { stop(); return; }
+            var el = steps[idx];
+            el.classList.add('active');
+            var c = el.getAttribute('data-cap');
+            if (c) cap.textContent = c;
+            idx++;
+          }
+          btn.addEventListener('click', function () {
+            if (timer) { clearInterval(timer); timer = null; }
+            idx = 0;
+            scene.classList.add('playing');
+            btn.textContent = '↻ Restart';
+            tick();
+            timer = setInterval(tick, STEP_MS);
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
