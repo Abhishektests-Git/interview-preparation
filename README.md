@@ -77,6 +77,18 @@ Abhishek's SDET interview preparation — interactive explainers and study guide
   collation and Unicode, LIKE patterns, and ORDER BY with NULLs —
   all with animated scenes, examples on a POLICIES table, a
   21-card revision grid and five model interview answers.
+- **`java-programming-animated-notes.html`** — Java Programming
+  Animated Notes: study notes from the "Java Programming: Complete
+  Beginner to Advanced" carousel — introduction and the JVM,
+  JDK/JRE/JVM, program structure, variables and data types,
+  input/output, operators, conditionals, loops, arrays and 2D
+  arrays, Strings (equals vs ==, StringBuilder, palindrome),
+  methods (pass-by-value, overloading, varargs, recursion),
+  classes and objects, the four OOP principles, inheritance vs
+  composition, polymorphism (upcasting and WebDriver dispatch),
+  abstraction and interfaces, packages and access modifiers —
+  17 animated sections with VS Code-style code, a 26-term
+  revision grid and six SDET interview answers.
 
 ## Live
 
@@ -92,6 +104,7 @@ GitHub Pages: https://abhishektests-git.github.io/interview-preparation/
 - Gen AI & LLMs animated explainer: https://abhishektests-git.github.io/interview-preparation/genai-llm-animated-explainer.html
 - Gen AI & LLM complete study notes: https://abhishektests-git.github.io/interview-preparation/genai-llm-complete-notes.html
 - SQL fundamentals animated notes: https://abhishektests-git.github.io/interview-preparation/sql-fundamentals-animated-notes.html
+- Java programming animated notes: https://abhishektests-git.github.io/interview-preparation/java-programming-animated-notes.html
 
 ## About
 
