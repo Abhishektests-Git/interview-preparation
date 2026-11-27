@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Prompt Engineering — Animated Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f3ec; --bg2:#efe9db; --surface:#fffdf7; --surface2:#f1ebdc;
+  --ink:#1c2420; --muted:#5c665f; --line:#ddd3bd;
+  --teal:#0e6b5c; --teal-soft:#d9ece7; --amber:#d98a16; --amber-soft:#fbeed3;
+  --coral:#c94f2e; --coral-soft:#fbe3da; --blue:#2456a6; --blue-soft:#dde8f8;
+  --code-bg:#14201c; --code-ink:#e8f0e9;
+  --shadow:0 10px 30px rgba(28,36,32,.10);
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#101613; --bg2:#0c100e; --surface:#18201c; --surface2:#1e2823;
+    --ink:#eef2ec; --muted:#a7b3aa; --line:#2e3a33;
+    --teal:#3ec2a8; --teal-soft:#173a33; --amber:#f0a93c; --amber-soft:#3d2f14;
+    --coral:#f0805f; --coral-soft:#3d231b; --blue:#7ba7ec; --blue-soft:#1d2c47;
+    --code-bg:#0a0f0d; --code-ink:#dcebe0;
+    --shadow:0 10px 30px rgba(0,0,0,.45);
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{animation-duration:.01ms !important; transition-duration:.01ms !important} }
+body{margin:0;font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px}
+button,[role="button"],select,summary,input,textarea{font:inherit}
+button,[role="button"],select,summary{min-height:2.75rem}
+a{color:var(--teal);text-underline-offset:3px}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px 72px}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+
+/* ---------- Hero ---------- */
+.hero{padding:44px 0 8px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);background:var(--teal-soft);border:1px solid var(--line);padding:7px 12px;border-radius:999px}
+.eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.55}}
+h1{font-size:clamp(2rem,6vw,3.4rem);line-height:1.05;margin:18px 0 12px;font-weight:800;letter-spacing:-.02em}
+h1 .hl{color:var(--teal);box-shadow:inset 0 -0.42em 0 var(--amber-soft)}
+.lede{font-size:1.12rem;color:var(--muted);max-width:44em;margin:0 0 20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+.chip{font-size:.85rem;font-weight:600;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 13px}
+.chip b{color:var(--teal)}
+
+/* typing demo */
+.typing-card{background:var(--code-bg);color:var(--code-ink);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);margin-bottom:10px}
+.typing-card .bar{display:flex;gap:6px;margin-bottom:12px}
+.typing-card .bar i{width:11px;height:11px;border-radius:50%;display:block}
+.typing-card .bar i:nth-child(1){background:#e0654a}.typing-card .bar i:nth-child(2){background:#e8a33d}.typing-card .bar i:nth-child(3){background:#3ec2a8}
+.typing-card p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:.95rem;min-height:3.2em}
+.typing-card .caret{display:inline-block;width:9px;height:1.05em;background:var(--amber);vertical-align:-0.18em;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.source-line{font-size:.85rem;color:var(--muted)}
+
+/* ---------- Nav ---------- */
+nav.toc{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%, transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin:26px -20px 0;padding:10px 20px}
+nav.toc ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0}
+nav.toc a{display:inline-flex;align-items:center;min-height:2.25rem;padding:5px 12px;border-radius:999px;text-decoration:none;font-size:.85rem;font-weight:600;color:var(--ink);border:1px solid transparent}
+nav.toc a:hover{border-color:var(--line);background:var(--surface)}
+@media (max-width:760px){
+  nav.toc{position:static}
+  section{scroll-margin-top:16px}
+}
+
+/* ---------- Sections ---------- */
+section{padding:40px 0 6px;scroll-margin-top:76px}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+.sec-num{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--amber);font-size:.95rem}
+h2{font-size:clamp(1.45rem,3.6vw,2rem);margin:0;line-height:1.15;font-weight:800;letter-spacing:-.01em}
+.sec-sub{color:var(--muted);max-width:46em;margin:6px 0 18px}
+h3{font-size:1.08rem;margin:0 0 6px;font-weight:700}
+p{margin:0 0 12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:16px}
+.grid.c2{grid-template-columns:1fr 1fr}
+.grid.c3{grid-template-columns:repeat(3,1fr)}
+@media (max-width:760px){.grid.c2,.grid.c3{grid-template-columns:1fr}}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;margin-bottom:8px}
+.tag.teal{background:var(--teal-soft);color:var(--teal)} .tag.amber{background:var(--amber-soft);color:var(--amber)}
+.tag.coral{background:var(--coral-soft);color:var(--coral)} .tag.blue{background:var(--blue-soft);color:var(--blue)}
+ul.tight{margin:0;padding-left:1.15em} ul.tight li{margin-bottom:6px}
+.small{font-size:.9rem;color:var(--muted)}
+pre{background:var(--code-bg);color:var(--code-ink);border-radius:10px;padding:14px 16px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:.86rem;line-height:1.55;margin:0 0 12px;white-space:pre-wrap;word-break:break-word}
+pre .k{color:#f0a93c} pre .s{color:#8fd8c4} pre .c{color:#8a9a90}
+.callout{border:1px dashed var(--amber);background:var(--amber-soft);border-radius:var(--radius);padding:16px 18px}
+.callout p:last-child{margin-bottom:0}
+
+/* content is always visible — no scroll-gated hiding, so the full page
+   reads correctly in captures, print and find-in-page */
+.reveal{opacity:1}
+
+/* ---------- Tokeniser ---------- */
+.tok-row{display:flex;flex-wrap:wrap;gap:7px;min-height:44px;align-items:flex-start}
+.tok{font-family:"IBM Plex Mono",monospace;font-size:.88rem;font-weight:600;padding:7px 11px;border-radius:8px;border:1px solid var(--line);animation:tokin .35s ease both}
+.tok:nth-child(4n+1){background:var(--teal-soft)} .tok:nth-child(4n+2){background:var(--amber-soft)}
+.tok:nth-child(4n+3){background:var(--blue-soft)} .tok:nth-child(4n){background:var(--coral-soft)}
+@keyframes tokin{from{opacity:0;transform:translateY(8px) scale(.92)}to{opacity:1;transform:none}}
+.input-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.input-row input[type="text"]{flex:1 1 260px;min-height:2.75rem;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:2.75rem;padding:10px 18px;border-radius:10px;border:1px solid var(--teal);background:var(--teal);color:#fff;font-weight:700;cursor:pointer}
+@media (prefers-color-scheme: dark){.btn{color:#0b1512}}
+.btn.ghost{background:transparent;color:var(--teal)}
+.btn:active{transform:translateY(1px)}
+
+/* ---------- Anatomy builder ---------- */
+.builder{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:820px){.builder{grid-template-columns:1fr}}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:.82rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;min-height:2.75rem;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.field textarea{min-height:4.5rem;resize:vertical}
+.output-box{background:var(--code-bg);color:var(--code-ink);border-radius:10px;padding:16px;font-family:"IBM Plex Mono",monospace;font-size:.88rem;line-height:1.6;white-space:pre-wrap;word-break:break-word;min-height:220px}
+.output-box .seg{color:#f0a93c;font-weight:600}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,80px);background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:999px;font-weight:600;font-size:.9rem;z-index:50;transition:transform .35s ease;box-shadow:var(--shadow)}
+.toast.show{transform:translate(-50%,0)}
+
+/* ---------- Technique explorer ---------- */
+.tab-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.tab-btn{min-height:2.75rem;padding:9px 15px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:600;cursor:pointer;font-size:.92rem}
+.tab-btn[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+@media (prefers-color-scheme: dark){.tab-btn[aria-selected="true"]{color:#0b1512}}
+.tab-panel{display:none}.tab-panel.active{display:block;animation:tokin .3s ease}
+
+/* ---------- CoT stepper ---------- */
+.cot-steps{display:grid;gap:10px}
+.cot-step{display:flex;gap:14px;align-items:flex-start;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:13px 15px;opacity:.35;transition:opacity .5s ease,border-color .5s ease}
+.cot-step.on{opacity:1;border-color:var(--amber)}
+.cot-step .n{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:var(--amber);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+@media (prefers-color-scheme: dark){.cot-step .n{color:#23180a}}
+.cot-step p{margin:0;font-size:.95rem}
+
+/* ---------- Weak vs strong ---------- */
+.vs-toggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-bottom:14px}
+.vs-toggle button{min-height:2.75rem;padding:9px 20px;border:0;background:var(--surface);color:var(--ink);font-weight:700;cursor:pointer}
+.vs-toggle button[aria-pressed="true"]{background:var(--coral);color:#fff}
+.vs-toggle button.good[aria-pressed="true"]{background:var(--teal)}
+.vs-panel{display:none}.vs-panel.active{display:block;animation:tokin .3s ease}
+.score{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.score span{font-size:.78rem;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:var(--surface2)}
+
+/* ---------- RAG flow ---------- */
+.flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap}
+.flow .node{flex:1 1 130px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;text-align:center;font-size:.88rem;font-weight:600;position:relative;transition:border-color .4s,background .4s}
+.flow .node small{display:block;font-weight:400;color:var(--muted);margin-top:3px}
+.flow .node.lit{border-color:var(--amber);background:var(--amber-soft)}
+.flow .arrow{flex:0 0 26px;display:flex;align-items:center;justify-content:center;color:var(--amber);font-weight:800;font-size:1.1rem}
+@media (max-width:640px){.flow{flex-direction:column}.flow .arrow{transform:rotate(90deg);flex-basis:22px;margin:0 auto}}
+
+/* ---------- Templates / starters ---------- */
+.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.tpl-grid{grid-template-columns:1fr}}
+.tpl{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;gap:8px}
+.tpl pre{flex:1}
+.copy-btn{align-self:flex-start;min-height:2.5rem;padding:8px 15px;border-radius:9px;border:1px solid var(--teal);background:transparent;color:var(--teal);font-weight:700;cursor:pointer;font-size:.88rem}
+ol.starters{margin:0;padding-left:1.3em;columns:2;column-gap:34px}
+ol.starters li{margin-bottom:9px;break-inside:avoid;font-size:.95rem}
+@media (max-width:700px){ol.starters{columns:1}}
+
+/* ---------- Revision grid ---------- */
+.rev{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px}
+.rev div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.rev b{display:block;font-size:.95rem;margin-bottom:2px;color:var(--teal)}
+.rev span{font-size:.86rem;color:var(--muted)}
+
+/* ---------- FAQ ---------- */
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:4px 18px}
+summary{cursor:pointer;font-weight:700;padding:12px 0;min-height:2.75rem;display:flex;align-items:center}
+details p{padding-bottom:14px;margin:0}
+
+footer{margin-top:52px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:.9rem}
+footer p{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <span class="eyebrow"><span class="dot"></span> Animated study notes · Ez Tech Explains carousel</span>
+    <h1>Prompt Engineering,<br><span class="hl">from first prompt to pro.</span></h1>
+    <p class="lede">Complete beginner-to-advanced notes on how to talk to large language models so they actually do what you meant — techniques, templates, structured output, RAG grounding, and responsible use, with live demos you can play with as you read.</p>
+    <div class="chips">
+      <span class="chip"><b>20</b> carousel slides, expanded</span>
+      <span class="chip"><b>13</b> core techniques</span>
+      <span class="chip"><b>6</b> ready-to-copy templates</span>
+      <span class="chip"><b>20</b> practical prompt starters</span>
+    </div>
+    <div class="typing-card" aria-label="Animated example of a strong prompt being typed">
+      <div class="bar"><i></i><i></i><i></i></div>
+      <p><span id="typeText"></span><span class="caret"></span></p>
+    </div>
+    <p class="source-line">Built from the “Prompt Engineering: Complete Beginner to Advanced Study Notes” carousel by <a href="https://www.facebook.com/share/1cXNeW5kQJ/" target="_blank" rel="noopener">Ez Tech Explains</a> (26 Nov 2026), expanded with worked examples and interactive demos.</p>
+  </header>
+
+  <nav class="toc" aria-label="Sections">
+    <ul>
+      <li><a href="#basics">1 · The basics</a></li>
+      <li><a href="#tokens">2 · Tokens</a></li>
+      <li><a href="#anatomy">3 · Anatomy + Builder</a></li>
+      <li><a href="#basic-tech">4 · Basic techniques</a></li>
+      <li><a href="#advanced-tech">5 · Advanced techniques</a></li>
+      <li><a href="#context-rag">6 · Context &amp; RAG</a></li>
+      <li><a href="#structured">7 · Structured output</a></li>
+      <li><a href="#weak-strong">8 · Weak vs strong</a></li>
+      <li><a href="#uses">9 · Coding, content, study, data</a></li>
+      <li><a href="#multimodal">10 · Multimodal</a></li>
+      <li><a href="#templates">11 · Templates</a></li>
+      <li><a href="#revision">12 · Revision + Interview</a></li>
+    </ul>
+  </nav>
+
+  <!-- 1 BASICS -->
+  <section id="basics">
+    <div class="sec-head"><span class="sec-num">01</span><h2>The basics: AI, GenAI, and the LLM</h2></div>
+    <p class="sec-sub">Prompt engineering only makes sense once you know what is on the other side of the text box.</p>
+    <div class="grid c3">
+      <div class="card reveal"><span class="tag teal">AI</span><h3>Artificial Intelligence</h3><p class="small" style="color:var(--ink)">The broad field: systems that perform tasks we associate with human intelligence — recognising, predicting, deciding. Spam filters and recommendation engines are AI, but they don’t create anything new.</p></div>
+      <div class="card reveal"><span class="tag amber">GenAI</span><h3>Generative AI</h3><p class="small" style="color:var(--ink)">The subset that <b>generates</b> new content — text, code, images, audio — instead of just classifying what exists. ChatGPT, image generators and code assistants live here.</p></div>
+      <div class="card reveal"><span class="tag coral">LLM</span><h3>Large Language Model</h3><p class="small" style="color:var(--ink)">The engine underneath text GenAI. Trained on enormous amounts of text, it works by predicting the most probable next token, over and over. It doesn’t “know” facts like a database — it models patterns in language.</p></div>
+    </div>
+    <div class="callout reveal" style="margin-top:16px">
+      <h3>Why this matters for prompting</h3>
+      <p>Because the model predicts likely text rather than looking up truth, <b>the wording of your prompt is the strongest lever you have</b>. Give it a vague pattern, you get the average of everything it has seen. Give it a precise role, context and format, and you steer the prediction toward exactly the corner of its training you want.</p>
+    </div>
+  </section>
+
+  <!-- 2 TOKENS -->
+  <section id="tokens">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Tokens: the model’s alphabet</h2></div>
+    <p class="sec-sub">LLMs don’t read words — they read <b>tokens</b>: chunks of roughly ¾ of a word in English. Context windows, cost and limits are all counted in tokens. Try the simplified tokeniser below (real tokenisers use learned sub-word merges, so counts differ slightly).</p>
+    <div class="card reveal">
+      <div class="input-row">
+        <input type="text" id="tokInput" value="Prompt engineering turns vague asks into precise instructions." aria-label="Sentence to tokenise">
+        <button class="btn" id="tokBtn" type="button">Tokenise</button>
+      </div>
+      <div class="tok-row" id="tokRow" aria-live="polite"></div>
+      <p class="small" id="tokCount" style="margin:12px 0 0"></p>
+    </div>
+    <div class="grid c2" style="margin-top:16px">
+      <div class="card reveal"><h3>Context window</h3><p class="small" style="color:var(--ink)">The maximum tokens the model can “see” at once — your prompt plus its reply. Anything outside the window is forgotten, which is why long chats drift and why pasting the right context matters more than chatting longer.</p></div>
+      <div class="card reveal"><h3>Rule of thumb</h3><p class="small" style="color:var(--ink)">100 tokens ≈ 75 English words. Code, URLs and non-English text usually cost more tokens per word — one reason a Hindi sentence can use more of the window than the same sentence in English.</p></div>
+    </div>
+  </section>
+
+  <!-- 3 ANATOMY -->
+  <section id="anatomy">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Anatomy of an effective prompt</h2></div>
+    <p class="sec-sub">Six building blocks. Not every prompt needs all six — but when an answer disappoints, it is almost always because one of them is missing. Build one live:</p>
+    <div class="card reveal">
+      <div class="builder">
+        <div>
+          <div class="field"><label for="fRole">1 · Role — who should the model be?</label><input id="fRole" type="text" value="You are a senior Selenium automation engineer"></div>
+          <div class="field"><label for="fTask">2 · Task — what exactly to do</label><input id="fTask" type="text" value="Write a TestNG test that verifies a policy premium calculation"></div>
+          <div class="field"><label for="fContext">3 · Context — background it needs</label><textarea id="fContext">The policy is a life insurance plan. Premium depends on age, sum assured and term. The existing framework uses Page Object Model and reads data from Excel.</textarea></div>
+          <div class="field"><label for="fFormat">4 · Format — shape of the answer</label>
+            <select id="fFormat">
+              <option>Complete Java code with comments, then a 3-line explanation</option>
+              <option>A step-by-step numbered list</option>
+              <option>A markdown table</option>
+              <option>Valid JSON only, no extra text</option>
+              <option>Bullet points, under 150 words</option>
+            </select></div>
+          <div class="field"><label for="fConstraints">5 · Constraints — limits &amp; must-nots</label><input id="fConstraints" type="text" value="Use explicit waits only, no Thread.sleep, no hard-coded test data"></div>
+          <div class="field"><label for="fExample">6 · Example — one sample of the style (optional)</label><input id="fExample" type="text" value="Follow the style of: @Test(dataProvider = &quot;premiumData&quot;) …"></div>
+        </div>
+        <div>
+          <p class="small" style="font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px">Your assembled prompt</p>
+          <div class="output-box" id="promptOut" aria-live="polite"></div>
+          <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+            <button class="btn" id="copyPrompt" type="button">Copy prompt</button>
+            <button class="btn ghost" id="resetPrompt" type="button">Reset example</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 BASIC TECHNIQUES -->
+  <section id="basic-tech">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Basic techniques</h2></div>
+    <p class="sec-sub">The everyday toolkit. “Shot” means an example included in the prompt — zero-shot is asking cold, few-shot is showing the pattern first.</p>
+    <div class="tab-row" role="tablist" aria-label="Basic prompting techniques">
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="t-zero" type="button">Zero-shot</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="t-one" type="button">One-shot</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="t-few" type="button">Few-shot</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="t-instr" type="button">Instruction &amp; question</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="t-iter" type="button">Iterative</button>
+    </div>
+    <div class="card reveal">
+      <div class="tab-panel active" id="t-zero" role="tabpanel">
+        <h3>Zero-shot — ask directly, no examples</h3>
+        <p>Works when the task is common and well-represented in training. Fastest to write; quality depends entirely on how clearly the task is stated.</p>
+        <pre>Classify the sentiment of this review as Positive, Negative or Neutral:
+"The delivery was late, but the product quality is excellent."</pre>
+        <p class="small">Best for: summaries, translations, simple classification, definitions.</p>
+      </div>
+      <div class="tab-panel" id="t-one" role="tabpanel">
+        <h3>One-shot — show one example</h3>
+        <p>A single example pins down the format far better than describing it. Use when the output shape matters more than the content.</p>
+        <pre>Convert to a formal email line:
+Casual: "hey, can't make it today"
+Formal: "Hello, I will be unable to attend today."
+
+Casual: "send me the file asap"
+Formal:</pre>
+        <p class="small">Best for: tone conversion, fixed reply formats, naming conventions.</p>
+      </div>
+      <div class="tab-panel" id="t-few" role="tabpanel">
+        <h3>Few-shot — show the pattern 2–5 times</h3>
+        <p>Multiple examples teach edge cases and consistency. Keep examples short, varied and in the exact format you want back.</p>
+        <pre>Bug title → Severity
+"App crashes on login with valid credentials" → Critical
+"Typo in footer copyright year" → Low
+"Payment succeeds but confirmation email missing" → High
+"Search results show duplicate policies" →</pre>
+        <p class="small">Best for: classification with your own labels, data extraction, consistent test-case formats.</p>
+      </div>
+      <div class="tab-panel" id="t-instr" role="tabpanel">
+        <h3>Instruction, question &amp; contextual prompting</h3>
+        <p><b>Instruction:</b> command form — “Summarise…”, “List…”. <b>Question:</b> ask as a question when you want reasoning or explanation. <b>Contextual:</b> attach the situation so the answer fits it, not the generic case.</p>
+        <pre>Context: I am preparing for an SDET interview tomorrow and know
+Java and Selenium but not microservices.
+Question: Explain waits in Selenium in 5 bullet points, at the
+depth an interviewer expects, and flag the one follow-up question
+they usually ask next.</pre>
+        <p class="small">Best for: study help, interview prep, anything where “for whom” changes the answer.</p>
+      </div>
+      <div class="tab-panel" id="t-iter" role="tabpanel">
+        <h3>Iterative prompting — refine in rounds</h3>
+        <p>Treat the first answer as a draft, not a failure. Each follow-up narrows one thing: scope, depth, format, tone, audience.</p>
+        <pre>Round 1: "Explain recursion."
+Round 2: "Now explain it with a Java example I can run."
+Round 3: "Remove the theory. Give me only the code and a
+          line-by-line dry run for factorial(4)."</pre>
+        <p class="small">Best for: learning, writing, debugging — anywhere the target sharpens as you see drafts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 ADVANCED TECHNIQUES -->
+  <section id="advanced-tech">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Advanced techniques</h2></div>
+    <p class="sec-sub">For problems where one straight-line answer isn’t reliable. Watch chain-of-thought work through a problem step by step:</p>
+    <div class="card reveal">
+      <h3 style="margin-bottom:4px">Chain-of-Thought (CoT) — “think step by step”</h3>
+      <p class="small" style="margin-bottom:14px">Prompt: <i>A test suite has 240 cases. 15% are flaky. Of the flaky ones, ⅓ fail only on Mondays. How many cases fail only on Mondays?</i> — press play and watch the reasoning chain.</p>
+      <div class="cot-steps" id="cotSteps">
+        <div class="cot-step"><span class="n">1</span><p><b>Find the flaky cases:</b> 15% of 240 = 0.15 × 240 = <b>36 flaky cases</b>.</p></div>
+        <div class="cot-step"><span class="n">2</span><p><b>Take one third of those:</b> 36 ÷ 3 = <b>12 cases</b>.</p></div>
+        <div class="cot-step"><span class="n">3</span><p><b>Answer:</b> 12 cases fail only on Mondays. Each step is checkable — that’s the point of CoT.</p></div>
+      </div>
+      <button class="btn" id="cotPlay" type="button" style="margin-top:14px">▶ Play the reasoning</button>
+    </div>
+    <div class="grid c2" style="margin-top:16px">
+      <div class="card reveal"><span class="tag teal">Decomposition</span><h3>Break the problem down</h3><p class="small" style="color:var(--ink)">Split a big task into sub-tasks and prompt for each in sequence: outline → sections → draft → polish. The model does each smaller job better than the whole job at once, and you can correct course between steps.</p></div>
+      <div class="card reveal"><span class="tag amber">Self-consistency</span><h3>Ask several ways, take the consensus</h3><p class="small" style="color:var(--ink)">Generate multiple reasoning paths (or re-ask in fresh chats) and trust the answer most paths agree on. Disagreement is a signal the question is ambiguous or the model is guessing.</p></div>
+      <div class="card reveal"><span class="tag coral">ReAct</span><h3>Reason + Act</h3><p class="small" style="color:var(--ink)">The pattern behind AI agents: the model reasons, takes an action (search, run code, call a tool), observes the result, then reasons again. Thought → Action → Observation, in a loop until done.</p></div>
+      <div class="card reveal"><span class="tag blue">Reflection / self-critique</span><h3>Make it review its own work</h3><p class="small" style="color:var(--ink)">“Review your answer above. List any errors, unsupported claims or missing cases, then give a corrected version.” Models catch a surprising amount of their own sloppiness when explicitly asked to audit it.</p></div>
+      <div class="card reveal" style="grid-column:1/-1"><span class="tag teal">Role / persona</span><h3>Cast the model before you brief it</h3><p class="small" style="color:var(--ink)">“You are a strict code reviewer at a bank” produces different — usually better-calibrated — output than the same question asked cold. The persona sets vocabulary, standards and what the model treats as important. Combine it with a task and constraints (see the Builder in §3) for the strongest everyday prompt.</p></div>
+    </div>
+  </section>
+
+  <!-- 6 CONTEXT & RAG -->
+  <section id="context-rag">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Context engineering &amp; RAG grounding</h2></div>
+    <p class="sec-sub">Modern prompting is less about one clever sentence and more about <b>what you put in the window</b>: instructions, examples, documents, conversation history. Retrieval-Augmented Generation (RAG) automates the document part.</p>
+    <div class="card reveal">
+      <div class="flow" id="ragFlow" aria-label="RAG pipeline diagram">
+        <div class="node">Your question<small>“What is the revival rule?”</small></div><div class="arrow">→</div>
+        <div class="node">Retrieve<small>Search your documents for relevant chunks</small></div><div class="arrow">→</div>
+        <div class="node">Ground<small>Chunks pasted into the prompt as context</small></div><div class="arrow">→</div>
+        <div class="node">Generate<small>Model answers from the chunks, not memory</small></div><div class="arrow">→</div>
+        <div class="node">Answer + sources<small>Traceable back to the document</small></div>
+      </div>
+      <button class="btn ghost" id="ragPlay" type="button" style="margin-top:14px">Animate the flow</button>
+    </div>
+    <div class="grid c2" style="margin-top:16px">
+      <div class="card reveal"><h3>Grounding rules that work</h3>
+        <ul class="tight">
+          <li>“Answer <b>only</b> from the context below. If it isn’t there, say ‘Not in the provided documents’.”</li>
+          <li>Ask for a quote or section reference with each claim.</li>
+          <li>Put the most important context where the model attends best — start or end, not buried mid-prompt.</li>
+        </ul></div>
+      <div class="card reveal"><h3>Why it matters</h3><p class="small" style="color:var(--ink)">Grounding is the main defence against <b>hallucination</b> — fluent, confident, invented answers. A model answering from supplied text can be checked; a model answering from “memory” of its training cannot. When facts matter, supply the facts.</p></div>
+    </div>
+  </section>
+
+  <!-- 7 STRUCTURED OUTPUT -->
+  <section id="structured">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Structured output prompting</h2></div>
+    <p class="sec-sub">When the answer feeds another tool — a script, a spreadsheet, an API test — prose is a liability. Ask for a schema, show one example, and validate what comes back.</p>
+    <div class="grid c2">
+      <div class="card reveal"><h3>The prompt</h3>
+        <pre>Extract the test data as JSON matching this schema.
+Output ONLY valid JSON, no commentary.
+
+Schema:
+{
+  "policyNumber": string,
+  "age": number,
+  "sumAssured": number,
+  "premium": number
+}
+
+Text: "Policy POL-88412, Mr Verma, age 42,
+sum assured 500000, annual premium 38500."</pre></div>
+      <div class="card reveal"><h3>The output — then validate it</h3>
+        <pre>{
+  <span class="k">"policyNumber"</span>: <span class="s">"POL-88412"</span>,
+  <span class="k">"age"</span>: 42,
+  <span class="k">"sumAssured"</span>: 500000,
+  <span class="k">"premium"</span>: 38500
+}</pre>
+        <ul class="tight">
+          <li>Does it <b>parse</b> as JSON? (Run it through a validator.)</li>
+          <li>Are all <b>required fields</b> present, with the right types?</li>
+          <li>Do the <b>values</b> match the source text — not just the shape?</li>
+        </ul></div>
+    </div>
+    <div class="callout reveal" style="margin-top:16px"><p><b>Tester’s note:</b> structured output is where prompt engineering meets API testing. The same discipline as validating a response body against a schema in RestAssured — expected shape first, then values, then edge cases (missing field, wrong type, extra field).</p></div>
+  </section>
+
+  <!-- 8 WEAK VS STRONG -->
+  <section id="weak-strong">
+    <div class="sec-head"><span class="sec-num">08</span><h2>Weak prompt vs strong prompt</h2></div>
+    <p class="sec-sub">Same goal, same model. The only difference is the prompt. Toggle between them:</p>
+    <div class="card reveal">
+      <div class="vs-toggle" role="group" aria-label="Compare weak and strong prompts">
+        <button type="button" id="vsWeak" aria-pressed="true">✗ Weak</button>
+        <button type="button" id="vsStrong" class="good" aria-pressed="false">✓ Strong</button>
+      </div>
+      <div class="vs-panel active" id="panelWeak">
+        <pre>"Write test cases for login."</pre>
+        <p>You’ll get a generic list — happy path, wrong password, maybe SQL injection if you’re lucky. No format, no coverage target, no connection to your application.</p>
+        <div class="score"><span>Role: missing</span><span>Context: missing</span><span>Format: missing</span><span>Constraints: missing</span></div>
+      </div>
+      <div class="vs-panel" id="panelStrong">
+        <pre>"You are a QA engineer on a life-insurance policy admin
+system. Write test cases for the login page in a markdown
+table with columns: ID, Scenario, Steps, Expected Result.
+Cover: valid login, locked account after 3 failed attempts,
+session timeout, and password reset. Negative cases first.
+Maximum 10 cases."</pre>
+        <p>Every block from §3 is present — so the output arrives in the shape you need, at the coverage you asked for, ready to paste into your test management tool.</p>
+        <div class="score"><span>Role ✓</span><span>Task ✓</span><span>Context ✓</span><span>Format ✓</span><span>Constraints ✓</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 USES -->
+  <section id="uses">
+    <div class="sec-head"><span class="sec-num">09</span><h2>Prompting for real work</h2></div>
+    <p class="sec-sub">Four domains from the carousel, each with the pattern that makes it reliable.</p>
+    <div class="grid c2">
+      <div class="card reveal"><span class="tag teal">Coding</span><h3>Specify language, version, and standards</h3>
+        <p class="small" style="color:var(--ink)">“In Java 17…” beats hoping. Ask for edge cases and complexity, and treat generated code like a junior’s PR: compile it, test it, review security-sensitive parts (inputs, SQL, auth) yourself. Reusable workflow: <i>explain → generate → test → refactor</i>, one prompt each.</p>
+        <pre>"In Java 17, write a method to find the second
+largest number in an int array. Handle duplicates
+and arrays shorter than 2. Then give 5 test inputs
+with expected outputs."</pre></div>
+      <div class="card reveal"><span class="tag amber">Content creation</span><h3>Brief first, draft second</h3>
+        <p class="small" style="color:var(--ink)">Give audience, purpose, tone, length and structure <i>before</i> asking for the draft — the same brief you’d give a human writer. Then iterate on sections, not the whole piece.</p>
+        <pre>"Audience: first-time home buyers in India.
+Tone: reassuring, no jargon. Write a 120-word
+intro for a guide on home-loan documents,
+ending with one question that invites comments."</pre></div>
+      <div class="card reveal"><span class="tag coral">Education &amp; learning</span><h3>Ask it to teach, not to hand over</h3>
+        <p class="small" style="color:var(--ink)">“Explain, then quiz me” builds understanding; “give me the answer” builds nothing — and submitting AI output as your own work breaks academic integrity rules in most institutions. Use it as a tutor: examples, hints, practice questions, feedback on <i>your</i> attempt.</p>
+        <pre>"Teach me SQL JOINs using a POLICIES and
+CUSTOMERS table. Explain one join at a time,
+then ask me one practice question and wait
+for my answer before continuing."</pre></div>
+      <div class="card reveal"><span class="tag blue">Data science &amp; analysis</span><h3>Demand defensible analysis</h3>
+        <p class="small" style="color:var(--ink)">Ask for the method before the conclusion: which columns, which aggregation, what was excluded and why. And keep the classic trap in view — <b>correlation is not causation</b>; a pattern in data is a question, not a proof.</p>
+        <pre>"Analyse this defect data: count defects by
+module and severity, show the calculation for
+each number, and list what this data cannot
+tell us. Do not invent missing values."</pre></div>
+    </div>
+  </section>
+
+  <!-- 10 MULTIMODAL + RESPONSIBLE -->
+  <section id="multimodal">
+    <div class="sec-head"><span class="sec-num">10</span><h2>Multimodal prompting &amp; responsible use</h2></div>
+    <div class="grid c2">
+      <div class="card reveal"><span class="tag teal">Multimodal</span><h3>Prompting with more than text</h3>
+        <ul class="tight">
+          <li><b>Image input:</b> attach the image, then say what to look at — “Read the error message in this screenshot and suggest the likely cause.”</li>
+          <li><b>Image generation:</b> subject + style + composition + lighting. You are art-directing, not describing a photo that exists.</li>
+          <li><b>Audio/docs:</b> ask for transcript first, summary second — verify against the source before trusting either.</li>
+          <li>Keep the two jobs separate in your head: prompting a model to <i>analyse</i> media vs to <i>generate</i> media need different instructions.</li>
+        </ul></div>
+      <div class="card reveal"><span class="tag coral">Responsible AI</span><h3>Rules that keep you safe</h3>
+        <ul class="tight">
+          <li><b>Verify facts.</b> Fluency is not accuracy — check names, dates, numbers and quotes against a real source.</li>
+          <li><b>Protect data.</b> Don’t paste passwords, personal data, or confidential company code into public tools.</li>
+          <li><b>Own the output.</b> If your name is on it, you are responsible for it — errors included.</li>
+          <li><b>Disclose</b> AI assistance where your employer, exam or publisher requires it.</li>
+        </ul></div>
+    </div>
+  </section>
+
+  <!-- 11 TEMPLATES -->
+  <section id="templates">
+    <div class="sec-head"><span class="sec-num">11</span><h2>Templates &amp; 20 practical starters</h2></div>
+    <p class="sec-sub">Copy, replace the [brackets], and go. Templates beat inspiration — they make your good prompts repeatable.</p>
+    <div class="tpl-grid">
+      <div class="tpl reveal"><h3>The all-rounder</h3>
+        <pre id="tpl1">You are a [role]. [Task] for [audience].
+Context: [background]. Format: [shape].
+Constraints: [limits]. If anything is unclear,
+ask me one question before starting.</pre>
+        <button class="copy-btn" data-copy="tpl1" type="button">Copy template</button></div>
+      <div class="tpl reveal"><h3>Explain like a tutor</h3>
+        <pre id="tpl2">Explain [concept] to me as if I know [what I
+already know]. Use one real example from
+[my domain]. Then ask me 3 questions to check
+I understood, easiest first.</pre>
+        <button class="copy-btn" data-copy="tpl2" type="button">Copy template</button></div>
+      <div class="tpl reveal"><h3>Debug my code</h3>
+        <pre id="tpl3">This [language] code should [expected behaviour]
+but instead [actual behaviour]. Find the cause,
+explain it in 2 lines, then show the corrected
+code with the changed lines marked.
+Code: [paste code]</pre>
+        <button class="copy-btn" data-copy="tpl3" type="button">Copy template</button></div>
+      <div class="tpl reveal"><h3>Test-case generator</h3>
+        <pre id="tpl4">You are a QA engineer. Write test cases for
+[feature] in a table: ID, Scenario, Steps,
+Expected Result. Cover positive, negative,
+boundary and [domain-specific] cases.
+Maximum [n] cases, negative cases first.</pre>
+        <button class="copy-btn" data-copy="tpl4" type="button">Copy template</button></div>
+      <div class="tpl reveal"><h3>Summarise with proof</h3>
+        <pre id="tpl5">Summarise the text below in [n] bullet points.
+After each bullet, quote the exact sentence
+from the text that supports it. Do not add
+anything the text does not say.
+Text: [paste text]</pre>
+        <button class="copy-btn" data-copy="tpl5" type="button">Copy template</button></div>
+      <div class="tpl reveal"><h3>Review &amp; improve</h3>
+        <pre id="tpl6">Review the [document/code/answer] below.
+First list its 3 biggest weaknesses with
+reasons. Then give an improved version that
+fixes them, keeping the length about the same.
+[paste content]</pre>
+        <button class="copy-btn" data-copy="tpl6" type="button">Copy template</button></div>
+    </div>
+    <div class="card reveal" style="margin-top:16px">
+      <h3 style="margin-bottom:12px">20 practical starters — finish the sentence and send</h3>
+      <ol class="starters">
+        <li>“Explain … in simple words, with one example.”</li>
+        <li>“Summarise this into 5 bullet points: …”</li>
+        <li>“Rewrite this to sound professional: …”</li>
+        <li>“Make a study plan for … in 7 days.”</li>
+        <li>“Quiz me on … — one question at a time.”</li>
+        <li>“Find the bug in this code: …”</li>
+        <li>“Convert this data into a table: …”</li>
+        <li>“Give me positive and negative test cases for …”</li>
+        <li>“Compare … and … in a table with a verdict.”</li>
+        <li>“Draft an email to … about …, polite and short.”</li>
+        <li>“List edge cases I might be missing in …”</li>
+        <li>“Explain this error message and how to fix it: …”</li>
+        <li>“Turn these rough notes into a structured doc: …”</li>
+        <li>“Give me 5 interview questions on … with model answers.”</li>
+        <li>“Check this for grammar and awkward phrasing: …”</li>
+        <li>“Brainstorm 10 ideas for …, then rank the top 3.”</li>
+        <li>“Translate this to … keeping the tone formal: …”</li>
+        <li>“Write the SQL query for … given this schema: …”</li>
+        <li>“Review my answer and tell me what an interviewer would probe next: …”</li>
+        <li>“Answer only from this document; if it’s not there, say so: …”</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 12 REVISION -->
+  <section id="revision">
+    <div class="sec-head"><span class="sec-num">12</span><h2>Quick revision &amp; interview answers</h2></div>
+    <p class="sec-sub">The grid for a 5-minute recap, then the questions an interviewer is most likely to ask about GenAI and prompting — answered the way you can defend.</p>
+    <div class="rev reveal">
+      <div><b>Prompt</b><span>The instruction + context you give a model.</span></div>
+      <div><b>Token</b><span>Chunk of text (~¾ word) the model actually reads.</span></div>
+      <div><b>Context window</b><span>Max tokens visible at once — prompt + reply.</span></div>
+      <div><b>Zero / few-shot</b><span>Asking with zero examples vs showing 2–5.</span></div>
+      <div><b>Chain-of-thought</b><span>Asking for step-by-step reasoning before the answer.</span></div>
+      <div><b>Self-consistency</b><span>Multiple reasoning paths; trust the consensus.</span></div>
+      <div><b>ReAct</b><span>Reason → Act (tool) → Observe loop behind agents.</span></div>
+      <div><b>Persona prompting</b><span>Casting the model in a role to set standards.</span></div>
+      <div><b>Context engineering</b><span>Designing everything in the window, not one line.</span></div>
+      <div><b>RAG</b><span>Retrieve documents, ground the answer in them.</span></div>
+      <div><b>Grounding</b><span>Forcing answers to come from supplied sources.</span></div>
+      <div><b>Hallucination</b><span>Fluent, confident, invented output.</span></div>
+      <div><b>Structured output</b><span>Schema-shaped replies (JSON/table) you can validate.</span></div>
+      <div><b>Iterative prompting</b><span>Refining in rounds instead of one perfect ask.</span></div>
+      <div><b>Decomposition</b><span>Splitting a big task into prompted sub-tasks.</span></div>
+      <div><b>Multimodal</b><span>Prompting across text, image, audio and documents.</span></div>
+    </div>
+    <div style="margin-top:20px">
+      <details><summary>Q1. What is prompt engineering?</summary><p>The practice of designing inputs to an LLM — role, task, context, examples, format and constraints — so its output is accurate, in the right shape, and repeatable. It matters because the model predicts text from patterns: the prompt is how you steer which pattern it follows.</p></details>
+      <details><summary>Q2. Zero-shot vs few-shot — when do you use each?</summary><p>Zero-shot for common tasks where the model already knows the pattern (summarise, translate). Few-shot when the output format or labels are yours — classification schemes, test-case formats, extraction — because examples pin the pattern down better than descriptions do.</p></details>
+      <details><summary>Q3. How do you reduce hallucinations?</summary><p>Ground the model: supply the source text and instruct it to answer only from it, ask for quotes or references per claim, use structured output so answers are checkable, and verify anything factual against a real source. Lower freedom + supplied facts = fewer inventions.</p></details>
+      <details><summary>Q4. What is chain-of-thought prompting?</summary><p>Asking the model to reason step by step before giving a final answer. Multi-step problems (maths, logic, debugging) get more accurate because each intermediate step constrains the next — and the steps are visible, so you can spot where reasoning went wrong.</p></details>
+      <details><summary>Q5. How would a tester use prompt engineering at work?</summary><p>Generating test-case drafts in a fixed format from a requirement, producing test data, explaining error logs, drafting defect reports, and creating SQL or automation snippets — always with the tester reviewing, correcting and owning the final artefact, exactly like reviewing a junior’s work.</p></details>
+      <details><summary>Q6. What is RAG, in one minute?</summary><p>Retrieval-Augmented Generation: instead of relying on what the model memorised in training, the system first retrieves relevant chunks from your documents, puts them in the prompt as context, and the model answers from those chunks. It makes answers current, source-based and checkable — the standard pattern for chatbots over company documents.</p></details>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>Source:</b> “Prompt Engineering: Complete Beginner to Advanced Study Notes” — carousel by Ez Tech Explains, posted 26 Nov 2026. <a href="https://www.facebook.com/share/1cXNeW5kQJ/" target="_blank" rel="noopener">View the original post</a>. Examples on this page were written for these notes to demonstrate each technique.</p>
+    <p>How to use these notes: read top to bottom once, play with the Builder and tokeniser, save the templates, and finish with the revision grid.</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status">Copied ✓</div>
+
+<script>
+// ---------- Typing hero ----------
+(function(){
+  var text = "You are an SDET coach. Turn this requirement into 8 test cases — table format, negative cases first, boundary values included.";
+  var el = document.getElementById('typeText');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){ el.textContent = text; return; }
+  var i = 0, deleting = false;
+  function tick(){
+    if(!deleting){
+      i++;
+      el.textContent = text.slice(0, i);
+      if(i === text.length){ deleting = true; setTimeout(tick, 3400); return; }
+      setTimeout(tick, 34);
+    } else {
+      i -= 3;
+      if(i <= 0){ i = 0; deleting = false; el.textContent = ''; setTimeout(tick, 600); return; }
+      el.textContent = text.slice(0, i);
+      setTimeout(tick, 14);
+    }
+  }
+  tick();
+})();
+
+// ---------- Reveal on scroll ----------
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){ els.forEach(function(e){ e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, {threshold: 0.08});
+  els.forEach(function(e){ io.observe(e); });
+})();
+
+// ---------- Tokeniser (simplified demo) ----------
+function tokenise(str){
+  // Split into word chunks and punctuation, then break long words into sub-words of ~4 chars
+  var raw = str.match(/[A-Za-z]+|[0-9]+|[^\sA-Za-z0-9]/g) || [];
+  var out = [];
+  raw.forEach(function(w){
+    if(/^[A-Za-z]{9,}$/.test(w)){
+      for(var i = 0; i < w.length; i += 4){ out.push(w.slice(i, i + 4)); }
+    } else { out.push(w); }
+  });
+  return out;
+}
+function runTokens(){
+  var val = document.getElementById('tokInput').value.trim();
+  var row = document.getElementById('tokRow');
+  var count = document.getElementById('tokCount');
+  row.innerHTML = '';
+  if(!val){ count.textContent = 'Type a sentence to see its tokens.'; return; }
+  var toks = tokenise(val);
+  toks.forEach(function(t, idx){
+    var s = document.createElement('span');
+    s.className = 'tok';
+    s.style.animationDelay = (idx * 45) + 'ms';
+    s.textContent = t;
+    row.appendChild(s);
+  });
+  var words = val.split(/\s+/).length;
+  count.textContent = toks.length + ' tokens · ' + words + ' words · ≈ ' + Math.round(toks.length * 0.75) + ' words at the ¾-word-per-token rule. Real tokenisers differ slightly — this is a teaching model.';
+}
+document.getElementById('tokBtn').addEventListener('click', runTokens);
+document.getElementById('tokInput').addEventListener('keydown', function(e){ if(e.key === 'Enter'){ runTokens(); } });
+runTokens();
+
+// ---------- Prompt builder ----------
+var defaults = {};
+['fRole','fTask','fContext','fFormat','fConstraints','fExample'].forEach(function(id){
+  defaults[id] = document.getElementById(id).value;
+});
+function buildPrompt(){
+  var role = document.getElementById('fRole').value.trim();
+  var task = document.getElementById('fTask').value.trim();
+  var ctx = document.getElementById('fContext').value.trim();
+  var fmt = document.getElementById('fFormat').value.trim();
+  var con = document.getElementById('fConstraints').value.trim();
+  var ex = document.getElementById('fExample').value.trim();
+  var parts = [];
+  if(role) parts.push('<span class="seg">ROLE:</span> ' + escapeHtml(role));
+  if(task) parts.push('<span class="seg">TASK:</span> ' + escapeHtml(task));
+  if(ctx) parts.push('<span class="seg">CONTEXT:</span> ' + escapeHtml(ctx));
+  if(fmt) parts.push('<span class="seg">FORMAT:</span> ' + escapeHtml(fmt));
+  if(con) parts.push('<span class="seg">CONSTRAINTS:</span> ' + escapeHtml(con));
+  if(ex) parts.push('<span class="seg">EXAMPLE:</span> ' + escapeHtml(ex));
+  document.getElementById('promptOut').innerHTML = parts.join('\n\n') || '<span style="opacity:.6">Fill in the fields to build your prompt…</span>';
+}
+function buildPromptText(){
+  var role = document.getElementById('fRole').value.trim();
+  var task = document.getElementById('fTask').value.trim();
+  var ctx = document.getElementById('fContext').value.trim();
+  var fmt = document.getElementById('fFormat').value.trim();
+  var con = document.getElementById('fConstraints').value.trim();
+  var ex = document.getElementById('fExample').value.trim();
+  var parts = [];
+  if(role) parts.push('ROLE: ' + role);
+  if(task) parts.push('TASK: ' + task);
+  if(ctx) parts.push('CONTEXT: ' + ctx);
+  if(fmt) parts.push('FORMAT: ' + fmt);
+  if(con) parts.push('CONSTRAINTS: ' + con);
+  if(ex) parts.push('EXAMPLE: ' + ex);
+  return parts.join('\n\n');
+}
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+['fRole','fTask','fContext','fFormat','fConstraints','fExample'].forEach(function(id){
+  document.getElementById(id).addEventListener('input', buildPrompt);
+  document.getElementById(id).addEventListener('change', buildPrompt);
+});
+buildPrompt();
+document.getElementById('resetPrompt').addEventListener('click', function(){
+  Object.keys(defaults).forEach(function(id){ document.getElementById(id).value = defaults[id]; });
+  buildPrompt();
+  showToast('Example restored');
+});
+
+// ---------- Copy helpers ----------
+function showToast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 1800);
+}
+function copyText(txt, msg){
+  function done(){ showToast(msg || 'Copied ✓'); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done).catch(function(){ fallback(); });
+  } else { fallback(); }
+  function fallback(){
+    var ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch(e){ showToast('Copy failed — select the text manually'); }
+    document.body.removeChild(ta);
+  }
+}
+document.getElementById('copyPrompt').addEventListener('click', function(){ copyText(buildPromptText(), 'Prompt copied ✓'); });
+document.querySelectorAll('.copy-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var src = document.getElementById(btn.getAttribute('data-copy'));
+    if(src){ copyText(src.textContent, 'Template copied ✓'); }
+  });
+});
+
+// ---------- Technique tabs ----------
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.setAttribute('aria-selected','false'); });
+    btn.setAttribute('aria-selected','true');
+    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.getElementById(btn.getAttribute('data-tab')).classList.add('active');
+  });
+});
+
+// ---------- CoT stepper ----------
+document.getElementById('cotPlay').addEventListener('click', function(){
+  var steps = document.querySelectorAll('#cotSteps .cot-step');
+  steps.forEach(function(s){ s.classList.remove('on'); });
+  steps.forEach(function(s, i){ setTimeout(function(){ s.classList.add('on'); }, 500 * (i + 1)); });
+});
+
+// ---------- Weak vs strong ----------
+var vsWeak = document.getElementById('vsWeak'), vsStrong = document.getElementById('vsStrong');
+function setVs(strong){
+  vsWeak.setAttribute('aria-pressed', String(!strong));
+  vsStrong.setAttribute('aria-pressed', String(strong));
+  document.getElementById('panelWeak').classList.toggle('active', !strong);
+  document.getElementById('panelStrong').classList.toggle('active', strong);
+}
+vsWeak.addEventListener('click', function(){ setVs(false); });
+vsStrong.addEventListener('click', function(){ setVs(true); });
+
+// ---------- RAG flow ----------
+document.getElementById('ragPlay').addEventListener('click', function(){
+  var nodes = document.querySelectorAll('#ragFlow .node');
+  nodes.forEach(function(n){ n.classList.remove('lit'); });
+  nodes.forEach(function(n, i){ setTimeout(function(){ n.classList.add('lit'); }, 450 * (i + 1)); });
+});
+</script>
+</body>
+</html>
