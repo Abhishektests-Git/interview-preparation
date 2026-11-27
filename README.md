@@ -89,6 +89,19 @@ Abhishek's SDET interview preparation — interactive explainers and study guide
   abstraction and interfaces, packages and access modifiers —
   17 animated sections with VS Code-style code, a 26-term
   revision grid and six SDET interview answers.
+- **`prompt-engineering-animated-notes.html`** — Prompt Engineering
+  Animated Notes: study notes from the "Prompt Engineering: Complete
+  Beginner to Advanced" carousel — AI/GenAI/LLM basics, tokens,
+  the anatomy of an effective prompt, basic techniques (zero-shot,
+  one-shot, few-shot, instruction, iterative), advanced techniques
+  (chain-of-thought, decomposition, self-consistency, ReAct,
+  reflection, role/persona), context engineering and RAG grounding,
+  structured JSON output, weak vs strong prompts, prompting for
+  coding, content, education and data, multimodal prompting and
+  responsible use — 12 sections with interactive demos (a live
+  tokeniser, a prompt builder, an animated chain-of-thought and
+  RAG pipeline), a 16-term revision grid and six SDET interview
+  answers.
 
 ## Live
 
@@ -105,6 +118,7 @@ GitHub Pages: https://abhishektests-git.github.io/interview-preparation/
 - Gen AI & LLM complete study notes: https://abhishektests-git.github.io/interview-preparation/genai-llm-complete-notes.html
 - SQL fundamentals animated notes: https://abhishektests-git.github.io/interview-preparation/sql-fundamentals-animated-notes.html
 - Java programming animated notes: https://abhishektests-git.github.io/interview-preparation/java-programming-animated-notes.html
+- Prompt engineering animated notes: https://abhishektests-git.github.io/interview-preparation/prompt-engineering-animated-notes.html
 
 ## About
 
