@@ -102,6 +102,20 @@ Abhishek's SDET interview preparation — interactive explainers and study guide
   tokeniser, a prompt builder, an animated chain-of-thought and
   RAG pipeline), a 16-term revision grid and six SDET interview
   answers.
+- **`rag-animated-notes.html`** — RAG Animated Notes: study notes
+  from the "Retrieval-Augmented Generation" carousel (Prompt
+  Engineering series, Part 6) — what RAG is and why it exists,
+  hallucination and grounding, parametric vs non-parametric
+  memory, the full two-phase architecture (indexing pipeline:
+  document loading, chunking, embeddings, vector database;
+  query pipeline: retrieval, ranking, prompt augmentation,
+  generation), RAG vs fine-tuning vs retraining, and failure
+  modes — 14 sections with five hands-on labs (a with/without-RAG
+  answer toggle, a chunking lab with size/overlap sliders, an
+  embeddings word-map, a vector-similarity lab and a top-k
+  retrieval simulator), an 18-term revision grid, six SDET
+  interview answers and a tester's checklist for testing a
+  RAG system.
 
 ## Live
 
@@ -119,6 +133,7 @@ GitHub Pages: https://abhishektests-git.github.io/interview-preparation/
 - SQL fundamentals animated notes: https://abhishektests-git.github.io/interview-preparation/sql-fundamentals-animated-notes.html
 - Java programming animated notes: https://abhishektests-git.github.io/interview-preparation/java-programming-animated-notes.html
 - Prompt engineering animated notes: https://abhishektests-git.github.io/interview-preparation/prompt-engineering-animated-notes.html
+- RAG animated notes: https://abhishektests-git.github.io/interview-preparation/rag-animated-notes.html
 
 ## About
 
