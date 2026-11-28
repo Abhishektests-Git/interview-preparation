@@ -666,3 +666,343 @@ and what must be paid to revive it?
       <li><b>Groundedness tests:</b> does every claim in the answer appear in the retrieved context — or did the model add facts?</li>
       <li><b>Refusal tests:</b> ask something the documents don't cover. The correct behaviour is “not in the documents”, not an invention.</li>
       <li><b>Freshness tests:</b> update a document, re-index, and verify the new fact is what comes back.</li>
+      <li><b>Regression set:</b> a fixed bank of question → expected-source pairs, re-run whenever chunking, embeddings or prompts change — the RAG equivalent of a regression suite.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 14 REVISION -->
+<section id="revision">
+  <div class="sec-head reveal">
+    <span class="num">14</span>
+    <h2>Revision grid — tap a card to flip it</h2>
+    <p class="lede">Eighteen terms that cover the whole carousel. If you can say each flip-side sentence out loud, you know RAG.</p>
+  </div>
+  <div class="rev-grid reveal" id="revGrid"></div>
+
+  <h3 style="font-family:'IBM Plex Serif',serif;font-size:1.45rem;margin:38px 0 6px">Six interview answers</h3>
+  <p class="small" style="margin-bottom:16px;max-width:46em">Framed the honest way: RAG understood deeply as a concept and a system you'd test — not claimed as project experience you don't have.</p>
+  <div class="reveal">
+    <details>
+      <summary><span class="qn">Q1</span>What is RAG, in simple words?</summary>
+      <div class="body"><p>“Retrieval-Augmented Generation. Instead of letting the LLM answer only from what it learned in training, the system first retrieves relevant chunks from your own documents, pastes them into the prompt, and then generates the answer from that context. It's an open-book exam versus a closed-book one — same model, but now it can use your data, stay current, and cite sources.”</p></div>
+    </details>
+    <details>
+      <summary><span class="qn">Q2</span>Walk me through a RAG pipeline, end to end.</summary>
+      <div class="body"><p>“Two phases. Offline indexing: load documents, clean them, split into chunks, embed each chunk into a vector, store the vectors in a vector database with metadata. Online, per question: embed the query with the same model, search for the nearest chunk vectors, rank and keep the top-k, build a prompt from an instruction plus those chunks plus the question, and let the LLM generate a grounded answer with citations.”</p></div>
+    </details>
+    <details>
+      <summary><span class="qn">Q3</span>RAG or fine-tuning — how do you choose?</summary>
+      <div class="body"><p>“Depends on what's changing. Facts that change or are private — documents, policies, prices — belong in RAG: no weight changes, updates in minutes, answers are citable, and a fact can be removed by deleting a chunk. Behaviour — tone, output format, a specialised way of responding — is fine-tuning's job. They also combine: fine-tune for behaviour, RAG for facts. Retraining from scratch is for building a new model, not for keeping one current.”</p></div>
+    </details>
+    <details>
+      <summary><span class="qn">Q4</span>What is chunking, and why do chunk size and overlap matter?</summary>
+      <div class="body"><p>“Chunking splits documents into small pieces, each about one topic, because retrieval works per piece. Too large and a chunk's vector averages several topics and matches none of them well; too small and a chunk loses the context that gives it meaning. Overlap — sharing text between neighbouring chunks — makes sure a sentence cut at a boundary still appears whole in the next chunk. Strategies range from fixed-size cuts to recursive splitting on paragraphs and sentences, to semantic splitting where the meaning shifts.”</p></div>
+    </details>
+    <details>
+      <summary><span class="qn">Q5</span>How does the retrieval actually find the right chunk?</summary>
+      <div class="body"><p>“Through embeddings and vector similarity. An embedding model turns text into a vector where direction represents meaning, so similar meanings sit close together. The query is embedded with the same model, and the database compares vectors — usually cosine similarity, the cosine of the angle between them, which ignores length and compares pure meaning. The highest-scoring chunks, the top-k, are what get pasted into the prompt.”</p></div>
+    </details>
+    <details>
+      <summary><span class="qn">Q6</span>Does RAG eliminate hallucination? How would you test a RAG system?</summary>
+      <div class="body"><p>“It reduces it, it doesn't eliminate it — wrong retrieval or a model ignoring its context can still produce a wrong answer. As a tester I'd test the stages separately: retrieval recall — is the right chunk in the top-k for known questions; groundedness — is every claim in the answer present in the retrieved context; refusal behaviour — for questions outside the documents, it must say so instead of inventing; and freshness — update a document, re-index, and verify the new answer. I'd keep a fixed question-and-source regression set and re-run it whenever chunking, embeddings or the prompt change — exactly like a regression suite after any build change.”</p></div>
+    </details>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <p>Notes built from the “RAG — Retrieval-Augmented Generation” carousel by <b>Be Cloud Architect</b> (Prompt Engineering series, Part 6), shared 28 Nov 2026. Worked examples use a life-insurance policy document — the revival-clause numbers in the demos are illustrative, drawn from the sample clause text in the labs, not from a live policy.</p>
+    <p style="margin-top:8px">Companion notes: Gen AI &amp; LLMs complete notes · Prompt Engineering animated notes · SQL fundamentals animated notes — in the interview-preparation repo.</p>
+  </div>
+</footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- reveal on scroll ---------- */
+var revealEls = document.querySelectorAll(".reveal");
+if("IntersectionObserver" in window && !reduceMotion){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+  },{threshold:0.08});
+  revealEls.forEach(function(el){ io.observe(el); });
+}else{
+  revealEls.forEach(function(el){ el.classList.add("in"); });
+}
+
+/* ---------- hero pipeline auto-play ---------- */
+var heroNodes = document.querySelectorAll("#heroPipe .pnode");
+var heroNote = document.getElementById("heroPipeNote");
+var heroMsgs = [
+  "<b>Question:</b> the user asks about something specific — say, a clause in a policy document.",
+  "<b>Retrieve:</b> the system searches your indexed documents and pulls the chunks that match.",
+  "<b>Augment:</b> those chunks are pasted into the prompt, next to the question.",
+  "<b>Generate:</b> the LLM writes the answer from those chunks — grounded, and citable."
+];
+var heroTimer = null, heroIdx = 0;
+function heroStep(){
+  heroNodes.forEach(function(n,i){ n.classList.toggle("on", i===heroIdx); });
+  heroNote.innerHTML = heroMsgs[heroIdx];
+  heroIdx = (heroIdx+1) % heroNodes.length;
+}
+if(!reduceMotion){
+  heroStep();
+  heroTimer = setInterval(heroStep, 2100);
+}else{
+  heroNote.textContent = "Question → Retrieve → Augment → Generate. That loop is the whole of RAG.";
+}
+
+/* ---------- RAG letter cards ---------- */
+document.querySelectorAll(".rag-card").forEach(function(card){
+  card.addEventListener("click", function(){
+    var open = card.classList.toggle("open");
+    card.setAttribute("aria-expanded", open ? "true" : "false");
+    card.querySelector(".hint").textContent = open ? "TAP TO CLOSE −" : "TAP FOR MORE +";
+  });
+});
+
+/* ---------- with / without RAG toggle ---------- */
+var btnNo = document.getElementById("btnNoRag"), btnYes = document.getElementById("btnRag");
+var dNo = document.getElementById("demoNoRag"), dYes = document.getElementById("demoRag");
+function setMode(rag){
+  btnNo.setAttribute("aria-pressed", rag ? "false" : "true");
+  btnYes.setAttribute("aria-pressed", rag ? "true" : "false");
+  dNo.hidden = rag; dYes.hidden = !rag;
+}
+btnNo.addEventListener("click", function(){ setMode(false); });
+btnYes.addEventListener("click", function(){ setMode(true); });
+
+/* ---------- architecture play ---------- */
+var stepsA = document.querySelectorAll("#stepsA .step");
+var stepsB = document.querySelectorAll("#stepsB .step");
+var pipeStatus = document.getElementById("pipeStatus");
+var playBtn = document.getElementById("playPipe");
+var msgsA = ["Phase A · Data sources: PDFs, Word files, web pages, wikis — wherever the knowledge lives.",
+"Phase A · Loading: each format is read and its text extracted and cleaned.",
+"Phase A · Chunking: documents are split into small, single-topic pieces.",
+"Phase A · Embedding: every chunk becomes a vector of numbers capturing its meaning.",
+"Phase A · Vector DB: vectors + text + metadata are stored, indexed for similarity search. Indexing done — this runs once per document."];
+var msgsB = ["Phase B · Query: a user asks a question.",
+"Phase B · Query embedding: the same model turns the question into a vector.",
+"Phase B · Retrieval: the database finds the chunk vectors closest to the query vector.",
+"Phase B · Ranking: chunks are ordered by similarity; the top-k survive.",
+"Phase B · Augmentation: instruction + top-k chunks + question become one prompt.",
+"Phase B · Generation: the LLM answers from the context — with the source attached."];
+var playing = false;
+playBtn.addEventListener("click", function(){
+  if(playing) return; playing = true; playBtn.disabled = true;
+  stepsA.forEach(function(s){ s.classList.remove("onA"); });
+  stepsB.forEach(function(s){ s.classList.remove("on"); });
+  var seq = [];
+  stepsA.forEach(function(s,i){ seq.push({el:s, cls:"onA", msg:msgsA[i]}); });
+  stepsB.forEach(function(s,i){ seq.push({el:s, cls:"on", msg:msgsB[i]}); });
+  var delay = reduceMotion ? 60 : 850, i = 0;
+  function next(){
+    if(i>0){ seq[i-1].el.classList.remove(seq[i-1].cls); }
+    if(i>=seq.length){
+      pipeStatus.textContent = "Done. Phase A built the index once; Phase B is the loop every question runs through.";
+      playing = false; playBtn.disabled = false; return;
+    }
+    seq[i].el.classList.add(seq[i].cls);
+    pipeStatus.textContent = seq[i].msg;
+    i++; setTimeout(next, delay);
+  }
+  next();
+});
+
+/* ---------- chunking lab ---------- */
+var DOC = "Revival of a lapsed policy. A policy that has lapsed due to non-payment of premium may be revived within five years from the date of the first unpaid premium, subject to the policyholder paying all arrears of premium together with interest at the rate declared by the insurer, and submitting a declaration of good health where required. On revival, all benefits under the policy stand restored as if the policy had never lapsed.";
+var sizeEl = document.getElementById("chunkSize"), ovEl = document.getElementById("chunkOverlap");
+var sizeOut = document.getElementById("chunkSizeOut"), ovOut = document.getElementById("chunkOverlapOut");
+var chunkView = document.getElementById("chunkView"), chunkStats = document.getElementById("chunkStats");
+function renderChunks(){
+  var size = parseInt(sizeEl.value,10), ov = parseInt(ovEl.value,10);
+  if(ov >= size){ ov = Math.max(0, size-20); }
+  sizeOut.textContent = size + " characters";
+  ovOut.textContent = ov + " characters";
+  var chunks = [], start = 0, guard = 0;
+  while(start < DOC.length && guard < 60){
+    chunks.push(DOC.slice(start, start+size));
+    if(start + size >= DOC.length) break;
+    start += (size - ov); guard++;
+  }
+  chunkView.innerHTML = "";
+  chunks.forEach(function(c,i){
+    var d = document.createElement("div");
+    d.className = "chunk c" + (i % 5);
+    var n = document.createElement("span"); n.className = "ch-n"; n.textContent = "Chunk " + (i+1);
+    d.appendChild(n); d.appendChild(document.createTextNode(c));
+    chunkView.appendChild(d);
+  });
+  chunkStats.textContent = DOC.length + " characters of source text → " + chunks.length + " chunks" +
+    (ov>0 ? ", each repeating the last " + ov + " characters of the previous chunk." : ", with no overlap — a sentence cut at a boundary appears whole in neither chunk.");
+}
+sizeEl.addEventListener("input", renderChunks);
+ovEl.addEventListener("input", renderChunks);
+renderChunks();
+
+/* ---------- embeddings scatter ---------- */
+var WORDS = [
+  {w:"policy", x:120, y:90, c:"#0c7264"}, {w:"premium", x:185, y:60, c:"#0c7264"},
+  {w:"claim", x:80, y:150, c:"#0c7264"}, {w:"revival", x:170, y:140, c:"#0c7264"},
+  {w:"sum assured", x:105, y:205, c:"#0c7264"}, {w:"nominee", x:215, y:195, c:"#0c7264"},
+  {w:"recipe", x:330, y:80, c:"#b45309"}, {w:"bake", x:385, y:130, c:"#b45309"},
+  {w:"flour", x:315, y:165, c:"#b45309"}, {w:"oven", x:395, y:55, c:"#b45309"},
+  {w:"planet", x:120, y:290, c:"#4a5aa8"}, {w:"orbit", x:200, y:275, c:"#4a5aa8"},
+  {w:"telescope", x:290, y:300, c:"#4a5aa8"}, {w:"galaxy", x:55, y:320, c:"#4a5aa8"}
+];
+var svg = document.getElementById("scatterSvg");
+var NS = "http://www.w3.org/2000/svg";
+var nearList = document.getElementById("nearList"), nearWord = document.getElementById("nearWord");
+var selected = "policy";
+function dist(a,b){ var dx=a.x-b.x, dy=a.y-b.y; return Math.sqrt(dx*dx+dy*dy); }
+function renderScatter(){
+  svg.innerHTML = "";
+  WORDS.forEach(function(p){
+    var g = document.createElementNS(NS,"g");
+    g.setAttribute("class","pt" + (p.w===selected ? " sel" : ""));
+    g.setAttribute("tabindex","0"); g.setAttribute("role","button");
+    g.setAttribute("aria-label","Select word " + p.w);
+    var circ = document.createElementNS(NS,"circle");
+    circ.setAttribute("cx",p.x); circ.setAttribute("cy",p.y); circ.setAttribute("r", p.w===selected ? 11 : 8);
+    circ.setAttribute("fill", p.c);
+    var t = document.createElementNS(NS,"text");
+    t.setAttribute("x", p.x + 14); t.setAttribute("y", p.y + 4); t.textContent = p.w;
+    g.appendChild(circ); g.appendChild(t);
+    g.addEventListener("click", function(){ selected = p.w; renderScatter(); });
+    g.addEventListener("keydown", function(ev){ if(ev.key==="Enter" || ev.key===" "){ ev.preventDefault(); selected = p.w; renderScatter(); } });
+    svg.appendChild(g);
+  });
+  var sel = WORDS.filter(function(p){ return p.w===selected; })[0];
+  nearWord.textContent = selected;
+  var others = WORDS.filter(function(p){ return p.w!==selected; })
+    .map(function(p){ return {w:p.w, d:dist(sel,p)}; })
+    .sort(function(a,b){ return a.d-b.d; }).slice(0,4);
+  var maxD = 340;
+  nearList.innerHTML = "";
+  others.forEach(function(o){
+    var sim = Math.max(0.02, 1 - o.d/maxD);
+    var li = document.createElement("li");
+    var name = document.createElement("span"); name.textContent = o.w; name.style.fontWeight = "600";
+    var bar = document.createElement("span"); bar.className = "score-bar";
+    var fill = document.createElement("i"); fill.style.width = Math.round(sim*100) + "%"; bar.appendChild(fill);
+    var num = document.createElement("span"); num.className = "score-num"; num.textContent = sim.toFixed(2);
+    li.appendChild(name); li.appendChild(bar); li.appendChild(num);
+    nearList.appendChild(li);
+  });
+}
+renderScatter();
+
+/* ---------- similarity lab ---------- */
+var angleEl = document.getElementById("angleRange"), angleOut = document.getElementById("angleOut");
+var simSvg = document.getElementById("simSvg");
+var cosVal = document.getElementById("cosVal"), dotVal = document.getElementById("dotVal"), eucVal = document.getElementById("eucVal");
+function renderSim(){
+  var deg = parseInt(angleEl.value,10), rad = deg * Math.PI/180;
+  angleOut.textContent = deg + "°";
+  var ox = 90, oy = 190, L = 150;
+  var ax = ox + L, ay = oy;
+  var bx = ox + L*Math.cos(rad), by = oy - L*Math.sin(rad);
+  var ink = getComputedStyle(document.documentElement).getPropertyValue("--ink") || "#333";
+  simSvg.innerHTML =
+    '<line x1="'+ox+'" y1="'+oy+'" x2="'+ax+'" y2="'+ay+'" stroke="#0c7264" stroke-width="3.5" stroke-linecap="round"/>' +
+    '<line x1="'+ox+'" y1="'+oy+'" x2="'+bx.toFixed(1)+'" y2="'+by.toFixed(1)+'" stroke="#b45309" stroke-width="3.5" stroke-linecap="round"/>' +
+    '<circle cx="'+ox+'" cy="'+oy+'" r="5" fill="'+ink+'"/>' +
+    '<text x="'+(ax-118)+'" y="'+(ay+24)+'" font-family="IBM Plex Mono, monospace" font-size="12" fill="#0c7264">query vector</text>' +
+    '<text x="'+(bx-6).toFixed(1)+'" y="'+(by-10).toFixed(1)+'" font-family="IBM Plex Mono, monospace" font-size="12" fill="#b45309">chunk vector</text>' +
+    '<text x="'+(ox+52)+'" y="'+(oy-14)+'" font-family="IBM Plex Mono, monospace" font-size="13" fill="'+ink+'">θ = '+deg+'°</text>';
+  var cos = Math.cos(rad);
+  cosVal.textContent = cos.toFixed(2);
+  dotVal.textContent = (cos * 1 * 1).toFixed(2) + " *";
+  eucVal.textContent = Math.sqrt(2 - 2*cos).toFixed(2);
+}
+angleEl.addEventListener("input", renderSim);
+renderSim();
+
+/* ---------- retrieval sim ---------- */
+var CHUNKS = [
+  {t:"“A policy that has lapsed due to non-payment of premium may be revived within five years from the date of the first unpaid premium…”", s:0.91, src:"Policy_Conditions.pdf · Clause 7"},
+  {t:"“Revival requires payment of all arrears of premium together with interest at the rate declared by the insurer, plus a revival fee…”", s:0.87, src:"Policy_Conditions.pdf · Clause 7"},
+  {t:"“The revival shall be effective only on written approval communicated to the policyholder by the insurer…”", s:0.82, src:"Policy_Conditions.pdf · Clause 7"},
+  {t:"“A grace period of 30 days is allowed for payment of yearly, half-yearly and quarterly premiums…”", s:0.61, src:"Policy_Conditions.pdf · Clause 4"},
+  {t:"“The nominee may intimate a death claim through the branch office or the online claims portal…”", s:0.38, src:"Claims_Guide.pdf · Section 2"},
+  {t:"“Free-look period: the policyholder may return the policy within 30 days of receipt of the policy document…”", s:0.24, src:"Policy_Conditions.pdf · Clause 11"}
+];
+var topkEl = document.getElementById("topk"), topkOut = document.getElementById("topkOut");
+var retList = document.getElementById("retrievalList"), topkNote = document.getElementById("topkNote");
+function renderRetrieval(){
+  var k = parseInt(topkEl.value,10);
+  topkOut.textContent = "k = " + k;
+  retList.innerHTML = "";
+  CHUNKS.forEach(function(c,i){
+    var used = i < k;
+    var row = document.createElement("div");
+    row.className = "chunk-row" + (used ? " used" : " off");
+    var txt = document.createElement("div"); txt.className = "txt";
+    txt.appendChild(document.createTextNode(c.t));
+    var meta = document.createElement("span"); meta.className = "meta";
+    meta.textContent = c.src + " · similarity " + c.s.toFixed(2);
+    txt.appendChild(meta);
+    var badge = document.createElement("span"); badge.className = "badge" + (used ? "" : " no");
+    badge.textContent = used ? "IN PROMPT" : "left out";
+    row.appendChild(txt); row.appendChild(badge);
+    retList.appendChild(row);
+  });
+  var notes = {
+    1:"k = 1: only the period clause is in. The “what must be paid” half of the question has no evidence — expect the model to guess it.",
+    2:"k = 2: period + arrears. Both halves of the question are now covered — this is the minimum honest setting for this question.",
+    3:"k = 3: adds the written-approval detail. Still all from Clause 7 — relevant, harmless, slightly more tokens.",
+    4:"k = 4: the grace-period chunk joins. Related to premiums but not to revival — mild noise the model must ignore.",
+    5:"k = 5: a claims chunk about nominees is now in the prompt. Off-topic evidence competing for the model's attention.",
+    6:"k = 6: everything is in, including free-look. Maximum recall, maximum noise and cost — the model must sort signal from clutter itself."
+  };
+  topkNote.textContent = notes[k];
+}
+topkEl.addEventListener("input", renderRetrieval);
+renderRetrieval();
+
+/* ---------- revision grid ---------- */
+var TERMS = [
+  ["RAG","Retrieval-Augmented Generation","Retrieve facts from your documents, augment the prompt with them, then generate the answer."],
+  ["Parametric memory","Knowledge inside the model's weights","Frozen at training time; updating it means retraining. Gives the model skills, not your facts."],
+  ["Non-parametric memory","Knowledge outside the model, in an index","Your vector database. Update a document, re-index, and the next answer uses it."],
+  ["Hallucination","A fluent answer that isn't true","Happens because the model predicts likely words, not verified facts. RAG reduces it; nothing eliminates it."],
+  ["Grounding","Answering from supplied evidence","The answer is conditioned on retrieved chunks, and can cite them — that's what makes it checkable."],
+  ["Ingestion","Loading documents into the pipeline","Per-format loaders extract clean text; bad extraction here poisons everything downstream."],
+  ["Chunking","Splitting text into retrievable pieces","Each chunk should be about one thing. Too big blurs meaning; too small loses context."],
+  ["Overlap","Text shared between neighbouring chunks","Stops a boundary-cut sentence from being whole in no chunk at all. Typically 10–20% of chunk size."],
+  ["Embedding","Text converted to a vector of numbers","Direction in vector space encodes meaning — similar meanings point similar ways."],
+  ["Vector database","A store built for similarity search","Holds chunk vectors + text + metadata, and answers 'what is nearest to this vector?' very fast."],
+  ["Cosine similarity","The default closeness score for text","Cosine of the angle between two vectors: 1 = same meaning, 0 = unrelated. Ignores length, compares direction."],
+  ["Top-k","How many chunks go into the prompt","Small k risks missing evidence; large k adds noise and cost. Often tuned, sometimes re-ranked."],
+  ["Re-ranking","A second, smarter scoring pass","Retrieve a wide top-20 cheaply, then a precise model picks the true top few. Breadth first, precision second."],
+  ["Prompt augmentation","Building the final prompt","Instruction ('use only the context') + retrieved chunks with sources + the user's question."],
+  ["Fine-tuning","Adjusting weights on your examples","Changes behaviour — tone, format, style. Wrong tool for fast-changing facts."],
+  ["Knowledge cutoff","The date training data ends","Anything after it is invisible to a bare LLM. RAG sidesteps it by fetching current documents live."],
+  ["Metadata","Labels attached to every chunk","Source file, section, page, date. Powers citations and filters like 'only 2026 circulars'."],
+  ["Recall@k","A retrieval quality measure","Of the questions whose answer exists, how often is the right chunk inside the top-k? The first thing to test in a RAG system."]
+];
+var revGrid = document.getElementById("revGrid");
+TERMS.forEach(function(t){
+  var b = document.createElement("button");
+  b.type = "button"; b.className = "rev"; b.setAttribute("aria-expanded","false");
+  var term = document.createElement("span"); term.className = "term"; term.textContent = t[0];
+  var def = document.createElement("span"); def.className = "def"; def.style.display = "block"; def.textContent = t[1];
+  var flip = document.createElement("span"); flip.className = "flip"; flip.textContent = t[2];
+  var hint = document.createElement("span"); hint.className = "hint"; hint.textContent = "TAP TO FLIP +";
+  b.appendChild(term); b.appendChild(def); b.appendChild(flip); b.appendChild(hint);
+  b.addEventListener("click", function(){
+    var open = b.classList.toggle("open");
+    b.setAttribute("aria-expanded", open ? "true" : "false");
+    hint.textContent = open ? "TAP TO CLOSE −" : "TAP TO FLIP +";
+  });
+  revGrid.appendChild(b);
+});
+})();
+</script>
+</body>
+</html>
